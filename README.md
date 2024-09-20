@@ -1,4 +1,10 @@
-# This is our README for the Desktop-WebApp
-[Backend Repository](https://github.com/COMP4350-Team2/Backend)
+# This is the README for the Desktop-WebApp
 
-[Mobile-WebApp Repository](https://github.com/COMP4350-Team2/Mobile-WebApp)
+## Technologies To Be Used
+- **Language:** C#
+- **Framework:** ASP.NET
+
+
+## Links To Other Repos
+[Link to Mobile Webapp](https://github.com/COMP4350-Team2/Mobile-WebApp) <br/>
+[Link to Backend](https://github.com/COMP4350-Team2/Backend)
