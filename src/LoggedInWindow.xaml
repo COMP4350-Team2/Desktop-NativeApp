@@ -1,0 +1,11 @@
+﻿<Window x:Class="Desktop_Frontend.LoggedInWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Welcome" WindowState="Maximized" Height="400" Width="600"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock Text="You are now logged into Cupboard" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontSize="24" FontWeight="Bold"/>
+    </Grid>
+</Window>
