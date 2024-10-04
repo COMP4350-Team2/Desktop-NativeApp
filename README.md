@@ -10,11 +10,18 @@
 [Link to Backend](https://github.com/COMP4350-Team2/Backend)
 
 ## Requirements
-This front end requires `DOT NET` Framework to be downloaded. [Download link.](https://dotnet.microsoft.com/en-us/download)
+
+### .NET Framework
+This front end requires `.NET` Framework to be downloaded. [Download link.](https://dotnet.microsoft.com/en-us/download)
 
 Type `dotnet --version` in terminal to check version on your system.
 
 ## Running Instructions
+
+### Make & Populate .env File
+- Navigate to `src`
+- Make a file file called `.env`
+- Populate this file using `./SAMPLE.env` as a template.
 
 ### Restore (Optional)
 - Navigate to `src`
