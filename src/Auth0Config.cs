@@ -16,12 +16,6 @@ namespace Desktop_Frontend
             LoadEnvVars();
 
             ValidateEnvVars();
-
-            // Check if values are null or empty
-            if (string.IsNullOrEmpty(Domain) || string.IsNullOrEmpty(ClientId))
-            {
-                throw new InvalidOperationException("Auth0 configuration is missing. Check your .env file.");
-            }
         }
 
         private void LoadEnvVars()
