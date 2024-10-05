@@ -4,6 +4,19 @@
         Title="LoggedInWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock Text="You are now logged into Cupboard" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#FF426731"/>
+
+        <TextBox Name="UsernameTextBox" 
+                 Background="Green" 
+                 Foreground="White" 
+                 BorderBrush="White" 
+                 BorderThickness="2"
+                 FontSize="16"
+                 IsReadOnly="True" 
+                 Margin="10" 
+                 VerticalAlignment="Top" 
+                 HorizontalAlignment="Left"
+                 Width="200"/>
+
         <Button Name="LogoutButton" Content="Log out" Width="150" Height="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" 
                 Click="LogoutButton_Click" Background="#FF426731" Foreground="White" FontSize="16" FontWeight="Bold" BorderBrush="White" BorderThickness="2"/>
     </Grid>
