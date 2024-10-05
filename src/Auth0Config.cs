@@ -1,6 +1,4 @@
-﻿using System.IO;
-using DotNetEnv;
-
+﻿using DotNetEnv;
 
 namespace Desktop_Frontend
 {
@@ -9,13 +7,15 @@ namespace Desktop_Frontend
         public string Domain;
         public string ClientId;
         public string CallbackUrl;
-        public string ApiIdentifier; 
+        public string ApiIdentifier;
+        public bool ConfigValid;
 
         public Auth0Config()
         {
             LoadEnvVars();
 
-            ValidateEnvVars();
+            ConfigValid = ValidateEnvVars();
+
         }
 
         private void LoadEnvVars()
@@ -28,13 +28,11 @@ namespace Desktop_Frontend
             ApiIdentifier = Env.GetString("AUTH0_API_IDENTIFIER");
         }
 
-        private void ValidateEnvVars()
+        private bool ValidateEnvVars()
         {
-            if (string.IsNullOrEmpty(Domain) || string.IsNullOrEmpty(ClientId)
-               || string.IsNullOrEmpty(CallbackUrl) || string.IsNullOrEmpty(ApiIdentifier))
-            {
-                throw new Exception("Auth0 configuration is missing. Missing environment variables.");
-            }
+            return !(string.IsNullOrEmpty(Domain) || string.IsNullOrEmpty(ClientId)
+               || string.IsNullOrEmpty(CallbackUrl) || string.IsNullOrEmpty(ApiIdentifier));
+       
         }
     }
 }
