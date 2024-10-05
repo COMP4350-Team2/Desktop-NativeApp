@@ -1,61 +1,39 @@
 ﻿using System.Windows;
-using Auth0.OidcClient;
 
 namespace Desktop_Frontend
 {
     public partial class MainWindow : Window
     {
-        private Auth0Client auth0Client;
+        private IUser user;
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeAuth0Client(); // Initialize Auth0 client
+            InitializeUser();
         }
 
-        private void InitializeAuth0Client()
+
+        private void InitializeUser()
         {
-            //var config = new Auth0Config(); // Load Auth0 configuration
-
-            //auth0Client = new Auth0Client(new Auth0ClientOptions
-            //{
-            //    Domain = config.Domain,
-            //    ClientId = config.ClientId,
-            //    RedirectUri = config.CallbackUrl
-            //});
-
-            var config = new Auth0Config();
-
-            Auth0ClientOptions clientOptions = new Auth0ClientOptions
-            {
-                Domain = config.Domain,
-                ClientId = config.ClientId
-            };
-
-            auth0Client = new Auth0Client(clientOptions);
-
-            clientOptions.PostLogoutRedirectUri = clientOptions.RedirectUri;
-
+            user = UserFactory.CreateUser();
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var loginResult = await auth0Client.LoginAsync();
+            await user.Login();
 
-            if (loginResult.IsError)
+            if (user.LoggedIn())
             {
-                MessageBox.Show($"Error: {loginResult.Error}");
-                return;
+                var loggedInWindow = new LoggedInWindow(user);
+                loggedInWindow.Show();
+                this.Close();
             }
+            else
+            {
+                MessageBox.Show("Something went wrong with logging in. Try again.");
+            }
+            
 
-            //MessageBox.Show($"Logged in! Access Token: {loginResult.AccessToken}");
-
-            // Open the logged-in window and pass the auth0Client instance
-            var loggedInWindow = new LoggedInWindow(auth0Client);
-            loggedInWindow.Show();
-
-            // Optionally, close the main window
-            this.Close();
         }
     }
 }
