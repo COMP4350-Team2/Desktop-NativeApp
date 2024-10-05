@@ -1,28 +1,38 @@
 ﻿using System.Windows;
-using Auth0.OidcClient;
 
 namespace Desktop_Frontend
 {
     public partial class LoggedInWindow : Window
     {
-        private Auth0Client auth0Client;
+        private IUser user;
 
         // Constructor accepting Auth0Client
-        public LoggedInWindow(Auth0Client client)
+        public LoggedInWindow(IUser user)
         {
-            InitializeComponent();
-            auth0Client = client; // Assign the passed instance
+            InitializeComponent(); 
+            this.user = user;
+
+            UsernameTextBox.Text = $"Username: {user.UserName()}";
         }
 
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // Log the user out
-            await auth0Client.LogoutAsync();
+            await user.Logout();
 
-            // Close the logged-in window and open the main window
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close();
+            //if user is logged out successfully
+            if (!user.LoggedIn())
+            {
+                // Close the logged-in window and open the main window
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Close();
+            }
+            //if not
+            else
+            {
+                MessageBox.Show("Something went wrong with logging out. Try again.");
+            }
+
         }
     }
 }
