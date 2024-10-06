@@ -9,14 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="cupboard.jpg" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="cupboard.jpg" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Auth0.OidcClient.WPF" Version="*" />
 		<PackageReference Include="DotNetEnv" Version="*" />
 	</ItemGroup>
