@@ -70,5 +70,9 @@ namespace Desktop_Frontend
             return myListsJSON;
         }
 
+        public String GetAccessToken()
+        {
+            return "";
+        }
     }
 }

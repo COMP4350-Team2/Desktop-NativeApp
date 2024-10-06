@@ -7,7 +7,7 @@ namespace Desktop_Frontend
     public partial class LoggedInWindow : Window
     {
         private IUser user;
-        private string[] ingredients; // Store the ingredients list
+        private IBackend backend; // Declare backend variable
 
         // Constructor accepting Auth0Client
         public LoggedInWindow(IUser user)
@@ -15,7 +15,7 @@ namespace Desktop_Frontend
             InitializeComponent();
             this.user = user;
 
-            GetAllIngredients(); // Initialize the ingredients array
+            InitializeBackend(); // Initialize the database
             InitializeContentSpace(); // Call the method to initialize content
             UsernameTextBox.Text = $"{user.UserName()}"; // Set the username
         }
@@ -44,25 +44,25 @@ namespace Desktop_Frontend
             ContentArea.Children.Clear();
         }
 
-        private void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
+        private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
         {
             // Call the method to display ingredients
-            DisplayIngredients();
+            await DisplayIngredients();
         }
 
-        private void InitializeContentSpace()
+        private void InitializeBackend()
+        {
+            // Initialize the backend
+            backend = BackendFactory.CreateBackend(user);
+        }
+
+        private async void InitializeContentSpace()
         {
             // Call the method to display ingredients on initialization
-            DisplayIngredients();
+            await DisplayIngredients();
         }
 
-        private void GetAllIngredients()
-        {
-            // Initialize the hardcoded list of ingredients
-            ingredients = new string[] { "Milk", "Apples", "Rice" };
-        }
-
-        private void DisplayIngredients()
+        private async Task DisplayIngredients()
         {
             // Clear any existing content
             ContentArea.Children.Clear();
@@ -111,10 +111,13 @@ namespace Desktop_Frontend
                 Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
             };
 
+            // Fetch the ingredients from the backend
+            List<Ingredient> ingredients = await backend.GetAllIngredients();
+
             // Add each ingredient to the ListBox
             foreach (var ingredient in ingredients)
             {
-                ingredientListBox.Items.Add(ingredient);
+                ingredientListBox.Items.Add(ingredient.GetName()); // Assuming GetName returns the ingredient name
             }
 
             // Add the search filter functionality
@@ -125,9 +128,9 @@ namespace Desktop_Frontend
                 string filter = searchBox.Text.ToLower(); // Get the filter text in lowercase
                 foreach (var ingredient in ingredients)
                 {
-                    if (ingredient.ToLower().Contains(filter))
+                    if (ingredient.GetName().ToLower().Contains(filter))
                     {
-                        ingredientListBox.Items.Add(ingredient); // Add item if it matches the filter
+                        ingredientListBox.Items.Add(ingredient.GetName()); // Add item if it matches the filter
                     }
                 }
             };

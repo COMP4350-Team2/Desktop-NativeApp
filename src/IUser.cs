@@ -12,5 +12,7 @@ namespace Desktop_Frontend
         public string UserName();
 
         public string GetLists();
+
+        public String GetAccessToken();
     }
 }
