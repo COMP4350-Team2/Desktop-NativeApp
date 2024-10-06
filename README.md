@@ -2,7 +2,7 @@
 
 ## Technologies To Be Used
 - **Language:** C#
-- **Framework:** ASP.NET
+- **Framework:** WPF.NET
 
 
 ## Links To Other Repos
@@ -19,9 +19,8 @@ Type `dotnet --version` in terminal to check version on your system.
 ## Running Instructions
 
 ### Make & Populate .env File
-- Navigate to `src`
-- Make a file file called `.env`
-- Populate this file using `./SAMPLE.env` as a template.
+- Make a file file called `.env` in the root directory.
+- Populate this file using `SAMPLE.env` as a template.
 
 ### Restore (Optional)
 - Navigate to `src`
