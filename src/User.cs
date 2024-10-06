@@ -32,13 +32,13 @@ namespace Desktop_Frontend
         {
             try
             {
-                await auth0Client.LoginAsync();
-                loggedIn = true;
+                var loginResult = await auth0Client.LoginAsync();
+     
+                loggedIn = !loginResult.IsError;
 
             }
             catch (Exception e)
             {
-                Debug.WriteLine("> Auth0 Logout Failed > >", e.ToString());
                 loggedIn = false;
             }
         }
@@ -53,7 +53,6 @@ namespace Desktop_Frontend
             }
             catch (Exception e)
             {
-                Debug.WriteLine("> Auth0 Login Failed > >", e.ToString());
                 loggedIn = true;
             }
         }
@@ -72,5 +71,6 @@ namespace Desktop_Frontend
         {
             return username;
         }
+
     }
 }
