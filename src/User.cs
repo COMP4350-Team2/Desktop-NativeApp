@@ -1,5 +1,4 @@
 ﻿using Auth0.OidcClient;
-using System.Diagnostics;
 namespace Desktop_Frontend
 {
     internal class User : IUser
@@ -9,6 +8,7 @@ namespace Desktop_Frontend
         private bool loggedIn;
         private string username;
         private string myListsJSON;
+        private string accessToken;
 
         public User() : this(new Auth0Config()) { }
 
@@ -16,6 +16,7 @@ namespace Desktop_Frontend
         {
             this.config = config;
             username = "Auth0 User";
+            accessToken = "";
             myListsJSON = @"
             {
                 ""lists"": [
@@ -68,12 +69,18 @@ namespace Desktop_Frontend
             try
             {
                 var loginResult = await auth0Client.LoginAsync();
+
+                accessToken = loginResult.AccessToken;
      
-                loggedIn = !loginResult.IsError;
+                if (!loginResult.IsError && !string.IsNullOrEmpty(accessToken))
+                {
+                    loggedIn = true;
+                }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
+                accessToken = "";
                 loggedIn = false;
             }
         }
@@ -86,7 +93,7 @@ namespace Desktop_Frontend
                 await auth0Client.LogoutAsync();
                 loggedIn = false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 loggedIn = true;
             }
@@ -105,6 +112,11 @@ namespace Desktop_Frontend
         public string UserName()
         {
             return username;
+        }
+
+        public String GetAccessToken()
+        {
+            return accessToken;
         }
 
         public string GetLists()
