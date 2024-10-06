@@ -8,6 +8,7 @@ namespace Desktop_Frontend
         private Auth0Client auth0Client;
         private bool loggedIn;
         private string username;
+        private string myListsJSON;
 
         public User() : this(new Auth0Config()) { }
 
@@ -15,6 +16,39 @@ namespace Desktop_Frontend
         {
             this.config = config;
             username = "Auth0 User";
+            myListsJSON = @"
+            {
+                ""lists"": [
+                    {
+                        ""id"": 0,
+                        ""name"": ""Grocery List"",
+                        ""ingredients"": [
+                            {
+                                ""name"": ""Apples"",
+                                ""amount"": 5,
+                                ""unit"": ""count""
+                            },
+                            {
+                                ""name"": ""Milk"",
+                                ""amount"": 1000,
+                                ""unit"": ""ml""
+                            }
+                        ]
+                    },
+                    {
+                        ""id"": 1,
+                        ""name"": ""Pantry List"",
+                        ""ingredients"": [
+                            {
+                                ""name"": ""Rice"",
+                                ""amount"": 200,
+                                ""unit"": ""g""
+                            }
+                        ]
+                    }
+                ]
+            }";
+
 
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
@@ -25,6 +59,7 @@ namespace Desktop_Frontend
             auth0Client = new Auth0Client(clientOptions);
 
             clientOptions.PostLogoutRedirectUri = clientOptions.RedirectUri;
+
         }
 
         // Async login method
@@ -70,6 +105,11 @@ namespace Desktop_Frontend
         public string UserName()
         {
             return username;
+        }
+
+        public string GetLists()
+        {
+            return myListsJSON;
         }
 
     }

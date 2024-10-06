@@ -3,29 +3,37 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="LoggedInWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Background="#99D9EA" BorderBrush="#463018" BorderThickness="8">
-    <Grid>
-        <!-- Banner with increased height and bottom outline -->
+    <Grid Name="MainGrid">
+        <!-- Banner  -->
         <Border Background="#9EAD39" Height="120" VerticalAlignment="Top" BorderBrush="#463018" BorderThickness="0,0,0,8">
             <TextBlock Text="You are now logged into Cupboard" Foreground="#463018" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
         </Border>
 
-        <!-- Username TextBox -->
-        <TextBox Name="UsernameTextBox" 
-                 Background="#9EAD39" 
-                 Foreground="#463018" 
-                 BorderBrush="#463018" 
-                 BorderThickness="5"
-                 FontSize="20"
-                 IsReadOnly="True" 
-                 Margin="20" 
-                 VerticalAlignment="Center" 
-                 HorizontalAlignment="Center"
-                 Width="250" Height="40" TextAlignment="Center"/>
+        <!-- Navigation Panel -->
+        <Border BorderBrush="#463018" BorderThickness="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,120,0,0">
+            <StackPanel Background="#EDDC7E">
+                <TextBox Name="UsernameTextBox" 
+                         Background="Transparent" 
+                         Foreground="#463018" 
+                         BorderBrush="#463018" 
+                         BorderThickness="0"
+                         FontSize="20"
+                         FontWeight="Bold" 
+                         IsReadOnly="True" 
+                         Margin="10" 
+                         TextAlignment="Center" 
+                         Visibility="Visible"/>
+                <!-- Ensure this is visible -->
 
-        <!-- Logout Button positioned in the bottom third of the screen -->
-        <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,150">
-            <Button Name="LogoutButton" Content="Log out" Width="200" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#AB4C11"
-                    Foreground="White" FontSize="24" FontWeight="Bold" Click="LogoutButton_Click" BorderBrush="#463018" BorderThickness="5" Margin="0,0,0,20"/>
-        </StackPanel>
+                <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" Background="#AB4C11" Foreground="White" FontSize="14" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" Content="All Ingredients"/>
+                <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" Background="#AB4C11" Foreground="White" FontSize="14" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" Content="My Lists"/>
+                <Button Name="LogoutButton" Width="180" Height="50" Margin="10" Click="LogoutButton_Click" Background="#AB4C11" Foreground="White" FontSize="16" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" VerticalAlignment="Bottom" Content="Log out"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content Area -->
+        <Grid Name="ContentArea" VerticalAlignment="Stretch" Margin="210,120,0,0">
+            <!-- This is where the ingredients list will be populated -->
+        </Grid>
     </Grid>
 </Window>

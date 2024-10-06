@@ -10,5 +10,7 @@ namespace Desktop_Frontend
         public bool LoggedIn();
 
         public string UserName();
+
+        public string GetLists();
     }
 }

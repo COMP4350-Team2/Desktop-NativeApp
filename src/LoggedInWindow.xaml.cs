@@ -1,25 +1,30 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Desktop_Frontend
 {
     public partial class LoggedInWindow : Window
     {
         private IUser user;
+        private string[] ingredients; // Store the ingredients list
 
         // Constructor accepting Auth0Client
         public LoggedInWindow(IUser user)
         {
-            InitializeComponent(); 
+            InitializeComponent();
             this.user = user;
 
-            UsernameTextBox.Text = $"Username: {user.UserName()}";
+            GetAllIngredients(); // Initialize the ingredients array
+            InitializeContentSpace(); // Call the method to initialize content
+            UsernameTextBox.Text = $"{user.UserName()}"; // Set the username
         }
 
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             await user.Logout();
 
-            //if user is logged out successfully
+            // If user is logged out successfully
             if (!user.LoggedIn())
             {
                 // Close the logged-in window and open the main window
@@ -27,12 +32,111 @@ namespace Desktop_Frontend
                 mainWindow.Show();
                 this.Close();
             }
-            //if not
             else
             {
                 MessageBox.Show("Something went wrong with logging out. Try again.");
             }
+        }
 
+        private void MyListsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Clear the ContentArea
+            ContentArea.Children.Clear();
+        }
+
+        private void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Call the method to display ingredients
+            DisplayIngredients();
+        }
+
+        private void InitializeContentSpace()
+        {
+            // Call the method to display ingredients on initialization
+            DisplayIngredients();
+        }
+
+        private void GetAllIngredients()
+        {
+            // Initialize the hardcoded list of ingredients
+            ingredients = new string[] { "Milk", "Apples", "Rice" };
+        }
+
+        private void DisplayIngredients()
+        {
+            // Clear any existing content
+            ContentArea.Children.Clear();
+
+            // Create a StackPanel for the ingredients
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Margin = new Thickness(10);
+
+            // Create the search TextBox with placeholder text
+            TextBox searchBox = new TextBox
+            {
+                Width = double.NaN, // Set width to auto-fill available space
+                Height = 30,
+                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
+                Margin = new Thickness(0, 0, 0, 10),
+                Text = "Search ingredients..."
+            };
+
+            // Handle focus events for placeholder
+            searchBox.GotFocus += (s, e) =>
+            {
+                if (searchBox.Text == "Search ingredients...")
+                {
+                    searchBox.Text = "";
+                    searchBox.Foreground = new SolidColorBrush(Colors.Black);
+                }
+            };
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrEmpty(searchBox.Text))
+                {
+                    searchBox.Text = "Search ingredients...";
+                    searchBox.Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)); // Brown color when placeholder
+                }
+            };
+
+            // Add the search TextBox to the StackPanel
+            stackPanel.Children.Add(searchBox);
+
+            // Create a ListBox to display ingredients
+            ListBox ingredientListBox = new ListBox
+            {
+                Margin = new Thickness(0, 5, 0, 0), // Space above the ListBox
+                Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
+                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+            };
+
+            // Add each ingredient to the ListBox
+            foreach (var ingredient in ingredients)
+            {
+                ingredientListBox.Items.Add(ingredient);
+            }
+
+            // Add the search filter functionality
+            searchBox.TextChanged += (s, e) =>
+            {
+                ingredientListBox.Items.Clear(); // Clear the ListBox
+
+                string filter = searchBox.Text.ToLower(); // Get the filter text in lowercase
+                foreach (var ingredient in ingredients)
+                {
+                    if (ingredient.ToLower().Contains(filter))
+                    {
+                        ingredientListBox.Items.Add(ingredient); // Add item if it matches the filter
+                    }
+                }
+            };
+
+            // Add the ListBox to the StackPanel
+            stackPanel.Children.Add(ingredientListBox);
+
+            // Add the StackPanel to the ContentArea
+            ContentArea.Children.Add(stackPanel);
         }
     }
 }
