@@ -1,0 +1,16 @@
+name: desktop_ci
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - env:
+          env_file: ${{ secrets.env }}
+        run: echo "$env_file" > ".env"
+      - run: echo '[Replace This with code to run your tests]'
