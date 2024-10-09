@@ -58,7 +58,6 @@ Type `dotnet --version` in terminal to check version on your system.
 
 ### Environment Setup
 The team ran these tests on both the Production environment and a Mock environment. </br>
-If you would like to run these test, use the Mock section.
 
 #### Production
 - Populated `AUTH0.env` and `BACKEND.env` as shown above.
@@ -67,6 +66,7 @@ If you would like to run these test, use the Mock section.
 
 #### Mock
 - Remove `AUTH0.env` and `BACKEND.env`.
+- No need to run the backend. Internal mock is used.
 - Run the app as above.
 
 ### User Story: Login/Registration
