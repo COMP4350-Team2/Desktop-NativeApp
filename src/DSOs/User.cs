@@ -1,5 +1,6 @@
 ﻿using Auth0.OidcClient;
-namespace Desktop_Frontend
+using Desktop_Frontend.Auth0;
+namespace Desktop_Frontend.DSOs
 {
     internal class User : IUser
     {
@@ -17,44 +18,13 @@ namespace Desktop_Frontend
             this.config = config;
             username = "Auth0 User";
             accessToken = "";
-            myListsJSON = @"
-            {
-                ""lists"": [
-                    {
-                        ""id"": 0,
-                        ""name"": ""Grocery List"",
-                        ""ingredients"": [
-                            {
-                                ""name"": ""Apples"",
-                                ""amount"": 5,
-                                ""unit"": ""count""
-                            },
-                            {
-                                ""name"": ""Milk"",
-                                ""amount"": 1000,
-                                ""unit"": ""ml""
-                            }
-                        ]
-                    },
-                    {
-                        ""id"": 1,
-                        ""name"": ""Pantry List"",
-                        ""ingredients"": [
-                            {
-                                ""name"": ""Rice"",
-                                ""amount"": 200,
-                                ""unit"": ""g""
-                            }
-                        ]
-                    }
-                ]
-            }";
+            myListsJSON = "";
 
 
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
                 Domain = config.Domain,
-                ClientId = config.ClientId
+                ClientId = config.ClientId,
             };
 
             auth0Client = new Auth0Client(clientOptions);
@@ -68,10 +38,15 @@ namespace Desktop_Frontend
         {
             try
             {
-                var loginResult = await auth0Client.LoginAsync();
+                var loginResult = await auth0Client.LoginAsync(new
+                {
+                    audience = config.Audience
+                });
+
+
 
                 accessToken = loginResult.AccessToken;
-     
+
                 if (!loginResult.IsError && !string.IsNullOrEmpty(accessToken))
                 {
                     loggedIn = true;
@@ -114,7 +89,7 @@ namespace Desktop_Frontend
             return username;
         }
 
-        public String GetAccessToken()
+        public string GetAccessToken()
         {
             return accessToken;
         }

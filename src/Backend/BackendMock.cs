@@ -1,4 +1,6 @@
-﻿namespace Desktop_Frontend
+﻿using Desktop_Frontend.DSOs;
+
+namespace Desktop_Frontend.Backend
 {
     public class BackendMock : IBackend
     {
@@ -19,10 +21,14 @@
             this.user = user;
         }
 
-        // Implementation of GetAllIngredients using the initialized list
-        public async Task<List<Ingredient>> GetAllIngredients()
+        public async Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
             return ingredients;
+        }
+
+        public async Task<bool> CreateUser(IUser user)
+        {
+            return await Task.FromResult(true);
         }
     }
 }

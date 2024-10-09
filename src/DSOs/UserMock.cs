@@ -1,14 +1,11 @@
-﻿
-using System.Diagnostics;
-
-namespace Desktop_Frontend
+﻿namespace Desktop_Frontend.DSOs
 {
-    internal class UserMock: IUser
+    internal class UserMock : IUser
     {
         private string username;
         private bool loggedIn;
         private string myListsJSON;
-        public UserMock() 
+        public UserMock()
         {
             username = "Mock User";
             myListsJSON = @"
@@ -70,7 +67,7 @@ namespace Desktop_Frontend
             return myListsJSON;
         }
 
-        public String GetAccessToken()
+        public string GetAccessToken()
         {
             return "";
         }

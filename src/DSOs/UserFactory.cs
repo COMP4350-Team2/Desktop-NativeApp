@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using Desktop_Frontend.Auth0;
 
-namespace Desktop_Frontend
+namespace Desktop_Frontend.DSOs
 {
     internal static class UserFactory
     {
