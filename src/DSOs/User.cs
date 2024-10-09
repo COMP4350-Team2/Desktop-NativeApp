@@ -18,38 +18,7 @@ namespace Desktop_Frontend.DSOs
             this.config = config;
             username = "Auth0 User";
             accessToken = "";
-            myListsJSON = @"
-            {
-                ""lists"": [
-                    {
-                        ""id"": 0,
-                        ""name"": ""Grocery List"",
-                        ""ingredients"": [
-                            {
-                                ""name"": ""Apples"",
-                                ""amount"": 5,
-                                ""unit"": ""count""
-                            },
-                            {
-                                ""name"": ""Milk"",
-                                ""amount"": 1000,
-                                ""unit"": ""ml""
-                            }
-                        ]
-                    },
-                    {
-                        ""id"": 1,
-                        ""name"": ""Pantry List"",
-                        ""ingredients"": [
-                            {
-                                ""name"": ""Rice"",
-                                ""amount"": 200,
-                                ""unit"": ""g""
-                            }
-                        ]
-                    }
-                ]
-            }";
+            myListsJSON = "";
 
 
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
