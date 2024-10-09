@@ -40,6 +40,7 @@ Type `dotnet --version` in terminal to check version on your system.
     ```   
 
 - Not having these files will run a Mock version of the system.
+- Contact one of the team members for `.env` files if needed.
 
 ### Restore (Optional)
 - Navigate to `src`
