@@ -70,7 +70,7 @@ namespace Desktop_Frontend
             {
                 var loginResult = await auth0Client.LoginAsync(new
                 {
-                    audience = config.ApiIdentifier
+                    audience = config.Audience
                 });
 
 
