@@ -49,5 +49,3 @@ Type `dotnet --version` in terminal to check version on your system.
 ### Run
 - Navigate to `src`
 - Run `dotnet run` 
-
-
