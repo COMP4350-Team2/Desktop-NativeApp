@@ -6,5 +6,7 @@ namespace Desktop_Frontend.Backend
     {
         public Task<List<Ingredient>> GetAllIngredients();
 
+        public Task<bool> CreateUser(IUser user);
+
     }
 }

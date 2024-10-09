@@ -21,10 +21,14 @@ namespace Desktop_Frontend.Backend
             this.user = user;
         }
 
-        // Implementation of GetAllIngredients using the initialized list
         public async Task<List<Ingredient>> GetAllIngredients()
         {
             return ingredients;
+        }
+
+        public async Task<bool> CreateUser(IUser user)
+        {
+            return await Task.FromResult(true);
         }
     }
 }
