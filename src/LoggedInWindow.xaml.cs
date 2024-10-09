@@ -44,6 +44,18 @@ namespace Desktop_Frontend
         {
             // Clear the ContentArea
             ContentArea.Children.Clear();
+
+            // Display a placeholder message for "My Lists" section
+            TextBlock placeholderText = new TextBlock
+            {
+                Text = "Coming soon: A page for your lists",
+                FontSize = 18,
+                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            ContentArea.Children.Add(placeholderText);
         }
 
         private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
@@ -64,8 +76,10 @@ namespace Desktop_Frontend
             ContentArea.Children.Clear();
 
             // Create a StackPanel for the ingredients
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Margin = new Thickness(10);
+            StackPanel stackPanel = new StackPanel
+            {
+                Margin = new Thickness(10)
+            };
 
             // Create the search TextBox with placeholder text
             TextBox searchBox = new TextBox
@@ -92,50 +106,124 @@ namespace Desktop_Frontend
                 if (string.IsNullOrEmpty(searchBox.Text))
                 {
                     searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)); // Brown color when placeholder
+                    searchBox.Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)); // Brown color for placeholder
                 }
             };
 
             // Add the search TextBox to the StackPanel
             stackPanel.Children.Add(searchBox);
 
-            // Create a ListBox to display ingredients
-            ListBox ingredientListBox = new ListBox
-            {
-                Margin = new Thickness(0, 5, 0, 0), // Space above the ListBox
-                Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
-                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-            };
+            // Create a StackPanel to display each ingredient with a "+" button
+            StackPanel ingredientListPanel = new StackPanel();
 
             // Fetch the ingredients from the backend
             List<Ingredient> ingredients = await backend.GetAllIngredients(user);
 
-            // Add each ingredient to the ListBox
+            // Add each ingredient with a "+" button anchored to the right
             foreach (var ingredient in ingredients)
             {
-                ingredientListBox.Items.Add(ingredient.GetName()); // Assuming GetName returns the ingredient name
+                // Create a DockPanel for each ingredient row
+                DockPanel ingredientRow = new DockPanel
+                {
+                    Margin = new Thickness(0, 5, 0, 5)
+                };
+
+                // Create a TextBlock for the ingredient name and type
+                TextBlock ingredientText = new TextBlock
+                {
+                    Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
+                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 10, 0)
+                };
+
+                // Add the ingredient text to the left side of the DockPanel
+                DockPanel.SetDock(ingredientText, Dock.Left);
+                ingredientRow.Children.Add(ingredientText);
+
+                // Create the "+" button and anchor it to the right
+                Button addButton = new Button
+                {
+                    Content = "+",
+                    Width = 30,
+                    Height = 30,
+                    Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
+                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(10, 0, 0, 0)
+                };
+
+                addButton.Click += (s, e) =>
+                {
+                    MessageBox.Show("Coming soon: Adding ingredients to your lists");
+                };
+
+                // Add the button to the right side of the DockPanel
+                DockPanel.SetDock(addButton, Dock.Right);
+                ingredientRow.Children.Add(addButton);
+
+                // Add the DockPanel to the main StackPanel
+                ingredientListPanel.Children.Add(ingredientRow);
             }
 
             // Add the search filter functionality
             searchBox.TextChanged += (s, e) =>
             {
-                ingredientListBox.Items.Clear(); // Clear the ListBox
+                ingredientListPanel.Children.Clear(); // Clear for filtered results
 
                 string filter = searchBox.Text.ToLower(); // Get the filter text in lowercase
                 foreach (var ingredient in ingredients)
                 {
-                    if (ingredient.GetName().ToLower().Contains(filter))
+                    if (ingredient.GetName().ToLower().Contains(filter) || ingredient.GetIngType().ToLower().Contains(filter))
                     {
-                        ingredientListBox.Items.Add(ingredient.GetName()); // Add item if it matches the filter
+                        // Create a new DockPanel row for each filtered ingredient
+                        DockPanel filteredRow = new DockPanel
+                        {
+                            Margin = new Thickness(0, 5, 0, 5)
+                        };
+
+                        TextBlock filteredText = new TextBlock
+                        {
+                            Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
+                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Margin = new Thickness(0, 0, 10, 0)
+                        };
+
+                        Button filteredAddButton = new Button
+                        {
+                            Content = "+",
+                            Width = 30,
+                            Height = 30,
+                            Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)),
+                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            Margin = new Thickness(10, 0, 0, 0)
+                        };
+
+                        filteredAddButton.Click += (s, e) =>
+                        {
+                            MessageBox.Show("Coming soon: Adding ingredients to your lists");
+                        };
+
+                        DockPanel.SetDock(filteredText, Dock.Left);
+                        DockPanel.SetDock(filteredAddButton, Dock.Right);
+
+                        filteredRow.Children.Add(filteredText);
+                        filteredRow.Children.Add(filteredAddButton);
+
+                        ingredientListPanel.Children.Add(filteredRow);
                     }
                 }
             };
 
-            // Add the ListBox to the StackPanel
-            stackPanel.Children.Add(ingredientListBox);
+            // Add the ListPanel to the StackPanel
+            stackPanel.Children.Add(ingredientListPanel);
 
             // Add the StackPanel to the ContentArea
             ContentArea.Children.Add(stackPanel);
         }
+
     }
 }
+
