@@ -4,7 +4,7 @@
     {
         public static IBackend CreateBackend(IUser user)
         {
-            if (user is UserMock)
+            if (IsMockEnvironment(user))
             {
                 return new BackendMock(user);
             }
@@ -12,6 +12,13 @@
             {
                 return new Backend(user);
             }
+        }
+
+        private static bool IsMockEnvironment(IUser user)
+        {
+            BackendConfig config = new BackendConfig();
+
+            return (user is UserMock) || (!config.ConfigValid);
         }
     }
 }
