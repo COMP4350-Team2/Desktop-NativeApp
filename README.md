@@ -11,6 +11,9 @@
 
 ## Requirements
 
+### Platform
+This is a Windows Native Application. To be run on Windows.
+
 ### .NET Framework
 This front end requires `.NET` Framework to be downloaded. [Download link.](https://dotnet.microsoft.com/en-us/download)
 
