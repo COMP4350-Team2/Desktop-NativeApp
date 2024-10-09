@@ -18,9 +18,25 @@ Type `dotnet --version` in terminal to check version on your system.
 
 ## Running Instructions
 
-### Make & Populate .env File
-- Make a file file called `.env` in the root directory.
-- Populate this file using `SAMPLE.env` as a template.
+### Make & Populate .env Files
+- Make a file file called `AUTH0.env` in the `./src/Auth0` directory. Below is the expected format:
+
+    ```
+    AUTH0_DOMAIN=
+    AUTH0_API_IDENTIFIER=
+    AUTH0_CLIENT_ID=
+    AUTH0_CALLBACK_URL=
+    AUTH0_AUDIENCE=
+    ```
+- Make a file file called `BACKEND.env` in the `./src/Backend` directory. Below is the expected format:
+
+    ```
+    BACKEND_URL=
+    CREATE_USER=
+    ALL_INGREDIENTS=
+    ```   
+
+- Not having these files will run a Mock version of the system.
 
 ### Restore (Optional)
 - Navigate to `src`
