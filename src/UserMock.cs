@@ -1,7 +1,4 @@
-﻿
-using System.Diagnostics;
-
-namespace Desktop_Frontend
+﻿namespace Desktop_Frontend
 {
     internal class UserMock: IUser
     {

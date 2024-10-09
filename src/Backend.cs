@@ -3,9 +3,9 @@
     public class Backend : IBackend
     {
         private IUser user;
-        // Constructor (empty for now)
-        public Backend(IUser user) 
-        { 
+
+        public Backend(IUser user)
+        {
             this.user = user;
         }
 

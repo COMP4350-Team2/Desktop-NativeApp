@@ -54,7 +54,7 @@ namespace Desktop_Frontend
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
                 Domain = config.Domain,
-                ClientId = config.ClientId
+                ClientId = config.ClientId,
             };
 
             auth0Client = new Auth0Client(clientOptions);
@@ -68,7 +68,12 @@ namespace Desktop_Frontend
         {
             try
             {
-                var loginResult = await auth0Client.LoginAsync();
+                var loginResult = await auth0Client.LoginAsync(new
+                {
+                    audience = config.ApiIdentifier
+                });
+
+
 
                 accessToken = loginResult.AccessToken;
      

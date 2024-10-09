@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
-
-namespace Desktop_Frontend
+﻿namespace Desktop_Frontend
 {
     internal static class UserFactory
     {

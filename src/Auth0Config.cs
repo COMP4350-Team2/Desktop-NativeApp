@@ -9,6 +9,7 @@ namespace Desktop_Frontend
         public string CallbackUrl;
         public string ApiIdentifier;
         public bool ConfigValid;
+        public string Identifier;
 
         public Auth0Config()
         {
@@ -26,6 +27,7 @@ namespace Desktop_Frontend
             ClientId = Env.GetString("AUTH0_CLIENT_ID");
             CallbackUrl = Env.GetString("AUTH0_CALLBACK_URL");
             ApiIdentifier = Env.GetString("AUTH0_API_IDENTIFIER");
+            Identifier = "https://cupboard/api";
         }
 
         private bool ValidateEnvVars()
