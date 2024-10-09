@@ -1,6 +1,8 @@
 ﻿using Desktop_Frontend.DSOs;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Windows;
 
 namespace Desktop_Frontend.Backend
 {
@@ -20,10 +22,29 @@ namespace Desktop_Frontend.Backend
         }
 
         // Implementation of GetAllIngredients, returning an empty list for now
-        public async Task<List<Ingredient>> GetAllIngredients()
+        public async Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            // Returning an empty list as a placeholder
-            return await Task.FromResult(new List<Ingredient>());
+            List<Ingredient> ingredients = new List<Ingredient>();
+
+            //Create request
+            string url = config.BackendUrl + config.All_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Get, url); ;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateAllIngResponse(response);
+                FillAllIngList(response, ingredients);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to fetch all ingredients");
+            }
+
+
+            return ingredients;
         }
 
         public async Task<bool> CreateUser(IUser user)
@@ -40,7 +61,7 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                success = await ValidateHTTPResponse(response);
+                success = await ValidateUserCreation(response);
 
             }
             catch (Exception)
@@ -52,7 +73,7 @@ namespace Desktop_Frontend.Backend
             return success;
         }
 
-        private async Task<bool> ValidateHTTPResponse(HttpResponseMessage response)
+        private async Task<bool> ValidateUserCreation(HttpResponseMessage response)
         {
             bool valid = false;
 
@@ -69,5 +90,38 @@ namespace Desktop_Frontend.Backend
 
             return valid;
         }
+
+        private async void ValidateAllIngResponse(HttpResponseMessage response)
+        {
+           if (!response.IsSuccessStatusCode)
+           {
+                throw new Exception();
+           }
+        }
+
+        private async void FillAllIngList(HttpResponseMessage response, List<Ingredient> allIng)
+        {
+            // Read the response content as a string
+            string body = await response.Content.ReadAsStringAsync();
+
+            // Parse the JSON response
+            var jsonBody = JsonDocument.Parse(body);
+
+            // Check if the root element contains "result"
+            if (jsonBody.RootElement.TryGetProperty("result", out JsonElement resultArray))
+            {
+                // Enumerate through each ingredient in the "result" array
+                foreach (JsonElement item in resultArray.EnumerateArray())
+                {
+                    // Extract the name and type from the JSON object
+                    string name = item.GetProperty("name").GetString();
+                    string ingType = item.GetProperty("type").GetString(); ;
+
+                    // Create an Ingredient object and add it to the list
+                    allIng.Add(new Ingredient(name, ingType));
+                }
+            }
+        }
+
     }
 }
