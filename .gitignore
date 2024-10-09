@@ -3,4 +3,4 @@
 [Oo]bj/
 
 # Local Env Files
-.env
+*.env
