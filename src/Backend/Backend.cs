@@ -61,6 +61,7 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
+
                 success = await ValidateUserCreation(response);
 
             }
