@@ -4,6 +4,7 @@ namespace Desktop_Frontend.Backend
 {
     public static class BackendFactory
     {
+        public static BackendConfig config;
         public static IBackend CreateBackend(IUser user)
         {
             if (IsMockEnvironment(user))
@@ -12,13 +13,13 @@ namespace Desktop_Frontend.Backend
             }
             else
             {
-                return new Backend(user);
+                return new Backend(config);
             }
         }
 
         private static bool IsMockEnvironment(IUser user)
         {
-            BackendConfig config = new BackendConfig();
+            config = new BackendConfig();
 
             return user is UserMock || !config.ConfigValid;
         }
