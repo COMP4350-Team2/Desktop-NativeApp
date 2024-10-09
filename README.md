@@ -73,7 +73,7 @@ If you would like to run these test, use the Mock section.
 **Description:** As a user, I want to be a able to log in using an existing account or register a new account.
 
 **Acceptance Criteria:** 
-- Given that I am on the log in/registration page.
+- Given that I am on the log in/registration page
 - I should be able log in with a previous account or register a new account.
 
 #### Test Steps
