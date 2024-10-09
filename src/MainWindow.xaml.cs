@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Animation;
+﻿using System.Windows;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 
@@ -34,7 +32,9 @@ namespace Desktop_Frontend
         {
             await user.Login();
 
-            if (user.LoggedIn())
+            bool loginSuccessful = user.LoggedIn() && await UserRegistered();
+
+            if (loginSuccessful)
             {
                 var loggedInWindow = new LoggedInWindow(user, backend);
                 loggedInWindow.Show();
@@ -45,6 +45,11 @@ namespace Desktop_Frontend
                 MessageBox.Show("Something went wrong with logging in. Try again.");
             }          
 
+        }
+
+        private async Task<bool> UserRegistered()
+        {
+            return await backend.CreateUser(user);
         }
     }
 }
