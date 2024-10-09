@@ -3,14 +3,14 @@ name: CI Workflow
 on:
   push:
     branches:
-      - main  # or your default branch
+      - main  
   pull_request:
     branches:
-      - main  # or your default branch
+      - main
 
 jobs:
   build:
-    runs-on: windows-latest  # Change this to use a Windows runner
+    runs-on: windows-latest  
 
     steps:
       - name: Checkout code
