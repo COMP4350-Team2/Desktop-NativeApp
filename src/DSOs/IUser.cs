@@ -1,5 +1,4 @@
-﻿
-namespace Desktop_Frontend
+﻿namespace Desktop_Frontend.DSOs
 {
     public interface IUser
     {
@@ -13,6 +12,6 @@ namespace Desktop_Frontend
 
         public string GetLists();
 
-        public String GetAccessToken();
+        public string GetAccessToken();
     }
 }

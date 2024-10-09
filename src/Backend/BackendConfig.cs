@@ -1,6 +1,8 @@
 ﻿using DotNetEnv;
+using System.IO;
+using System.Runtime.CompilerServices;
 
-namespace Desktop_Frontend
+namespace Desktop_Frontend.Backend
 {
     public class BackendConfig
     {
@@ -9,7 +11,7 @@ namespace Desktop_Frontend
         public string All_Ing_Endpoint;
         public bool ConfigValid;
 
-        public BackendConfig() 
+        public BackendConfig()
         {
             LoadEnvVars();
             ConfigValid = ValidateEnvVars();
@@ -17,7 +19,21 @@ namespace Desktop_Frontend
 
         private void LoadEnvVars()
         {
-            Env.TraversePath().Load("BACKEND.env");
+
+            string sourceDirectory = GetSourceFileDirectory();
+            string envFilePath = Path.Combine(sourceDirectory, "BACKEND.env");
+
+
+            if (File.Exists(envFilePath))
+            {
+                using (var stream = File.OpenRead(envFilePath))
+                {
+                    Env.Load(stream);  // Load the .env file into the environment
+                }
+            }
+
+
+            //Env.TraversePath().Load("BACKEND.env");
             BackendUrl = Env.GetString("BACKEND_URL");
             Create_User_Endpoint = Env.GetString("CREATE_USER");
             All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
@@ -29,5 +45,9 @@ namespace Desktop_Frontend
                || string.IsNullOrEmpty(All_Ing_Endpoint));
         }
 
+        private string GetSourceFileDirectory([CallerFilePath] string sourceFilePath = "")
+        {
+            return Path.GetDirectoryName(sourceFilePath);
+        }
     }
 }

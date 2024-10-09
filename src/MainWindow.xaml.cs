@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Desktop_Frontend.DSOs;
 
 namespace Desktop_Frontend
 {

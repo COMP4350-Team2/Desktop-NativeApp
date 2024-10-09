@@ -1,4 +1,6 @@
-﻿namespace Desktop_Frontend
+﻿using Desktop_Frontend.Auth0;
+
+namespace Desktop_Frontend.DSOs
 {
     internal static class UserFactory
     {

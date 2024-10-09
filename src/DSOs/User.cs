@@ -1,5 +1,6 @@
 ﻿using Auth0.OidcClient;
-namespace Desktop_Frontend
+using Desktop_Frontend.Auth0;
+namespace Desktop_Frontend.DSOs
 {
     internal class User : IUser
     {
@@ -76,7 +77,7 @@ namespace Desktop_Frontend
 
 
                 accessToken = loginResult.AccessToken;
-     
+
                 if (!loginResult.IsError && !string.IsNullOrEmpty(accessToken))
                 {
                     loggedIn = true;
@@ -119,7 +120,7 @@ namespace Desktop_Frontend
             return username;
         }
 
-        public String GetAccessToken()
+        public string GetAccessToken()
         {
             return accessToken;
         }

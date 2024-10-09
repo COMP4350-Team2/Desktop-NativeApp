@@ -1,4 +1,6 @@
-﻿namespace Desktop_Frontend
+﻿using Desktop_Frontend.DSOs;
+
+namespace Desktop_Frontend.Backend
 {
     public static class BackendFactory
     {
@@ -18,7 +20,7 @@
         {
             BackendConfig config = new BackendConfig();
 
-            return (user is UserMock) || (!config.ConfigValid);
+            return user is UserMock || !config.ConfigValid;
         }
     }
 }

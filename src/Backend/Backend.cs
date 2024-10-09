@@ -1,4 +1,6 @@
-﻿namespace Desktop_Frontend
+﻿using Desktop_Frontend.DSOs;
+
+namespace Desktop_Frontend.Backend
 {
     public class Backend : IBackend
     {

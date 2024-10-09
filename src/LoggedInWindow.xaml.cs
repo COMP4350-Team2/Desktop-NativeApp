@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Desktop_Frontend.Backend;
+using Desktop_Frontend.DSOs;
 
 namespace Desktop_Frontend
 {

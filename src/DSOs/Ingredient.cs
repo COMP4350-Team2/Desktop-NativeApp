@@ -1,11 +1,11 @@
-﻿namespace Desktop_Frontend
+﻿namespace Desktop_Frontend.DSOs
 {
     public class Ingredient
     {
         private string name;
         private string ingType;
 
-        public Ingredient(): this("No Name", "No Type") { }
+        public Ingredient() : this("No Name", "No Type") { }
 
         public Ingredient(string name, string ingType)
         {
@@ -18,14 +18,14 @@
             return name;
         }
 
-        public void  SetName(string name)
+        public void SetName(string name)
         {
             this.name = name;
         }
 
-        public string GetIngType() 
-        { 
-            return ingType; 
+        public string GetIngType()
+        {
+            return ingType;
         }
 
         public void SetIngType(string ingType)

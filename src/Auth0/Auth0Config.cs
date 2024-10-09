@@ -1,6 +1,8 @@
 ﻿using DotNetEnv;
+using System.IO;
+using System.Runtime.CompilerServices;
 
-namespace Desktop_Frontend
+namespace Desktop_Frontend.Auth0
 {
     public class Auth0Config
     {
@@ -21,7 +23,18 @@ namespace Desktop_Frontend
 
         private void LoadEnvVars()
         {
-            Env.TraversePath().Load("./AUTH0.env");
+            string sourceDirectory = GetSourceFileDirectory();
+            string envFilePath = Path.Combine(sourceDirectory, "AUTH0.env");
+
+
+            if (File.Exists(envFilePath))
+            {
+                using (var stream = File.OpenRead(envFilePath))
+                {
+                    Env.Load(stream);  // Load the .env file into the environment
+                }
+            }
+
 
             Domain = Env.GetString("AUTH0_DOMAIN");
             ClientId = Env.GetString("AUTH0_CLIENT_ID");
@@ -35,7 +48,12 @@ namespace Desktop_Frontend
             return !(string.IsNullOrEmpty(Domain) || string.IsNullOrEmpty(ClientId)
                || string.IsNullOrEmpty(CallbackUrl) || string.IsNullOrEmpty(ApiIdentifier)
                || string.IsNullOrEmpty(Audience));
-       
+
+        }
+
+        private string GetSourceFileDirectory([CallerFilePath] string sourceFilePath = "")
+        {
+            return Path.GetDirectoryName(sourceFilePath);
         }
     }
 }
