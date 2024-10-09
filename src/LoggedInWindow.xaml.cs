@@ -108,7 +108,7 @@ namespace Desktop_Frontend
             };
 
             // Fetch the ingredients from the backend
-            List<Ingredient> ingredients = await backend.GetAllIngredients();
+            List<Ingredient> ingredients = await backend.GetAllIngredients(user);
 
             // Add each ingredient to the ListBox
             foreach (var ingredient in ingredients)
