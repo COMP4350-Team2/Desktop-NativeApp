@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 
@@ -30,6 +31,10 @@ namespace Desktop_Frontend
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            // Disable the button to prevent multiple clicks
+            var button = sender as Button;
+            button.IsEnabled = false;
+
             await user.Login();
 
             bool loginSuccessful = user.LoggedIn() && await UserRegistered();
@@ -42,6 +47,7 @@ namespace Desktop_Frontend
             }
             else
             {
+                button.IsEnabled = true;
                 MessageBox.Show("Something went wrong with logging in. Try again.");
             }          
 
