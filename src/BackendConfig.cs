@@ -17,7 +17,7 @@ namespace Desktop_Frontend
 
         private void LoadEnvVars()
         {
-            Env.TraversePath().Load();
+            Env.TraversePath().Load("BACKEND.env");
             BackendUrl = Env.GetString("BACKEND_URL");
             Create_User_Endpoint = Env.GetString("CREATE_USER");
             All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
