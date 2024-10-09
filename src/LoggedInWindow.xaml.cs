@@ -12,12 +12,12 @@ namespace Desktop_Frontend
         private IBackend backend; // Declare backend variable
 
         // Constructor accepting Auth0Client
-        public LoggedInWindow(IUser user)
+        public LoggedInWindow(IUser user, IBackend backend)
         {
             InitializeComponent();
             this.user = user;
+            this.backend = backend;
 
-            InitializeBackend(); // Initialize the database
             InitializeContentSpace(); // Call the method to initialize content
             UsernameTextBox.Text = $"{user.UserName()}"; // Set the username
         }
@@ -50,12 +50,6 @@ namespace Desktop_Frontend
         {
             // Call the method to display ingredients
             await DisplayIngredients();
-        }
-
-        private void InitializeBackend()
-        {
-            // Initialize the backend
-            backend = BackendFactory.CreateBackend(user);
         }
 
         private async void InitializeContentSpace()
