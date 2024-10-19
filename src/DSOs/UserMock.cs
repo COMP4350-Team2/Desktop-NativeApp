@@ -47,14 +47,16 @@
             return loggedIn;
         }
 
-        public async Task Login()
+        public Task Login()
         {
             loggedIn = true;
+            return Task.CompletedTask;
         }
 
-        public async Task Logout()
+        public Task Logout()
         {
             loggedIn = false;
+            return Task.CompletedTask;
         }
 
         public string UserName()
