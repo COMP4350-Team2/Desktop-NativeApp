@@ -21,9 +21,9 @@ namespace Desktop_Frontend.Backend
             this.user = user;
         }
 
-        public async Task<List<Ingredient>> GetAllIngredients(IUser user)
+        public Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            return ingredients;
+            return Task.FromResult(ingredients);
         }
 
         public async Task<bool> CreateUser(IUser user)
