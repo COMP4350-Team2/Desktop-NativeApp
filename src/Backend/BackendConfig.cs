@@ -6,9 +6,9 @@ namespace Desktop_Frontend.Backend
 {
     public class BackendConfig
     {
-        public string BackendUrl;
-        public string Create_User_Endpoint;
-        public string All_Ing_Endpoint;
+        public string? BackendUrl;
+        public string? Create_User_Endpoint;
+        public string? All_Ing_Endpoint;
         public bool ConfigValid;
 
         public BackendConfig()
@@ -20,21 +20,25 @@ namespace Desktop_Frontend.Backend
         private void LoadEnvVars()
         {
 
-            string sourceDirectory = GetSourceFileDirectory();
-            string envFilePath = Path.Combine(sourceDirectory, "BACKEND.env");
+            string? sourceDirectory = GetSourceFileDirectory();
 
-
-            if (File.Exists(envFilePath))
+            if(sourceDirectory != null)
             {
-                using (var stream = File.OpenRead(envFilePath))
+                string envFilePath = Path.Combine(sourceDirectory, "BACKEND.env");
+
+                if (File.Exists(envFilePath))
                 {
-                    Env.Load(stream);  // Load the .env file into the environment
+                    using (var stream = File.OpenRead(envFilePath))
+                    {
+                        Env.Load(stream); 
+                    }
                 }
+
+                BackendUrl = Env.GetString("BACKEND_URL");
+                Create_User_Endpoint = Env.GetString("CREATE_USER");
+                All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
             }
 
-            BackendUrl = Env.GetString("BACKEND_URL");
-            Create_User_Endpoint = Env.GetString("CREATE_USER");
-            All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
         }
 
         private bool ValidateEnvVars()
@@ -43,7 +47,7 @@ namespace Desktop_Frontend.Backend
                || string.IsNullOrEmpty(All_Ing_Endpoint));
         }
 
-        private string GetSourceFileDirectory([CallerFilePath] string sourceFilePath = "")
+        private string? GetSourceFileDirectory([CallerFilePath] string sourceFilePath = "")
         {
             return Path.GetDirectoryName(sourceFilePath);
         }
