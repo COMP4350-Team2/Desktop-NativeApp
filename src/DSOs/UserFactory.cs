@@ -2,8 +2,18 @@
 
 namespace Desktop_Frontend.DSOs
 {
+    /// <summary>
+    /// A factory class for creating instances of <see cref="IUser"/>.
+    /// </summary>
     internal static class UserFactory
     {
+        /// <summary>
+        /// Creates an instance of <see cref="IUser"/> based on the validity of the Auth0 configuration.
+        /// </summary>
+        /// <returns>
+        /// An instance of <see cref="IUser"/>. Returns a real <see cref="User"/> instance if the 
+        /// configuration is valid, otherwise returns a <see cref="UserMock"/> instance.
+        /// </returns>
         public static IUser CreateUser()
         {
             Auth0Config config = new Auth0Config();
