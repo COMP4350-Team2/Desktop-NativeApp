@@ -6,12 +6,19 @@ using Desktop_Frontend.DSOs;
 
 namespace Desktop_Frontend
 {
+    /// <summary>
+    /// Represents the logged-in window of the application. User's home page.
+    /// </summary>
     public partial class LoggedInWindow : Window
     {
         private IUser user;
         private IBackend backend; // Declare backend variable
 
-        // Constructor accepting Auth0Client
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoggedInWindow"/> class.
+        /// </summary>
+        /// <param name="user">The authenticated <see cref="IUser"/>instance.</param>
+        /// <param name="backend">The <see cref="IBackend"/> service instance.</param>
         public LoggedInWindow(IUser user, IBackend backend)
         {
             InitializeComponent();
@@ -22,6 +29,12 @@ namespace Desktop_Frontend
             UsernameTextBox.Text = $"{user.UserName()}"; // Set the username
         }
 
+        /// <summary>
+        /// Event handler for the logout button click event.
+        /// Logs out the user and returns to the main window if successful.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             await user.Logout();
@@ -40,6 +53,12 @@ namespace Desktop_Frontend
             }
         }
 
+        /// <summary>
+        /// Event handler for the "My Lists" button click event.
+        /// Displays a placeholder message indicating that the functionality is coming soon.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void MyListsButton_Click(object sender, RoutedEventArgs e)
         {
             // Clear the ContentArea
@@ -58,18 +77,31 @@ namespace Desktop_Frontend
             ContentArea.Children.Add(placeholderText);
         }
 
+        /// <summary>
+        /// Event handler for the "All Ingredients" button click event.
+        /// Calls the method to display the list of ingredients.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
         {
             // Call the method to display ingredients
             await DisplayIngredients();
         }
 
+        /// <summary>
+        /// Initializes the content space by displaying ingredients on initialization.
+        /// </summary>
         private async void InitializeContentSpace()
         {
             // Call the method to display ingredients on initialization
             await DisplayIngredients();
         }
 
+        /// <summary>
+        /// Displays the list of ingredients fetched from the backend.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task DisplayIngredients()
         {
             // Clear any existing content
@@ -223,7 +255,5 @@ namespace Desktop_Frontend
             // Add the StackPanel to the ContentArea
             ContentArea.Children.Add(stackPanel);
         }
-
     }
 }
-
