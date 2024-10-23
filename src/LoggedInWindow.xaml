@@ -2,32 +2,77 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="LoggedInWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen"
-        Background="#99D9EA" BorderBrush="#463018" BorderThickness="8">
+        Background="#1B262C">
     <Grid Name="MainGrid">
-        <!-- Banner  -->
-        <Border Background="#9EAD39" Height="120" VerticalAlignment="Top" BorderBrush="#463018" BorderThickness="0,0,0,8">
-            <TextBlock Text="You are now logged into Cupboard" Foreground="#463018" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
+        <!-- Banner -->
+        <Border Background="#0F4C75" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
+            <TextBlock Text="You are now logged into Cupboard" 
+                       Foreground="#BBE1FA" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       FontSize="32" 
+                       FontWeight="Bold"/>
         </Border>
 
         <!-- Navigation Panel -->
-        <Border BorderBrush="#463018" BorderThickness="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,120,0,0">
-            <StackPanel Background="#EDDC7E">
+        <Border BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,120,0,0">
+            <StackPanel Background="#3282B8">
                 <TextBox Name="UsernameTextBox" 
                          Background="Transparent" 
-                         Foreground="#463018" 
-                         BorderBrush="#463018" 
-                         BorderThickness="0"
+                         Foreground="#BBE1FA" 
+                         BorderBrush="Transparent" 
                          FontSize="20"
                          FontWeight="Bold" 
-                         IsReadOnly="True" 
                          Margin="10" 
-                         TextAlignment="Center" 
-                         Visibility="Visible"/>
-                <!-- Ensure this is visible -->
+                         TextAlignment="Center"/>
 
-                <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" Background="#AB4C11" Foreground="White" FontSize="14" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" Content="All Ingredients"/>
-                <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" Background="#AB4C11" Foreground="White" FontSize="14" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" Content="My Lists"/>
-                <Button Name="LogoutButton" Width="180" Height="50" Margin="10" Click="LogoutButton_Click" Background="#AB4C11" Foreground="White" FontSize="16" FontWeight="Bold" BorderBrush="#463018" BorderThickness="5" VerticalAlignment="Bottom" Content="Log out"/>
+                <!-- All Ingredients Button -->
+                <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" 
+                        Background="#BBE1FA" Foreground="#1B262C" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="All Ingredients">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
+                                </Border.Effect>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!-- My Lists Button -->
+                <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" 
+                        Background="#BBE1FA" Foreground="#1B262C" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="My Lists">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
+                                </Border.Effect>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!-- Logout Button -->
+                <Button Name="LogoutButton" Width="180" Height="50" Margin="10" Click="LogoutButton_Click" 
+                        Background="#BBE1FA" Foreground="#1B262C" FontSize="16" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="Log out">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
+                                </Border.Effect>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
         </Border>
 

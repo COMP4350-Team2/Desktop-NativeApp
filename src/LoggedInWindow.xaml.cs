@@ -11,13 +11,21 @@ namespace Desktop_Frontend
     /// </summary>
     public partial class LoggedInWindow : Window
     {
+        // Define color variables
+        private SolidColorBrush primaryColor = new SolidColorBrush(Color.FromRgb(27, 38, 44)); // Dark color
+        private SolidColorBrush secondaryColor = new SolidColorBrush(Color.FromRgb(15, 76, 117)); // Medium color
+        private SolidColorBrush tertiaryColor = new SolidColorBrush(Color.FromRgb(50, 130, 184)); // Light color
+        private SolidColorBrush backgroundColor = new SolidColorBrush(Color.FromRgb(187, 225, 250)); // Light background color
+        private SolidColorBrush textColor = new SolidColorBrush(Color.FromRgb(187, 225, 250)); // Text color set to #BBE1FA
+        private SolidColorBrush buttonColor = new SolidColorBrush(Color.FromRgb(27, 38, 44)); // Button color set to #1B262C
+
         private IUser user;
         private IBackend backend; // Declare backend variable
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggedInWindow"/> class.
         /// </summary>
-        /// <param name="user">The authenticated <see cref="IUser"/>instance.</param>
+        /// <param name="user">The authenticated <see cref="IUser"/> instance.</param>
         /// <param name="backend">The <see cref="IBackend"/> service instance.</param>
         public LoggedInWindow(IUser user, IBackend backend)
         {
@@ -64,12 +72,23 @@ namespace Desktop_Frontend
             // Clear the ContentArea
             ContentArea.Children.Clear();
 
+            // Create and add the "My Lists" header
+            TextBlock myListsHeader = new TextBlock
+            {
+                Text = "My Lists",
+                FontSize = 24,
+                Foreground = textColor,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+            ContentArea.Children.Add(myListsHeader);
+
             // Display a placeholder message for "My Lists" section
             TextBlock placeholderText = new TextBlock
             {
                 Text = "Coming soon: A page for your lists",
                 FontSize = 18,
-                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                Foreground = textColor, // Use textColor for visibility
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -107,6 +126,17 @@ namespace Desktop_Frontend
             // Clear any existing content
             ContentArea.Children.Clear();
 
+            // Create and add the "All Ingredients" header
+            TextBlock allIngredientsHeader = new TextBlock
+            {
+                Text = "All Ingredients",
+                FontSize = 24,
+                Foreground = textColor,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10) // Margin above header
+            };
+            ContentArea.Children.Add(allIngredientsHeader);
+
             // Create a StackPanel for the ingredients
             StackPanel stackPanel = new StackPanel
             {
@@ -118,9 +148,9 @@ namespace Desktop_Frontend
             {
                 Width = double.NaN, // Set width to auto-fill available space
                 Height = 30,
-                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-                Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
-                Margin = new Thickness(0, 0, 0, 10),
+                Foreground = textColor, // Use textColor
+                Background = backgroundColor, // Use backgroundColor
+                Margin = new Thickness(0, 40, 0, 10), 
                 Text = "Search ingredients..."
             };
 
@@ -164,7 +194,7 @@ namespace Desktop_Frontend
                 TextBlock ingredientText = new TextBlock
                 {
                     Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
-                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                    Foreground = textColor, // Use textColor for visibility
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0, 0, 10, 0)
                 };
@@ -179,8 +209,8 @@ namespace Desktop_Frontend
                     Content = "+",
                     Width = 30,
                     Height = 30,
-                    Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
-                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
+                    Background = backgroundColor, // Use backgroundColor
+                    Foreground = buttonColor, // Use buttonColor set to #1B262C
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Margin = new Thickness(10, 0, 0, 0)
                 };
@@ -217,18 +247,23 @@ namespace Desktop_Frontend
                         TextBlock filteredText = new TextBlock
                         {
                             Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
-                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
+                            Foreground = textColor, // Use textColor for visibility
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(0, 0, 10, 0)
                         };
 
+                        // Add the filtered ingredient text to the left side of the DockPanel
+                        DockPanel.SetDock(filteredText, Dock.Left);
+                        filteredRow.Children.Add(filteredText);
+
+                        // Create the "+" button for the filtered ingredient
                         Button filteredAddButton = new Button
                         {
                             Content = "+",
                             Width = 30,
                             Height = 30,
-                            Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)),
-                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
+                            Background = backgroundColor, // Use backgroundColor
+                            Foreground = buttonColor, // Use buttonColor set to #1B262C
                             HorizontalAlignment = HorizontalAlignment.Right,
                             Margin = new Thickness(10, 0, 0, 0)
                         };
@@ -238,22 +273,20 @@ namespace Desktop_Frontend
                             MessageBox.Show("Coming soon: Adding ingredients to your lists");
                         };
 
-                        DockPanel.SetDock(filteredText, Dock.Left);
+                        // Add the button to the right side of the DockPanel
                         DockPanel.SetDock(filteredAddButton, Dock.Right);
-
-                        filteredRow.Children.Add(filteredText);
                         filteredRow.Children.Add(filteredAddButton);
 
+                        // Add the filtered row to the ingredient list panel
                         ingredientListPanel.Children.Add(filteredRow);
                     }
                 }
             };
 
-            // Add the ListPanel to the StackPanel
+            // Add the ingredient list panel to the main StackPanel
             stackPanel.Children.Add(ingredientListPanel);
-
-            // Add the StackPanel to the ContentArea
             ContentArea.Children.Add(stackPanel);
         }
     }
 }
+
