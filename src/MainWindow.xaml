@@ -3,17 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Cupboard" WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Background="#1B262C">
-    <!-- Use the most dominant color as background -->
+
     <Grid>
+        <!-- Background Image -->
+        <Image Source="pack://application:,,,/Cupboard_Logo.png" Stretch="UniformToFill" Opacity="0.1"/>
+
         <!-- Banner with increased height and bottom outline -->
         <Border Background="#0F4C75" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
-            <TextBlock Text="Welcome to Cupboard" Foreground="#BBE1FA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
+            <TextBlock Text="Welcome to Cupboard" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
         </Border>
 
         <!-- Login Button in the bottom third of the screen -->
         <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,150">
             <Button Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="#3282B8" Foreground="#BBE1FA" FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
+                    Background="White" Foreground="#3282B8" FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
                     Padding="10" Margin="0,0,0,20" BorderBrush="Transparent" BorderThickness="0">
                 <!-- Rounded corners and shadow for a professional look -->
                 <Button.Style>
@@ -27,6 +30,31 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Setter Property="Foreground" Value="#3282B8"/>
+                        <!-- Default text color -->
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#BBE1FA"/>
+                                <!-- Change background on hover -->
+                                <Setter Property="Foreground" Value="Black"/>
+                                <!-- Change text color on hover -->
+                                <Setter Property="Opacity" Value="1"/>
+                                <!-- Optional: Remove opacity change on hover -->
+                                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <!-- Optional: Slightly scale the button on hover -->
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#0F4C75"/>
+                                <!-- Change background on press -->
+                                <Setter Property="Foreground" Value="White"/>
+                                <!-- Change text color on press -->
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </Button.Style>
                 <Button.Effect>
@@ -35,7 +63,7 @@
             </Button>
 
             <!-- Below Button Text -->
-            <TextBlock Text="Log in to continue" Foreground="#BBE1FA" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="Log in to continue" Foreground="#FFFFFF" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
         </StackPanel>
     </Grid>
 </Window>
