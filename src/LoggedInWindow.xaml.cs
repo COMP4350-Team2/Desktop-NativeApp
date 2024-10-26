@@ -16,8 +16,11 @@ namespace Desktop_Frontend
         private SolidColorBrush secondaryColor = new SolidColorBrush(Color.FromRgb(15, 76, 117)); // Medium color
         private SolidColorBrush tertiaryColor = new SolidColorBrush(Color.FromRgb(50, 130, 184)); // Light color
         private SolidColorBrush backgroundColor = new SolidColorBrush(Color.FromRgb(187, 225, 250)); // Light background color
-        private SolidColorBrush textColor = new SolidColorBrush(Color.FromRgb(187, 225, 250)); // Text color set to #BBE1FA
-        private SolidColorBrush buttonColor = new SolidColorBrush(Color.FromRgb(27, 38, 44)); // Button color set to #1B262C
+        private SolidColorBrush textColor = new SolidColorBrush(Colors.White); // Text color set to White
+        private SolidColorBrush buttonColor = new SolidColorBrush(Colors.White); // Button color set to White
+        private SolidColorBrush ingredientTextColor = new SolidColorBrush(Colors.White); // Ingredients list text color (White)
+        private SolidColorBrush highlightedTextColor = new SolidColorBrush(Colors.Black); // Text color for highlighted background
+        private SolidColorBrush highlightedBackgroundColor = new SolidColorBrush(Colors.White); // Background color for highlighted rows
 
         private IUser user;
         private IBackend backend;
@@ -48,7 +51,6 @@ namespace Desktop_Frontend
             // If user is logged out successfully
             if (!user.LoggedIn())
             {
-                // Close the logged-in window and open the main window
                 var mainWindow = new MainWindow();
                 mainWindow.Show();
                 this.Close();
@@ -65,30 +67,23 @@ namespace Desktop_Frontend
         /// </summary>
         private void MyListsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Clear the ContentArea
             ContentArea.Children.Clear();
-
-            // Create and add the "My Lists" header
             TextBlock myListsHeader = CreateHeader("My Lists");
             ContentArea.Children.Add(myListsHeader);
 
-            // Create a StackPanel to center the content
             StackPanel centerPanel = new StackPanel
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 40, 0, 0) 
+                Margin = new Thickness(0, 40, 0, 0)
             };
 
-            // Display a placeholder message for "My Lists" section
             TextBlock placeholderText = CreatePlaceholderText("Coming soon: A page for your lists");
-            placeholderText.HorizontalAlignment = HorizontalAlignment.Center; // Center the text
+            placeholderText.HorizontalAlignment = HorizontalAlignment.Center;
             centerPanel.Children.Add(placeholderText);
 
-            // Add the centered panel to the ContentArea
             ContentArea.Children.Add(centerPanel);
         }
-
 
         /// <summary>
         /// Event handler for the "All Ingredients" button click event.
@@ -96,7 +91,7 @@ namespace Desktop_Frontend
         /// </summary>
         private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
         {
-            await DisplayIngredients(); // Call the method to display ingredients
+            await DisplayIngredients();
         }
 
         /// <summary>
@@ -104,7 +99,7 @@ namespace Desktop_Frontend
         /// </summary>
         private async void InitializeContentSpace()
         {
-            await DisplayIngredients(); // Call the method to display ingredients on initialization
+            await DisplayIngredients();
         }
 
         /// <summary>
@@ -113,35 +108,27 @@ namespace Desktop_Frontend
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task DisplayIngredients()
         {
-            // Clear any existing content
             ContentArea.Children.Clear();
-
-            // Create and add the "All Ingredients" header
             TextBlock allIngredientsHeader = CreateHeader("All Ingredients");
             ContentArea.Children.Add(allIngredientsHeader);
 
-            // Create a StackPanel for the ingredients
             StackPanel stackPanel = new StackPanel
             {
-                Margin = new Thickness(10)
+                Margin = new Thickness(0, 40, 0, 0)
             };
 
-            // Create the search TextBox
             TextBox searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
 
-            // Create a StackPanel to display each ingredient with a "+" button
             StackPanel ingredientListPanel = new StackPanel();
             stackPanel.Children.Add(ingredientListPanel);
 
-            // Fetch the ingredients from the backend
             List<Ingredient> ingredients = await backend.GetAllIngredients(user);
-            PopulateIngredientList(ingredients, ingredientListPanel); // Populate the ingredient list
+            PopulateIngredientList(ingredients, ingredientListPanel);
 
-            // Add search filter functionality
             searchBox.TextChanged += (s, e) => FilterIngredients(ingredients, searchBox.Text, ingredientListPanel);
 
-            ContentArea.Children.Add(stackPanel); // Add the main stack panel to the ContentArea
+            ContentArea.Children.Add(stackPanel);
         }
 
         /// <summary>
@@ -151,10 +138,10 @@ namespace Desktop_Frontend
         /// <param name="ingredientListPanel">The panel to populate with ingredients.</param>
         private void PopulateIngredientList(List<Ingredient> ingredients, StackPanel ingredientListPanel)
         {
-            ingredientListPanel.Children.Clear(); // Clear existing ingredients
+            ingredientListPanel.Children.Clear();
             foreach (var ingredient in ingredients)
             {
-                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient)); // Create a row for each ingredient
+                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient));
             }
         }
 
@@ -166,21 +153,20 @@ namespace Desktop_Frontend
         {
             TextBox searchBox = new TextBox
             {
-                Width = double.NaN, // Set width to auto-fill available space
+                Width = double.NaN,
                 Height = 30,
-                Foreground = textColor,
-                Background = backgroundColor,
+                Foreground = Brushes.Black,
+                Background = Brushes.White,
                 Margin = new Thickness(0, 40, 0, 10),
                 Text = "Search ingredients..."
             };
 
-            // Handle focus events for placeholder
             searchBox.GotFocus += (s, e) =>
             {
                 if (searchBox.Text == "Search ingredients...")
                 {
-                    searchBox.Text = string.Empty; // Clear placeholder
-                    searchBox.Foreground = new SolidColorBrush(Colors.Black); // Change text color to black
+                    searchBox.Text = string.Empty;
+                    searchBox.Foreground = Brushes.Black;
                 }
             };
 
@@ -188,8 +174,8 @@ namespace Desktop_Frontend
             {
                 if (string.IsNullOrEmpty(searchBox.Text))
                 {
-                    searchBox.Text = "Search ingredients..."; // Reset placeholder
-                    searchBox.Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)); // Brown color for placeholder
+                    searchBox.Text = "Search ingredients...";
+                    searchBox.Foreground = Brushes.Gray;
                 }
             };
 
@@ -197,46 +183,75 @@ namespace Desktop_Frontend
         }
 
         /// <summary>
-        /// Creates an ingredient row with a "+" button.
+        /// Creates an ingredient row with a "+" button wrapped in a border.
         /// </summary>
         /// <param name="ingredient">The ingredient to display.</param>
-        /// <returns>The created DockPanel for the ingredient.</returns>
-        private DockPanel CreateIngredientRow(Ingredient ingredient)
+        /// <returns>The created Border for the ingredient row.</returns>
+        private Border CreateIngredientRow(Ingredient ingredient)
         {
             DockPanel ingredientRow = new DockPanel
             {
-                Margin = new Thickness(0, 5, 0, 5)
+                Margin = new Thickness(0, 5, 0, 5),
+                Background = Brushes.Transparent
             };
 
+            // Create the TextBlock for the ingredient text
             TextBlock ingredientText = new TextBlock
             {
                 Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
-                Foreground = textColor,
+                Foreground = ingredientTextColor,
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 10, 0)
             };
 
-            ingredientRow.Children.Add(ingredientText); // Add ingredient text to the row
+            ingredientRow.Children.Add(ingredientText);
 
             Button addButton = new Button
             {
                 Content = "+",
                 Width = 30,
                 Height = 30,
-                Background = backgroundColor,
-                Foreground = buttonColor,
+                Background = buttonColor,
+                Foreground = Brushes.Black, // Button text color set to black for visibility
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(10, 0, 0, 0)
             };
 
             addButton.Click += (s, e) =>
             {
-                MessageBox.Show("Coming soon: Adding ingredients to your lists"); // Placeholder action
+                MessageBox.Show("Coming soon: Adding ingredients to your lists");
             };
 
-            ingredientRow.Children.Add(addButton); // Add the button to the ingredient row
-            return ingredientRow; // Return the complete row
+            ingredientRow.Children.Add(addButton);
+
+            // Wrap the ingredient row in a Border with padding
+            Border border = new Border
+            {
+                BorderBrush = Brushes.Gray,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(5),
+                Margin = new Thickness(0, 5, 0, 5),
+                Padding = new Thickness(10), // Added padding inside the border
+                Child = ingredientRow
+            };
+
+            // Highlight behavior for the whole border
+            border.MouseEnter += (s, e) =>
+            {
+                border.Background = highlightedBackgroundColor; // Highlight the entire box
+                ingredientText.Foreground = highlightedTextColor; // Change text color on hover
+            };
+
+            border.MouseLeave += (s, e) =>
+            {
+                border.Background = Brushes.Transparent; // Reset background of the box
+                ingredientText.Foreground = ingredientTextColor; // Reset text color to original
+            };
+
+            return border;
         }
+
+
 
         /// <summary>
         /// Filters the displayed ingredients based on the search text.
@@ -246,21 +261,15 @@ namespace Desktop_Frontend
         /// <param name="ingredientListPanel">The panel to update with filtered ingredients.</param>
         private void FilterIngredients(List<Ingredient> ingredients, string filterText, StackPanel ingredientListPanel)
         {
-            ingredientListPanel.Children.Clear(); // Clear for filtered results
-            string filter = filterText.ToLower(); // Get the filter text in lowercase
+            var filteredIngredients = ingredients.Where(i =>
+                i.GetName().IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                i.GetIngType().IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
 
-            foreach (var ingredient in ingredients)
-            {
-                // Check if ingredient name or type contains the filter text
-                if (ingredient.GetName().ToLower().Contains(filter) || ingredient.GetIngType().ToLower().Contains(filter))
-                {
-                    ingredientListPanel.Children.Add(CreateIngredientRow(ingredient)); // Add matching ingredients
-                }
-            }
+            PopulateIngredientList(filteredIngredients, ingredientListPanel);
         }
 
         /// <summary>
-        /// Creates a header TextBlock.
+        /// Creates a header TextBlock with specified text.
         /// </summary>
         /// <param name="headerText">The text for the header.</param>
         /// <returns>The created TextBlock.</returns>
@@ -272,12 +281,13 @@ namespace Desktop_Frontend
                 FontSize = 24,
                 FontWeight = FontWeights.Bold,
                 Foreground = textColor,
-                Margin = new Thickness(10, 10, 0, 10)
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 20, 0, 20) 
             };
         }
 
         /// <summary>
-        /// Creates a placeholder TextBlock for future content.
+        /// Creates a placeholder TextBlock for future functionality.
         /// </summary>
         /// <param name="placeholderText">The text for the placeholder.</param>
         /// <returns>The created TextBlock.</returns>
@@ -286,12 +296,10 @@ namespace Desktop_Frontend
             return new TextBlock
             {
                 Text = placeholderText,
-                FontSize = 16,
+                FontSize = 18,
                 Foreground = textColor,
-                Margin = new Thickness(10, 10, 0, 10),
-                FontStyle = FontStyles.Italic
+                HorizontalAlignment = HorizontalAlignment.Center
             };
         }
     }
 }
-

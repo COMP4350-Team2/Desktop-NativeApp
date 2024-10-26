@@ -4,80 +4,144 @@
         Title="LoggedInWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Background="#1B262C">
     <Grid Name="MainGrid">
-        <!-- Banner -->
-        <Border Background="#0F4C75" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
-            <TextBlock Text="You are now logged into Cupboard" 
-                       Foreground="#BBE1FA" 
-                       HorizontalAlignment="Center" 
-                       VerticalAlignment="Center" 
-                       FontSize="32" 
-                       FontWeight="Bold"/>
-        </Border>
 
         <!-- Navigation Panel -->
-        <Border BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,120,0,0">
-            <StackPanel Background="#3282B8">
-                <TextBox Name="UsernameTextBox" 
-                         Background="Transparent" 
-                         Foreground="#BBE1FA" 
-                         BorderBrush="Transparent" 
-                         FontSize="20"
-                         FontWeight="Bold" 
-                         Margin="10" 
-                         TextAlignment="Center"/>
+        <Border BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,0,0,0">
+            <DockPanel LastChildFill="True" Background="#0F4C75">
+                <StackPanel DockPanel.Dock="Top">
+                    <TextBox Name="UsernameTextBox" 
+                             Background="Transparent" 
+                             Foreground="#FFFFFF" 
+                             BorderBrush="Transparent" 
+                             FontSize="20"
+                             FontWeight="Bold" 
+                             Margin="10" 
+                             TextAlignment="Center"/>
 
-                <!-- All Ingredients Button -->
-                <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" 
-                        Background="#BBE1FA" Foreground="#1B262C" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="All Ingredients">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
-                                </Border.Effect>
-                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                    <!-- All Ingredients Button -->
+                    <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" 
+                            Background="White" Foreground="#3282B8" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="All Ingredients">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Control.Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="#3282B8"/>
+                                <!-- Default text color -->
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#BBE1FA"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value>
+                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#0F4C75"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Button.Effect>
+                            <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
+                        </Button.Effect>
+                    </Button>
 
-                <!-- My Lists Button -->
-                <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" 
-                        Background="#BBE1FA" Foreground="#1B262C" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="My Lists">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
-                                </Border.Effect>
-                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                    <!-- My Lists Button -->
+                    <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" 
+                            Background="White" Foreground="#3282B8" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="My Lists">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Control.Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="#3282B8"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#BBE1FA"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value>
+                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#0F4C75"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Button.Effect>
+                            <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
 
-                <!-- Logout Button -->
+                <!-- Logout Button at the very bottom -->
                 <Button Name="LogoutButton" Width="180" Height="50" Margin="10" Click="LogoutButton_Click" 
-                        Background="#BBE1FA" Foreground="#1B262C" FontSize="16" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="Log out">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
-                                </Border.Effect>
-                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
+                        Background="White" Foreground="#3282B8" FontSize="16" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="Log out"
+                        VerticalAlignment="Bottom" DockPanel.Dock="Bottom">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Foreground" Value="#3282B8"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#BBE1FA"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                    <Setter Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#0F4C75"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Button.Effect>
+                        <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
+                    </Button.Effect>
                 </Button>
-            </StackPanel>
+            </DockPanel>
         </Border>
 
         <!-- Content Area -->
-        <Grid Name="ContentArea" VerticalAlignment="Stretch" Margin="210,120,0,0">
+        <Grid Name="ContentArea" VerticalAlignment="Stretch" Margin="210,0,0,0">
             <!-- This is where the ingredients list will be populated -->
         </Grid>
     </Grid>
