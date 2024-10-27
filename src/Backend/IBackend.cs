@@ -26,5 +26,14 @@ namespace Desktop_Frontend.Backend
         /// whether the user creation was successful.
         /// </returns>
         public Task<bool> CreateUser(IUser user);
+
+        /// <summary>
+        /// Returns a list of <see cref="UserList"/> objects
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> whose lists are being returned.</param>
+        /// <returns>
+        /// List of <see cref="UserList"/> objects
+        /// </returns>
+        public Task<List<UserList>> GetMyLists(IUser user);
     }
 }

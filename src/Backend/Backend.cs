@@ -166,5 +166,38 @@ namespace Desktop_Frontend.Backend
             }
         }
 
+        /// <summary>
+        /// Asynchronously retrieves the user's lists of ingredients.
+        /// This method creates two predefined ingredient lists: Grocery and Pantry, 
+        /// each containing a set of ingredients.
+        /// </summary>
+        /// <param name="user">The user for whom the lists are retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
+        public async Task<List<UserList>> GetMyLists(IUser user)
+        {
+            List<UserList> myLists = new List<UserList>();
+
+            List<Ingredient> groceryIngs = new List<Ingredient>();
+            groceryIngs.Add(new Ingredient("Chicken", "Poultry", 2000, "g"));
+            groceryIngs.Add(new Ingredient("Peas", "Produce", 250, "g"));
+            groceryIngs.Add(new Ingredient("Apples", "Produce", 5, "count"));
+            groceryIngs.Add(new Ingredient("Chicken", "Poultry", 8, "count"));
+
+
+            List<Ingredient> pantryIngs = new List<Ingredient>();
+            pantryIngs.Add(new Ingredient("Pear", "Produce", 100, "g"));
+            pantryIngs.Add(new Ingredient("Milk", "Dairy", 250, "ml"));
+            pantryIngs.Add(new Ingredient("Beef", "Meat", 500, "g"));
+            pantryIngs.Add(new Ingredient("Celery", "Produce", 4, "count"));
+
+            UserList groceryList = new UserList("Grocery", groceryIngs);
+            UserList pantryList = new UserList("Pantry", pantryIngs);
+
+            myLists.Add(groceryList);
+            myLists.Add(pantryList);
+
+            return await Task.FromResult(myLists);
+
+        }
     }
 }
