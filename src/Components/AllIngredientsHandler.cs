@@ -52,11 +52,11 @@ namespace Desktop_Frontend.Components
                 FontWeight = FontWeights.Bold,
                 Foreground = ingredientTextColor,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 20)
+                Margin = new Thickness(0, 20, 0, 20)
             };
             contentArea.Children.Add(header);
 
-            StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 10, 0, 0) };
+            StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
 
             TextBox searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
