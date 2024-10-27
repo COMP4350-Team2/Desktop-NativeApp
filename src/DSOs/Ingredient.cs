@@ -24,10 +24,10 @@
         /// <param name="ingType">The type of the ingredient.</param>
         public Ingredient(string name, string ingType)
         {
-            this.name = name;
-            this.ingType = ingType;
-            amount = 0;
-            unit = "No Unit";
+            SetName(name);
+            SetIngType(ingType);
+            SetAmount(1);
+            SetUnit("No Unit");
         }
 
         /// <summary>
@@ -39,8 +39,9 @@
         /// <param name="unit">The unit of measurement for the ingredient amount.</param>
         public Ingredient(string name, string ingType, float amount, string unit) : this(name, ingType)
         {
-            this.amount = amount;
-            this.unit = unit;
+
+            SetAmount(amount);
+            SetUnit(unit);
         }
 
 
@@ -59,7 +60,15 @@
         /// <param name="name">The name to set for the ingredient.</param>
         public void SetName(string name)
         {
-            this.name = name;
+            if(!string.IsNullOrEmpty(name))
+            {
+                this.name = name;
+            }
+            else
+            {
+                this.name = "No Name";
+            }
+            
         }
 
         /// <summary>
@@ -77,7 +86,14 @@
         /// <param name="ingType">The type to set for the ingredient.</param>
         public void SetIngType(string ingType)
         {
-            this.ingType = ingType;
+            if (!string.IsNullOrEmpty(ingType))
+            {
+                this.ingType = ingType;
+            }
+            else
+            {
+                this.ingType = "No Type";
+            }
         }
 
         /// <summary>
@@ -90,7 +106,17 @@
         /// Sets the amount of the ingredient.
         /// </summary>
         /// <param name="amount">The amount to set for the ingredient.</param>
-        public void SetAmount(float amount) { this.amount = amount; }
+        public void SetAmount(float amount) 
+        {
+            if (amount > 0)
+            {
+                this.amount = amount;
+            } 
+            else
+            {
+                this.amount = 1;
+            }
+        }
 
         /// <summary>
         /// Gets the unit of the ingredient.
@@ -103,6 +129,27 @@
         /// Sets the unit of the ingredient.
         /// </summary>
         /// <param name="unit">The unit to set for the ingredient.</param>
-        public void SetUnit(string unit) { this.unit = unit; }
+        public void SetUnit(string unit) 
+        { 
+            if (!string.IsNullOrEmpty(name))
+            {
+                this.unit = unit;
+            }
+            else
+            {
+                this.unit = "No Unit";
+            }
+        }
+
+
+        /// <summary>
+        /// Returns if 2 ingredients are the same
+        /// </summary>
+        /// <param name="other">The other ingredient to be compared to.</param>
+        /// <returns>The true if their name, type and unit are the same.</returns>
+        public bool IsEqual(Ingredient other)
+        {
+            return (name == other.GetName() && ingType == other.GetIngType() && unit == other.GetUnit());
+        }
     }
 }
