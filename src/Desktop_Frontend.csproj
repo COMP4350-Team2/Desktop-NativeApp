@@ -21,4 +21,8 @@
 	  <Resource Include="Assets\Cupboard_Logo.png" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Components\" />
+	</ItemGroup>
+
 </Project>
