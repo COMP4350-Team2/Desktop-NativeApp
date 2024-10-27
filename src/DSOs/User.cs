@@ -13,8 +13,8 @@ namespace Desktop_Frontend.DSOs
         private Auth0Client auth0Client;
         private bool loggedIn;
         private string username;
-        private string myListsJSON;
         private string accessToken;
+        private List<UserList> myLists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class
@@ -32,7 +32,6 @@ namespace Desktop_Frontend.DSOs
             this.config = config;
             username = "Auth0 User";
             accessToken = "";
-            myListsJSON = "";
 
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
@@ -133,14 +132,17 @@ namespace Desktop_Frontend.DSOs
         }
 
         /// <summary>
-        /// Retrieves the user's lists in JSON format.
+        /// Retrieves the lists of a user
         /// </summary>
         /// <returns>
-        /// A string containing the user's lists.
+        /// A list of <see cref="UserList"/>
         /// </returns>
-        public string GetLists()
-        {
-            return myListsJSON;
-        }
+        public List<UserList> GetUserLists() { return myLists; }
+
+        /// <summary>
+        /// Sets the user's lists.
+        /// </summary>
+        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
+        public void SetUserLists(List<UserList> userLists) { myLists = userLists; }
     }
 }
