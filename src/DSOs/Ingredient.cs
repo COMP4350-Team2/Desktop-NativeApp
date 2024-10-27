@@ -27,7 +27,7 @@
             this.name = name;
             this.ingType = ingType;
             amount = 0;
-            unit = string.Empty;
+            unit = "No Unit";
         }
 
         /// <summary>
