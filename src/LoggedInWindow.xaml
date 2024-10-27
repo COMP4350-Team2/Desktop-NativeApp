@@ -140,8 +140,8 @@
         </Border>
 
         <!-- Content Area -->
-        <Grid Name="ContentArea" VerticalAlignment="Stretch" Margin="210,0,0,0">
+        <StackPanel Name="ContentArea" VerticalAlignment="Stretch" Margin="210,0,0,0">
             <!-- This is where the ingredients list will be populated -->
-        </Grid>
+        </StackPanel>
     </Grid>
 </Window>
