@@ -207,7 +207,7 @@ namespace Desktop_Frontend.Backend
         private static void ValidateGetMyListsResponse(HttpResponseMessage response) { }
 
         /// <summary>
-        /// Fills in user's lists to return based on the response
+        /// Fills in a list of <see cref="UserList"/> based on the response
         /// </summary>
         /// <param name="response">The HTTP response parse.</param>
         /// <param name="myLists">The list to be filled.</param>
