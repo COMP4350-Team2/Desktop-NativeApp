@@ -9,6 +9,7 @@ namespace Desktop_Frontend.Backend
     {
         private IUser user;
         private List<Ingredient> ingredients;
+        private List<UserList> myLists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BackendMock"/> class and populates the list 
@@ -26,6 +27,8 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Bread", "Grain")
             };
             this.user = user;
+
+            InitMyLists();
         }
 
         /// <summary>
@@ -63,28 +66,31 @@ namespace Desktop_Frontend.Backend
         /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
-            List<UserList> myLists = new List<UserList>();
+           return await Task.FromResult(myLists);
+        }
+
+        private void InitMyLists()
+        {
+            myLists = new List<UserList>();
 
             List<Ingredient> groceryIngs = new List<Ingredient>();
             groceryIngs.Add(new Ingredient("Chicken", "Poultry", 2000, "g"));
-            groceryIngs.Add(new Ingredient("Peas", "Produce", 250, "g"));
-            groceryIngs.Add(new Ingredient("Apples", "Produce", 5, "count"));
+            groceryIngs.Add(new Ingredient("Beef", "Meat", 250, "g"));
+            groceryIngs.Add(new Ingredient("Rabbit", "Meat", 1, "count"));
             groceryIngs.Add(new Ingredient("Chicken", "Poultry", 8, "count"));
 
 
             List<Ingredient> pantryIngs = new List<Ingredient>();
-            pantryIngs.Add(new Ingredient("Pear", "Produce", 100, "g"));
+            pantryIngs.Add(new Ingredient("Cheese", "Dairy", 100, "g"));
             pantryIngs.Add(new Ingredient("Milk", "Dairy", 250, "ml"));
-            pantryIngs.Add(new Ingredient("Beef", "Meat", 500, "g"));
-            pantryIngs.Add(new Ingredient("Celery", "Produce", 4, "count"));
+            pantryIngs.Add(new Ingredient("Cereal", "Pantry", 500, "g"));
+            pantryIngs.Add(new Ingredient("Carrot", "Produce", 4, "count"));
 
             UserList groceryList = new UserList("Grocery", groceryIngs);
             UserList pantryList = new UserList("Pantry", pantryIngs);
 
             myLists.Add(groceryList);
             myLists.Add(pantryList);
-
-           return await Task.FromResult(myLists);
 
         }
     }
