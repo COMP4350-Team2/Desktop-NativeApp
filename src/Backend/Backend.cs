@@ -176,6 +176,27 @@ namespace Desktop_Frontend.Backend
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
             List<UserList> myLists = new List<UserList>();
+            try
+            {
+                HttpResponseMessage response = null;
+
+                ValidateGetMyListsResponse(response);
+
+                FillMyLists(response, myLists);
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to fetch your lists!");
+            }
+
+            return await Task.FromResult(myLists);
+        }
+
+        private static void ValidateGetMyListsResponse(HttpResponseMessage response) { }
+
+        private async void FillMyLists(HttpResponseMessage response, List<UserList> myLists)
+        {
 
             List<Ingredient> groceryIngs = new List<Ingredient>();
             groceryIngs.Add(new Ingredient("Chicken", "Poultry", 2000, "g"));
@@ -195,9 +216,6 @@ namespace Desktop_Frontend.Backend
 
             myLists.Add(groceryList);
             myLists.Add(pantryList);
-
-            return await Task.FromResult(myLists);
-
         }
     }
 
