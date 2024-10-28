@@ -167,7 +167,7 @@ namespace Desktop_Frontend.Backend
         }
 
         /// <summary>
-        /// Asynchronously retrieves the user's lists of ingredients.
+        /// Retrieves the user's lists of ingredients.
         /// This method creates two predefined ingredient lists: Grocery and Pantry, 
         /// each containing a set of ingredients.
         /// </summary>
@@ -200,4 +200,5 @@ namespace Desktop_Frontend.Backend
 
         }
     }
+
 }
