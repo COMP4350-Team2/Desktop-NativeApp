@@ -77,7 +77,7 @@ namespace Desktop_Frontend.Backend
             //Create request
             string url = config.BackendUrl + config.Create_User_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Post, url);;
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Send request and get response
@@ -176,9 +176,16 @@ namespace Desktop_Frontend.Backend
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
             List<UserList> myLists = new List<UserList>();
+
+            //Create request
+            string url = config.BackendUrl + config.Get_My_Lists_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
             try
             {
-                HttpResponseMessage response = null;
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
 
                 ValidateGetMyListsResponse(response);
 
