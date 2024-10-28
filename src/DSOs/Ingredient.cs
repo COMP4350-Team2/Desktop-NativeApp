@@ -112,10 +112,6 @@
             {
                 this.amount = amount;
             } 
-            else
-            {
-                this.amount = 1;
-            }
         }
 
         /// <summary>
