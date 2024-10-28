@@ -200,8 +200,17 @@ namespace Desktop_Frontend.Backend
             return await Task.FromResult(myLists);
         }
 
+        /// <summary>
+        /// Validates the response from the backend API when fetching user's lists. 
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
         private static void ValidateGetMyListsResponse(HttpResponseMessage response) { }
 
+        /// <summary>
+        /// Fills in user's lists to return based on the response
+        /// </summary>
+        /// <param name="response">The HTTP response parse.</param>
+        /// <param name="myLists">The list to be filled.</param>
         private async void FillMyLists(HttpResponseMessage response, List<UserList> myLists)
         {
 
