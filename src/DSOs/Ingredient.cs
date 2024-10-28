@@ -49,10 +49,7 @@
         /// Gets the name of the ingredient.
         /// </summary>
         /// <returns>The name of the ingredient as a string.</returns>
-        public string GetName()
-        {
-            return name;
-        }
+        public string GetName() { return name; }
 
         /// <summary>
         /// Sets the name of the ingredient.
@@ -75,10 +72,8 @@
         /// Gets the type of the ingredient.
         /// </summary>
         /// <returns>The type of the ingredient as a string.</returns>
-        public string GetIngType()
-        {
-            return ingType;
-        }
+        public string GetIngType() { return ingType; }
+
 
         /// <summary>
         /// Sets the type of the ingredient.

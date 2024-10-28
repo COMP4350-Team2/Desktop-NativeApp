@@ -12,10 +12,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="UserMock"/> class.
         /// </summary>
-        public UserMock()
-        {
-            username = "Mock User";
-        }
+        public UserMock() { username = "Mock User"; }
 
         /// <summary>
         /// Indicates whether the user is logged in.
@@ -23,10 +20,7 @@
         /// <returns>
         /// <c>true</c> if the user is logged in; otherwise, <c>false</c>.
         /// </returns>
-        public bool LoggedIn()
-        {
-            return loggedIn;
-        }
+        public bool LoggedIn() { return loggedIn; }
 
         /// <summary>
         /// Simulates the login process for the mock user.
@@ -52,10 +46,8 @@
         /// Retrieves the username of the mock user.
         /// </summary>
         /// <returns>The username of the mock user.</returns>
-        public string UserName()
-        {
-            return username;
-        }
+        public string UserName() { return username; }
+ 
 
         /// <summary>
         /// Retrieves an access token for the mock user.

@@ -23,7 +23,7 @@
         /// Gets the name of the user list.
         /// </summary>
         /// <returns>The name of the user list.</returns>
-        public string GetListName() { return this.ListName; }
+        public string GetListName() { return ListName; }
 
         /// <summary>
         /// Sets the name of the user list.
@@ -80,10 +80,7 @@
         /// Removes an ingredient from the user list.
         /// </summary>
         /// <param name="ingredient">The ingredient to remove from the list.</param>
-        public void RemIngFromList(Ingredient ingredient)
-        {
-            Ingredients.Remove(ingredient);
-        }
+        public void RemIngFromList(Ingredient ingredient) { Ingredients.Remove(ingredient); }
 
         /// <summary>
         /// Checks if an ingredient is already in the user list.

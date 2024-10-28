@@ -104,10 +104,8 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// A boolean indicating whether the user is logged in.
         /// </returns>
-        public bool LoggedIn()
-        {
-            return loggedIn;
-        }
+        public bool LoggedIn() { return loggedIn; }
+
 
         /// <summary>
         /// Retrieves the username of the authenticated user.
@@ -115,10 +113,8 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// The username as a string.
         /// </returns>
-        public string UserName()
-        {
-            return username;
-        }
+        public string UserName() { return username; }
+
 
         /// <summary>
         /// Retrieves the access token for the logged-in user.
@@ -126,10 +122,8 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// The access token as a string.
         /// </returns>
-        public string GetAccessToken()
-        {
-            return accessToken;
-        }
+        public string GetAccessToken() { return accessToken; }
+
 
         /// <summary>
         /// Retrieves the lists of a user
