@@ -12,6 +12,7 @@ namespace Desktop_Frontend.Backend
         public string? BackendUrl;
         public string? Create_User_Endpoint;
         public string? All_Ing_Endpoint;
+        public string? Get_My_Lists_Endpoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -51,6 +52,7 @@ namespace Desktop_Frontend.Backend
                 BackendUrl = Env.GetString("BACKEND_URL");
                 Create_User_Endpoint = Env.GetString("CREATE_USER");
                 All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
+                Get_My_Lists_Endpoint = Env.GetString("MY_LISTS");
             }
 
         }
@@ -62,7 +64,7 @@ namespace Desktop_Frontend.Backend
         private bool ValidateEnvVars()
         {
             return !(string.IsNullOrEmpty(BackendUrl) || string.IsNullOrEmpty(Create_User_Endpoint)
-               || string.IsNullOrEmpty(All_Ing_Endpoint));
+               || string.IsNullOrEmpty(All_Ing_Endpoint) || string.IsNullOrEmpty(Get_My_Lists_Endpoint));
         }
 
         /// <summary>
