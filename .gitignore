@@ -4,3 +4,6 @@
 
 # Local Env Files
 *.env
+
+# Visual Studio Files
+.vs/
