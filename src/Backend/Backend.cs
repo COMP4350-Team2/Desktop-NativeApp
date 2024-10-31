@@ -1,4 +1,5 @@
 ﻿using Desktop_Frontend.DSOs;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -104,20 +105,7 @@ namespace Desktop_Frontend.Backend
         /// <returns>A boolean value indicating whether the response was valid.</returns>
         private async Task<bool> ValidateUserCreation(HttpResponseMessage response)
         {
-            bool valid = false;
-
-            if(response.IsSuccessStatusCode)
-            {
-                string responseBody = await response.Content.ReadAsStringAsync();
-
-                if (responseBody.Contains("Item created successfully") ||
-                    responseBody.Contains("Item already exists."))
-                {
-                    valid = true;
-                }
-            }
-
-            return valid;
+            return response.StatusCode == HttpStatusCode.Created;
         }
 
         /// <summary>
@@ -180,7 +168,7 @@ namespace Desktop_Frontend.Backend
             //Create request
             string url = config.BackendUrl + config.Get_My_Lists_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             try
@@ -204,7 +192,13 @@ namespace Desktop_Frontend.Backend
         /// Validates the response from the backend API when fetching user's lists. 
         /// </summary>
         /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateGetMyListsResponse(HttpResponseMessage response) { }
+        private static void ValidateGetMyListsResponse(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
 
         /// <summary>
         /// Fills in a list of <see cref="UserList"/> based on the response
@@ -213,25 +207,37 @@ namespace Desktop_Frontend.Backend
         /// <param name="myLists">The list to be filled.</param>
         private async void FillMyLists(HttpResponseMessage response, List<UserList> myLists)
         {
+            // Read JSON from response
+            var jsonString = await response.Content.ReadAsStringAsync();
 
-            List<Ingredient> groceryIngs = new List<Ingredient>();
-            groceryIngs.Add(new Ingredient("Chicken", "Poultry", 2000, "g"));
-            groceryIngs.Add(new Ingredient("Peas", "Produce", 250, "g"));
-            groceryIngs.Add(new Ingredient("Apples", "Produce", 5, "count"));
-            groceryIngs.Add(new Ingredient("Chicken", "Poultry", 8, "count"));
+            // Parse JSON as a document to access elements directly
+            using var document = JsonDocument.Parse(jsonString);
+            var root = document.RootElement;
 
+            // Clear existing data in myLists
+            myLists.Clear();
 
-            List<Ingredient> pantryIngs = new List<Ingredient>();
-            pantryIngs.Add(new Ingredient("Pear", "Produce", 100, "g"));
-            pantryIngs.Add(new Ingredient("Milk", "Dairy", 250, "ml"));
-            pantryIngs.Add(new Ingredient("Beef", "Meat", 500, "g"));
-            pantryIngs.Add(new Ingredient("Celery", "Produce", 4, "count"));
+            // Traverse JSON to extract lists and ingredients
+            foreach (var listItem in root.GetProperty("result").EnumerateArray())
+            {
+                string listName = listItem.GetProperty("list_name").GetString();
+                var ingredients = new List<Ingredient>();
 
-            UserList groceryList = new UserList("Grocery", groceryIngs);
-            UserList pantryList = new UserList("Pantry", pantryIngs);
+                foreach (var ingredientItem in listItem.GetProperty("ingredients").EnumerateArray())
+                {
+                    string name = ingredientItem.GetProperty("ingredient_name").GetString();
+                    string type = ingredientItem.GetProperty("ingredient_type").GetString(); 
+                    float amount = ingredientItem.GetProperty("amount").GetSingle(); 
+                    string unit = ingredientItem.GetProperty("unit").GetString();
 
-            myLists.Add(groceryList);
-            myLists.Add(pantryList);
+                    // Create Ingredient with name, type, amount (float), and unit
+                    ingredients.Add(new Ingredient(name, type, amount, unit));
+                }
+
+                // Add the list to myLists
+                myLists.Add(new UserList(listName, ingredients));
+            }
+
         }
     }
 
