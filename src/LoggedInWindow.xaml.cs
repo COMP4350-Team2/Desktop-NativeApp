@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.Components;
 using Desktop_Frontend.DSOs;
