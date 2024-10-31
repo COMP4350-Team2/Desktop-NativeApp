@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.Components;
 using Desktop_Frontend.DSOs;
@@ -57,10 +58,16 @@ namespace Desktop_Frontend
         /// Event handler for the "My Lists" button click event.
         /// Displays the "My Lists" section with placeholder content.
         /// </summary>
-        private void MyListsButton_Click(object sender, RoutedEventArgs e)
+        private async void MyListsButton_Click(object sender, RoutedEventArgs e)
         {
+            // Temporarily disable all buttons
+            SetButtonsEnabled(false);
+
             // Clear current content and display my lists section
-            myListsHandler.DisplayMyLists(ContentArea);
+            await myListsHandler.DisplayMyLists(ContentArea);
+
+            // Enable buttons again
+            SetButtonsEnabled(true);
         }
 
         /// <summary>
@@ -69,8 +76,15 @@ namespace Desktop_Frontend
         /// </summary>
         private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
         {
+            // Temporarily disable all buttons
+            SetButtonsEnabled(false);
+
             // Display all ingredients using the handler
             await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
+
+            // Enable buttons again
+            SetButtonsEnabled(true);
+            
         }
 
         /// <summary>
@@ -81,5 +95,17 @@ namespace Desktop_Frontend
             // Display all ingredients when the window is initialized
             await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
         }
+
+        /// <summary>
+        /// Enables or disables all buttons in the window.
+        /// </summary>
+        /// <param name="isEnabled">Indicates whether buttons should be enabled or disabled.</param>
+        private void SetButtonsEnabled(bool isEnabled)
+        {
+            AllIngredientsButton.IsEnabled = isEnabled;
+            MyListsButton.IsEnabled = isEnabled;
+            LogoutButton.IsEnabled = isEnabled;
+        }
+
     }
 }

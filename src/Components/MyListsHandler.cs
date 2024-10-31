@@ -122,10 +122,10 @@ namespace Desktop_Frontend.Components
             };
             ingredientRow.Children.Add(ingredientText);
 
-            // Add button placeholder (can be connected to further actions as needed)
+            // Edit button
             Button editButton = new Button
             {
-                Content = "\u270E",
+                Content = "\u270E", //edit button icon
                 Width = 30,
                 Height = 30,
                 Background = Brushes.White,
