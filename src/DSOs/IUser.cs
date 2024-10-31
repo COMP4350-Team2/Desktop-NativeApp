@@ -33,13 +33,6 @@
         /// </returns>
         public string UserName();
 
-        /// <summary>
-        /// Retrieves a string representation of the user's lists.
-        /// </summary>
-        /// <returns>
-        /// A string containing the user's lists.
-        /// </returns>
-        public string GetLists();
 
         /// <summary>
         /// Retrieves the access token for the logged-in user.
@@ -48,5 +41,20 @@
         /// The access token as a string.
         /// </returns>
         public string GetAccessToken();
+
+
+        /// <summary>
+        /// Retrieves the lists of a user
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="UserList"/>
+        /// </returns>
+        public List<UserList> GetUserLists();
+
+        /// <summary>
+        /// Sets the user's lists.
+        /// </summary>
+        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
+        public void SetUserLists(List<UserList> userLists);
     }
 }

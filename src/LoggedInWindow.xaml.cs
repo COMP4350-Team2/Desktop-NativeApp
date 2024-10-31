@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using Desktop_Frontend.Backend;
+using Desktop_Frontend.Components;
 using Desktop_Frontend.DSOs;
 
 namespace Desktop_Frontend
@@ -11,30 +10,32 @@ namespace Desktop_Frontend
     /// </summary>
     public partial class LoggedInWindow : Window
     {
-        private IUser user;
-        private IBackend backend; // Declare backend variable
+        private readonly IUser user; // The authenticated user instance
+        private readonly IBackend backend; // The backend service instance
+        private readonly AllIngredientsHandler allIngredientsHandler; // Handler for all ingredients
+        private readonly MyListsHandler myListsHandler; // Handler for my lists
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggedInWindow"/> class.
         /// </summary>
-        /// <param name="user">The authenticated <see cref="IUser"/>instance.</param>
+        /// <param name="user">The authenticated <see cref="IUser"/> instance.</param>
         /// <param name="backend">The <see cref="IBackend"/> service instance.</param>
         public LoggedInWindow(IUser user, IBackend backend)
         {
             InitializeComponent();
-            this.user = user;
-            this.backend = backend;
+            this.user = user; // Store the user instance
+            this.backend = backend; // Store the backend instance
+            allIngredientsHandler = new AllIngredientsHandler(backend, user); // Instantiate the ingredients handler
+            myListsHandler = new MyListsHandler(backend, user); // Instantiate the lists handler
 
             InitializeContentSpace(); // Call the method to initialize content
-            UsernameTextBox.Text = $"{user.UserName()}"; // Set the username
+            UsernameTextBox.Text = user.UserName(); // Set the username
         }
 
         /// <summary>
         /// Event handler for the logout button click event.
         /// Logs out the user and returns to the main window if successful.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             await user.Logout();
@@ -42,51 +43,47 @@ namespace Desktop_Frontend
             // If user is logged out successfully
             if (!user.LoggedIn())
             {
-                // Close the logged-in window and open the main window
                 var mainWindow = new MainWindow();
-                mainWindow.Show();
-                this.Close();
+                mainWindow.Show(); // Show the main window
+                this.Close(); // Close the logged-in window
             }
             else
             {
-                MessageBox.Show("Something went wrong with logging out. Try again.");
+                MessageBox.Show("Something went wrong with logging out. Try again."); // Error message
             }
         }
 
         /// <summary>
         /// Event handler for the "My Lists" button click event.
-        /// Displays a placeholder message indicating that the functionality is coming soon.
+        /// Displays the "My Lists" section with placeholder content.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void MyListsButton_Click(object sender, RoutedEventArgs e)
+        private async void MyListsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Clear the ContentArea
-            ContentArea.Children.Clear();
+            // Temporarily disable all buttons
+            SetButtonsEnabled(false);
 
-            // Display a placeholder message for "My Lists" section
-            TextBlock placeholderText = new TextBlock
-            {
-                Text = "Coming soon: A page for your lists",
-                FontSize = 18,
-                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            // Clear current content and display my lists section
+            await myListsHandler.DisplayMyLists(ContentArea);
 
-            ContentArea.Children.Add(placeholderText);
+            // Enable buttons again
+            SetButtonsEnabled(true);
         }
 
         /// <summary>
         /// Event handler for the "All Ingredients" button click event.
         /// Calls the method to display the list of ingredients.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
         private async void AllIngredientsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Call the method to display ingredients
-            await DisplayIngredients();
+            // Temporarily disable all buttons
+            SetButtonsEnabled(false);
+
+            // Display all ingredients using the handler
+            await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
+
+            // Enable buttons again
+            SetButtonsEnabled(true);
+            
         }
 
         /// <summary>
@@ -94,166 +91,20 @@ namespace Desktop_Frontend
         /// </summary>
         private async void InitializeContentSpace()
         {
-            // Call the method to display ingredients on initialization
-            await DisplayIngredients();
+            // Display all ingredients when the window is initialized
+            await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
         }
 
         /// <summary>
-        /// Displays the list of ingredients fetched from the backend.
+        /// Enables or disables all buttons in the window.
         /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task DisplayIngredients()
+        /// <param name="isEnabled">Indicates whether buttons should be enabled or disabled.</param>
+        private void SetButtonsEnabled(bool isEnabled)
         {
-            // Clear any existing content
-            ContentArea.Children.Clear();
-
-            // Create a StackPanel for the ingredients
-            StackPanel stackPanel = new StackPanel
-            {
-                Margin = new Thickness(10)
-            };
-
-            // Create the search TextBox with placeholder text
-            TextBox searchBox = new TextBox
-            {
-                Width = double.NaN, // Set width to auto-fill available space
-                Height = 30,
-                Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-                Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
-                Margin = new Thickness(0, 0, 0, 10),
-                Text = "Search ingredients..."
-            };
-
-            // Handle focus events for placeholder
-            searchBox.GotFocus += (s, e) =>
-            {
-                if (searchBox.Text == "Search ingredients...")
-                {
-                    searchBox.Text = "";
-                    searchBox.Foreground = new SolidColorBrush(Colors.Black);
-                }
-            };
-            searchBox.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrEmpty(searchBox.Text))
-                {
-                    searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)); // Brown color for placeholder
-                }
-            };
-
-            // Add the search TextBox to the StackPanel
-            stackPanel.Children.Add(searchBox);
-
-            // Create a StackPanel to display each ingredient with a "+" button
-            StackPanel ingredientListPanel = new StackPanel();
-
-            // Fetch the ingredients from the backend
-            List<Ingredient> ingredients = await backend.GetAllIngredients(user);
-
-            // Add each ingredient with a "+" button anchored to the right
-            foreach (var ingredient in ingredients)
-            {
-                // Create a DockPanel for each ingredient row
-                DockPanel ingredientRow = new DockPanel
-                {
-                    Margin = new Thickness(0, 5, 0, 5)
-                };
-
-                // Create a TextBlock for the ingredient name and type
-                TextBlock ingredientText = new TextBlock
-                {
-                    Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
-                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(0, 0, 10, 0)
-                };
-
-                // Add the ingredient text to the left side of the DockPanel
-                DockPanel.SetDock(ingredientText, Dock.Left);
-                ingredientRow.Children.Add(ingredientText);
-
-                // Create the "+" button and anchor it to the right
-                Button addButton = new Button
-                {
-                    Content = "+",
-                    Width = 30,
-                    Height = 30,
-                    Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)), // Yellow background
-                    Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)), // Brown text color
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Margin = new Thickness(10, 0, 0, 0)
-                };
-
-                addButton.Click += (s, e) =>
-                {
-                    MessageBox.Show("Coming soon: Adding ingredients to your lists");
-                };
-
-                // Add the button to the right side of the DockPanel
-                DockPanel.SetDock(addButton, Dock.Right);
-                ingredientRow.Children.Add(addButton);
-
-                // Add the DockPanel to the main StackPanel
-                ingredientListPanel.Children.Add(ingredientRow);
-            }
-
-            // Add the search filter functionality
-            searchBox.TextChanged += (s, e) =>
-            {
-                ingredientListPanel.Children.Clear(); // Clear for filtered results
-
-                string filter = searchBox.Text.ToLower(); // Get the filter text in lowercase
-                foreach (var ingredient in ingredients)
-                {
-                    if (ingredient.GetName().ToLower().Contains(filter) || ingredient.GetIngType().ToLower().Contains(filter))
-                    {
-                        // Create a new DockPanel row for each filtered ingredient
-                        DockPanel filteredRow = new DockPanel
-                        {
-                            Margin = new Thickness(0, 5, 0, 5)
-                        };
-
-                        TextBlock filteredText = new TextBlock
-                        {
-                            Text = $"{ingredient.GetName()} - {ingredient.GetIngType()}",
-                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Margin = new Thickness(0, 0, 10, 0)
-                        };
-
-                        Button filteredAddButton = new Button
-                        {
-                            Content = "+",
-                            Width = 30,
-                            Height = 30,
-                            Background = new SolidColorBrush(Color.FromRgb(237, 220, 126)),
-                            Foreground = new SolidColorBrush(Color.FromRgb(70, 48, 24)),
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            Margin = new Thickness(10, 0, 0, 0)
-                        };
-
-                        filteredAddButton.Click += (s, e) =>
-                        {
-                            MessageBox.Show("Coming soon: Adding ingredients to your lists");
-                        };
-
-                        DockPanel.SetDock(filteredText, Dock.Left);
-                        DockPanel.SetDock(filteredAddButton, Dock.Right);
-
-                        filteredRow.Children.Add(filteredText);
-                        filteredRow.Children.Add(filteredAddButton);
-
-                        ingredientListPanel.Children.Add(filteredRow);
-                    }
-                }
-            };
-
-            // Add the ListPanel to the StackPanel
-            stackPanel.Children.Add(ingredientListPanel);
-
-            // Add the StackPanel to the ContentArea
-            ContentArea.Children.Add(stackPanel);
+            AllIngredientsButton.IsEnabled = isEnabled;
+            MyListsButton.IsEnabled = isEnabled;
+            LogoutButton.IsEnabled = isEnabled;
         }
+
     }
 }

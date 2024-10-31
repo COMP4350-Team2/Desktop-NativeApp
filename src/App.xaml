@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:Desktop_Frontend"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Color x:Key="PrimaryColor">#1B262C</Color>
+        <Color x:Key="SecondaryColor">#0F4C75</Color>
+        <Color x:Key="TertiaryColor">#FFFFFF</Color>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+        <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}" />
+        <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource TertiaryColor}" />
     </Application.Resources>
 </Application>

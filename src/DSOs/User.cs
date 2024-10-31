@@ -13,8 +13,8 @@ namespace Desktop_Frontend.DSOs
         private Auth0Client auth0Client;
         private bool loggedIn;
         private string username;
-        private string myListsJSON;
         private string accessToken;
+        private List<UserList> myLists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class
@@ -32,7 +32,6 @@ namespace Desktop_Frontend.DSOs
             this.config = config;
             username = "Auth0 User";
             accessToken = "";
-            myListsJSON = "";
 
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
@@ -105,10 +104,8 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// A boolean indicating whether the user is logged in.
         /// </returns>
-        public bool LoggedIn()
-        {
-            return loggedIn;
-        }
+        public bool LoggedIn() { return loggedIn; }
+
 
         /// <summary>
         /// Retrieves the username of the authenticated user.
@@ -116,10 +113,8 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// The username as a string.
         /// </returns>
-        public string UserName()
-        {
-            return username;
-        }
+        public string UserName() { return username; }
+
 
         /// <summary>
         /// Retrieves the access token for the logged-in user.
@@ -127,20 +122,21 @@ namespace Desktop_Frontend.DSOs
         /// <returns>
         /// The access token as a string.
         /// </returns>
-        public string GetAccessToken()
-        {
-            return accessToken;
-        }
+        public string GetAccessToken() { return accessToken; }
+
 
         /// <summary>
-        /// Retrieves the user's lists in JSON format.
+        /// Retrieves the lists of a user
         /// </summary>
         /// <returns>
-        /// A string containing the user's lists.
+        /// A list of <see cref="UserList"/>
         /// </returns>
-        public string GetLists()
-        {
-            return myListsJSON;
-        }
+        public List<UserList> GetUserLists() { return myLists; }
+
+        /// <summary>
+        /// Sets the user's lists.
+        /// </summary>
+        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
+        public void SetUserLists(List<UserList> userLists) { myLists = userLists; }
     }
 }

@@ -9,8 +9,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Cupboard_Logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Auth0.OidcClient.WPF" Version="*" />
 		<PackageReference Include="DotNetEnv" Version="*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Assets\Cupboard_Logo.png" />
 	</ItemGroup>
 
 </Project>
