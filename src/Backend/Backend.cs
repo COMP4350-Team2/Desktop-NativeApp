@@ -134,23 +134,15 @@ namespace Desktop_Frontend.Backend
             // Parse the JSON response
             var jsonBody = JsonDocument.Parse(body);
 
-            // Check if the root element contains "result"
-            if (jsonBody.RootElement.TryGetProperty("result", out JsonElement resultArray))
+            // Enumerate through each ingredient in the root array
+            foreach (JsonElement item in jsonBody.RootElement.EnumerateArray())
             {
-                // Enumerate through each ingredient in the "result" array
-                foreach (JsonElement item in resultArray.EnumerateArray())
-                {
-                    // Extract the name and type from the JSON object
-                    string? name = item.GetProperty("name").GetString();
-                    string? ingType = item.GetProperty("type").GetString(); ;
-                    
-                    if(name != null && ingType != null)
-                    {
-                        // Create an Ingredient object and add it to the list
-                        allIng.Add(new Ingredient(name, ingType));
-                    }
+                // Extract the name and type from the JSON object
+                string? name = item.GetProperty("name").GetString();
+                string? ingType = item.GetProperty("type").GetString();
 
-                }
+                // Add new ingredient
+                allIng.Add(new Ingredient(name, ingType));
             }
         }
 
@@ -165,12 +157,13 @@ namespace Desktop_Frontend.Backend
         {
             List<UserList> myLists = new List<UserList>();
 
-            //Create request
+            // Create request
             string url = config.BackendUrl + config.Get_My_Lists_Endpoint;
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+            // Get response
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
@@ -218,7 +211,7 @@ namespace Desktop_Frontend.Backend
             myLists.Clear();
 
             // Traverse JSON to extract lists and ingredients
-            foreach (var listItem in root.GetProperty("result").EnumerateArray())
+            foreach (var listItem in root.EnumerateArray())
             {
                 string listName = listItem.GetProperty("list_name").GetString();
                 var ingredients = new List<Ingredient>();
@@ -236,6 +229,133 @@ namespace Desktop_Frontend.Backend
 
                 // Add the list to myLists
                 myLists.Add(new UserList(listName, ingredients));
+            }
+
+        }
+
+        /// <summary>
+        /// Adds an <see cref="Ingredient"/> to a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
+        /// <param name="listName">The name of the list to add to</param>
+        public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
+        {
+            // bool to indicate success
+            bool added = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Add_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                list_name = listName,
+                ingredient = ingredient.GetName(),
+                amount = ingredient.GetAmount(),
+                unit = ingredient.GetUnit()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateAddIngToList(response);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+                MessageBox.Show("Failed to add ingredient to list!");
+            }
+
+            return await Task.FromResult(added);
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when adding an ingredient to a list
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateAddIngToList(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        public async Task<List<string>> GetAllMeasurements(IUser user)
+        {
+            // List of units
+            List<string> units = new List<string>();
+
+            // Create request
+            string url = config.BackendUrl + config.Get_Measurements_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateGetAllMeasurements(response);
+                FillMeasurementList(response, units);
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to add fetch units!");
+            }
+
+
+            return await Task.FromResult(units);
+        }
+
+
+        /// <summary>
+        /// Validates the response from the backend API when getting all measurements
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateGetAllMeasurements(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Fills in a list of strings of units based on the response
+        /// </summary>
+        /// <param name="response">The HTTP response parse.</param>
+        /// <param name="units">The list of units to be filled.</param>
+        private async void FillMeasurementList(HttpResponseMessage response, List<string> units)
+        {
+            // Read JSON from response
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            // Parse JSON as a document to access elements directly
+            using var document = JsonDocument.Parse(jsonString);
+            var root = document.RootElement;
+
+            // Clear existing data in units list
+            units.Clear();
+
+            // Traverse JSON to extract units
+            foreach (var unitItem in root.EnumerateArray())
+            {
+                // Get the unit string
+                string unit = unitItem.GetProperty("unit").GetString();
+
+                // Add unit to the list
+                units.Add(unit);
             }
 
         }
