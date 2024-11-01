@@ -94,8 +94,21 @@
             {
                 found = Ingredients[i].IsEqual(ingredient);
             }
-
             return found;
+        }
+
+        public UserList CopyList()
+        {
+            List<Ingredient> copyIng = new List<Ingredient>();
+
+            for (int i = 0; i < Ingredients.Count; i++)
+            {
+                copyIng.Add(Ingredients[i]);
+            }
+
+            UserList copyList = new UserList(this.GetListName(), copyIng);
+
+            return copyList;
         }
     }
 }

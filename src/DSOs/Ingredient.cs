@@ -121,14 +121,16 @@
         /// </summary>
         /// <param name="unit">The unit to set for the ingredient.</param>
         public void SetUnit(string unit) 
-        { 
-            if (!string.IsNullOrEmpty(name))
+        {
+            string[] acceptableUnits = ["count", "g", "kg", "lb", "oz", "mL", "L", "gal"];
+
+            if (!string.IsNullOrEmpty(name) && acceptableUnits.Contains(unit))
             {
                 this.unit = unit;
             }
             else
             {
-                this.unit = "No Unit";
+                this.unit = "count";
             }
         }
 
@@ -141,6 +143,16 @@
         public bool IsEqual(Ingredient other)
         {
             return (name == other.GetName() && ingType == other.GetIngType() && unit == other.GetUnit());
+        }
+
+        /// <summary>
+        /// Returns a copy of the ingredient
+        /// </summary>
+        /// <returns>Deep copy of this ingredient.</returns>
+        public Ingredient CopyIngredient()
+        {
+            Ingredient copy = new Ingredient(this.GetName(), this.GetIngType(), this.GetAmount(), this.GetUnit());
+            return copy;
         }
     }
 }
