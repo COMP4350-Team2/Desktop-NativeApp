@@ -35,5 +35,15 @@ namespace Desktop_Frontend.Backend
         /// List of <see cref="UserList"/> objects
         /// </returns>
         public Task<List<UserList>> GetMyLists(IUser user);
+
+        /// <summary>
+        /// Adds an <see cref="Ingredient"/> to a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
+        /// <param name="listName">The name of the list to add to</param>
+        /// <returns>
+        /// List of <see cref="UserList"/> objects
+        /// </returns>
+        public Task<bool> AddIngredientToList(IUser user, string listName);
     }
 }
