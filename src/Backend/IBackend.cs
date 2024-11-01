@@ -43,7 +43,7 @@ namespace Desktop_Frontend.Backend
         /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
         /// <param name="listName">The name of the list to add to</param>
         /// <returns>
-        /// List of <see cref="UserList"/> objects
+        /// True if successful, false it not
         /// </returns>
         public Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName);
     }
