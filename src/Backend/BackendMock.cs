@@ -41,7 +41,13 @@ namespace Desktop_Frontend.Backend
         /// </returns>
         public Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            return Task.FromResult(ingredients);
+            List<Ingredient> copy = new List<Ingredient>();
+
+            for (int i = 0; i < ingredients.Count; i++)
+            {
+                copy.Add(ingredients[i].CopyIngredient());
+            }
+            return Task.FromResult(copy);
         }
 
         /// <summary>
@@ -66,9 +72,18 @@ namespace Desktop_Frontend.Backend
         /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
+            List<UserList> copy = new List<UserList>();
+
+           for (int i = 0; i < myLists.Count; i++)
+           {
+                copy.Add(myLists[i].CopyList());
+           }
            return await Task.FromResult(myLists);
         }
 
+        /// <summary>
+        /// Method to initialize mocked backend lists
+        /// </summary>
         private void InitMyLists()
         {
             myLists = new List<UserList>();
@@ -92,6 +107,44 @@ namespace Desktop_Frontend.Backend
             myLists.Add(groceryList);
             myLists.Add(pantryList);
 
+        }
+
+        /// <summary>
+        /// Adds an <see cref="Ingredient"/> to a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
+        /// <param name="listName">The name of the list to add to</param>
+        public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
+        {
+            UserList listToBeModified = myLists.FirstOrDefault(list => list.GetListName() == listName);
+               
+            listToBeModified?.AddIngToList(ingredient);
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Returns a list of strings containing the measurement units
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> for authentication.</param>
+        /// <returns>
+        /// List of strings with the allowed measurement units
+        /// </returns>
+        public Task<List<string>> GetAllMeasurements(IUser user)
+        {
+            List<string> units = new List<string>();
+            units.Add("count");
+            units.Add("g");
+            units.Add("kg");
+            units.Add("lbs");
+            units.Add("oz");
+            units.Add("mL");
+            units.Add("L");
+            units.Add("gal");
+
+            return Task.FromResult(units);
         }
     }
 }
