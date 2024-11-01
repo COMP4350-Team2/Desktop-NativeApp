@@ -42,9 +42,15 @@ namespace Desktop_Frontend.Backend
         /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
         /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
         /// <param name="listName">The name of the list to add to</param>
-        /// <returns>
-        /// True if successful, false it not
-        /// </returns>
         public Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName);
+
+        /// <summary>
+        /// Returns a list of strings containing the measurement units
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> for authentication.</param>
+        /// <returns>
+        /// List of strings with the allowed measurement units
+        /// </returns>
+        public Task<List<string>> GetAllMeasurements(IUser user);
     }
 }
