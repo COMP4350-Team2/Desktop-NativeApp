@@ -118,11 +118,25 @@ namespace Desktop_Frontend.Backend
         /// <returns>A bool indicating whether addition was successfull.</returns>
         public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
         {
-            UserList listToBeModified = myLists.FirstOrDefault(list => list.GetListName() == listName);
-               
-            listToBeModified?.AddIngToList(ingredient);
+            bool added = false;
 
-            return true;
+            UserList listToBeModified = null;
+
+            for (int i = 0; i < myLists.Count; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    listToBeModified = myLists[i];
+                }
+            }
+
+            if (listToBeModified != null)
+            {
+                listToBeModified.AddIngToList(ingredient);
+                added = true;
+            }
+
+            return added;
 
         }
 
@@ -139,7 +153,7 @@ namespace Desktop_Frontend.Backend
             units.Add("count");
             units.Add("g");
             units.Add("kg");
-            units.Add("lbs");
+            units.Add("lb");
             units.Add("oz");
             units.Add("mL");
             units.Add("L");
