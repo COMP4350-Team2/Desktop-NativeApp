@@ -5,9 +5,9 @@
     /// </summary>
     internal class UserMock : IUser
     {
-        private string username;
+        private string ?username;
         private bool loggedIn;
-        private List<UserList> myLists;
+        private List<UserList> ?myLists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserMock"/> class.
