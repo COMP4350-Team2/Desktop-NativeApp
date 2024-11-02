@@ -40,6 +40,9 @@ jobs:
           "BACKEND_URL=${{ secrets.BACKEND_URL }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "CREATE_USER=${{ secrets.CREATE_USER }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "ALL_INGREDIENTS=${{ secrets.ALL_INGREDIENTS }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
+          "MY_LISTS=${{ secrets.MY_LISTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
+          "ADD_INGREDIENT=${{ secrets.ADD_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
+          "GET_MEASUREMENTS=${{ secrets.GET_MEASUREMENTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
 
       - name: Build project
         run: |
