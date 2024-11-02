@@ -126,7 +126,7 @@ namespace Desktop_Frontend.Backend
         /// </summary>
         /// <param name="response">The HTTP response containing the ingredient data.</param>
         /// <param name="allIng">The list to populate with <see cref="Ingredient"/> objects.</param>
-        private async void FillAllIngList(HttpResponseMessage response, List<Ingredient> allIng)
+        private static async void FillAllIngList(HttpResponseMessage response, List<Ingredient> allIng)
         {
             // Read the response content as a string
             string body = await response.Content.ReadAsStringAsync();
@@ -198,7 +198,7 @@ namespace Desktop_Frontend.Backend
         /// </summary>
         /// <param name="response">The HTTP response parse.</param>
         /// <param name="myLists">The list to be filled.</param>
-        private async void FillMyLists(HttpResponseMessage response, List<UserList> myLists)
+        private static async void FillMyLists(HttpResponseMessage response, List<UserList> myLists)
         {
             // Read JSON from response
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -239,6 +239,7 @@ namespace Desktop_Frontend.Backend
         /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
         /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
         /// <param name="listName">The name of the list to add to</param>
+        /// <returns>A bool indicating whether addition was successfull.</returns>
         public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
         {
             // bool to indicate success
@@ -336,7 +337,7 @@ namespace Desktop_Frontend.Backend
         /// </summary>
         /// <param name="response">The HTTP response parse.</param>
         /// <param name="units">The list of units to be filled.</param>
-        private async void FillMeasurementList(HttpResponseMessage response, List<string> units)
+        private static async void FillMeasurementList(HttpResponseMessage response, List<string> units)
         {
             // Read JSON from response
             var jsonString = await response.Content.ReadAsStringAsync();
