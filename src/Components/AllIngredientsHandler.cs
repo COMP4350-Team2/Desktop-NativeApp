@@ -85,7 +85,7 @@ namespace Desktop_Frontend.Components
             ingredientListPanel.Children.Clear();
             foreach (var ingredient in ingredients)
             {
-                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient));
+                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient.CopyIngredient()));
             }
         }
 
@@ -159,7 +159,7 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(10, 0, 0, 0)
             };
-            addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient);
+            addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient.CopyIngredient());
             ingredientRow.Children.Add(addButton);
 
             Border border = new Border

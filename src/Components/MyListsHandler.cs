@@ -251,7 +251,6 @@ namespace Desktop_Frontend.Components
                 bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
                 if (success)
                 {
-                    // Update the local user list and UI
                     await DisplayMyLists(parentPanel);
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     popup.Close();
