@@ -9,7 +9,7 @@ namespace Desktop_Frontend.Backend
     {
         private IUser user;
         private List<Ingredient> ingredients;
-        private List<UserList> myLists;
+        private List<UserList> ?myLists;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BackendMock"/> class and populates the list 
@@ -115,6 +115,7 @@ namespace Desktop_Frontend.Backend
         /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
         /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
         /// <param name="listName">The name of the list to add to</param>
+        /// <returns>A bool indicating whether addition was successfull.</returns>
         public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
         {
             UserList listToBeModified = myLists.FirstOrDefault(list => list.GetListName() == listName);
