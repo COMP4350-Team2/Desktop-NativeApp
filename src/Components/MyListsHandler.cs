@@ -14,6 +14,7 @@ namespace Desktop_Frontend.Components
         private readonly SolidColorBrush textColor;
         private readonly IBackend backend;
         private readonly IUser user;
+        private StackPanel parentPanel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyListsHandler"/> class.
@@ -26,7 +27,8 @@ namespace Desktop_Frontend.Components
         {
             textColor = (SolidColorBrush)App.Current.Resources["TertiaryBrush"]; 
             this.backend = backend; 
-            this.user = user; 
+            this.user = user;
+            parentPanel = null;
         }
 
         /// <summary>
@@ -35,6 +37,10 @@ namespace Desktop_Frontend.Components
         /// <param name="contentArea">The panel to display content within.</param>
         public async Task DisplayMyLists(StackPanel contentArea)
         {
+            if (this.parentPanel == null)
+            {
+                this.parentPanel = contentArea;
+            }
             contentArea.Children.Clear();
 
             // Create and add header
@@ -86,10 +92,10 @@ namespace Desktop_Frontend.Components
                     Margin = new Thickness(20, 20, 0, 0)
                 };
 
-                // Click event to show a message box
-                addIngredientButton.Click += (s, e) =>
+                // Click event 
+                addIngredientButton.Click += async (s, e) =>
                 {
-                    MessageBox.Show("Coming soon: Adding ingredients to your lists");
+                    await ShowAddIngredientPopup(userList);
                 };
 
                 // Add the button to the ingredient panel
@@ -148,5 +154,119 @@ namespace Desktop_Frontend.Components
 
             return border;
         }
+
+
+        /// <summary>
+        /// Shows pop up window for adding an <see cref="Ingredient"/>
+        /// </summary>
+        /// <param name="userList">The <see cref="UserList"/> to be added to.</param>
+        private async Task ShowAddIngredientPopup(UserList userList)
+        {
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Add Ingredient",
+                Width = 300,
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            // Ingredient name input
+            ComboBox nameBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
+            foreach (var ing in allIngredients)
+            {
+                nameBox.Items.Add(ing.GetName());
+            }
+            if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
+            panel.Children.Add(new TextBlock { Text = "Ingredient Name:" });
+            panel.Children.Add(nameBox);
+
+            // Amount input with placeholder
+            TextBox amountBox = new TextBox
+            {
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Text = "Enter amount",
+                Foreground = Brushes.Gray
+            };
+            amountBox.GotFocus += (s, e) =>
+            {
+                if (amountBox.Text == "Enter amount")
+                {
+                    amountBox.Text = "";
+                    amountBox.Foreground = Brushes.Black;
+                }
+            };
+            amountBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(amountBox.Text))
+                {
+                    amountBox.Text = "Enter amount";
+                    amountBox.Foreground = Brushes.Gray;
+                }
+            };
+            panel.Children.Add(new TextBlock { Text = "Amount:" });
+            panel.Children.Add(amountBox);
+
+            // Unit input
+            ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            List<string> units = await backend.GetAllMeasurements(user);
+            foreach (var unit in units)
+            {
+                unitBox.Items.Add(unit);
+            }
+            if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0;
+            panel.Children.Add(new TextBlock { Text = "Unit:" });
+            panel.Children.Add(unitBox);
+
+            // Add button
+            Button addButton = new Button
+            {
+                Content = "Add",
+                Margin = new Thickness(0, 20, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            addButton.Click += async (s, e) =>
+            {
+                // Validate amount input
+                if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
+                {
+                    MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Retrieve values
+                string name = nameBox.SelectedItem.ToString();
+                string unit = unitBox.SelectedItem.ToString();
+                string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
+
+                // Create the ingredient with specified values
+                Ingredient newIngredient = new Ingredient(name, type, amount, unit);
+
+                // Add ingredient to list via backend and check success
+                bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
+                if (success)
+                {
+                    // Update the local user list and UI
+                    await DisplayMyLists(parentPanel);
+                    MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    popup.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+            panel.Children.Add(addButton);
+
+            popup.Content = panel;
+            popup.ShowDialog();
+        }
+
+
     }
 }
