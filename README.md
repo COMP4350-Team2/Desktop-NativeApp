@@ -37,6 +37,9 @@ Type `dotnet --version` in terminal to check version on your system.
     BACKEND_URL=
     CREATE_USER=
     ALL_INGREDIENTS=
+    MY_LISTS=
+    ADD_INGREDIENT=
+    GET_MEASUREMENTS=
     ```   
 
 - Not having these files will run a Mock version of the system.
