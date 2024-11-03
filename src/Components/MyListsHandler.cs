@@ -35,6 +35,17 @@ namespace Desktop_Frontend.Components
         /// Displays the "My Lists" section with collapsible ingredient lists for each user list.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
+
+        /// <summary>
+        /// Displays the "My Lists" section with collapsible ingredient lists for each user list.
+        /// Each list includes a search bar to filter ingredients.
+        /// </summary>
+        /// <param name="contentArea">The panel to display content within.</param>
+        /// <summary>
+        /// Displays the "My Lists" section with collapsible ingredient lists for each user list.
+        /// Each list includes a search bar to filter ingredients.
+        /// </summary>
+        /// <param name="contentArea">The panel to display content within.</param>
         public async Task DisplayMyLists(StackPanel contentArea)
         {
             if (this.parentPanel == null)
@@ -75,11 +86,54 @@ namespace Desktop_Frontend.Components
 
                 StackPanel ingredientPanel = new StackPanel();
 
-                // Add each ingredient in the UserList to the ingredient panel
-                foreach (var ingredient in userList.GetIngredients())
+                // Add search box for filtering ingredients
+                TextBox searchBox = new TextBox
                 {
-                    ingredientPanel.Children.Add(CreateIngredientRow(ingredient, userList));
-                }
+                    Text = "Search ingredients...", // Initial placeholder text
+                    Foreground = Brushes.Gray,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                // Placeholder behavior
+                searchBox.GotFocus += (s, e) =>
+                {
+                    if (searchBox.Text == "Search ingredients...")
+                    {
+                        searchBox.Text = "";
+                        searchBox.Foreground = Brushes.Black;
+                    }
+                };
+
+                searchBox.LostFocus += (s, e) =>
+                {
+                    if (string.IsNullOrWhiteSpace(searchBox.Text))
+                    {
+                        searchBox.Text = "Search ingredients...";
+                        searchBox.Foreground = Brushes.Gray;
+                    }
+                };
+
+                ingredientPanel.Children.Add(searchBox);
+
+                // Filter ingredients as user types in the search box
+                searchBox.TextChanged += (s, e) =>
+                {
+                    string searchText = searchBox.Text.ToLower();
+                    UpdateIngredientPanel(ingredientPanel, searchText, userList);
+                };
+
+                // Event to handle expanding and collapsing
+                listExpander.Expanded += (s, e) =>
+                {
+                    ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
+                };
+                listExpander.Collapsed += (s, e) =>
+                {
+                    ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
+                };
+
+                // Display all ingredients initially
+                UpdateIngredientPanel(ingredientPanel, "", userList);
 
                 // Create and add "Add Ingredient" button at the bottom of each ingredient panel
                 Button addIngredientButton = new Button
@@ -92,7 +146,7 @@ namespace Desktop_Frontend.Components
                     Margin = new Thickness(20, 20, 0, 0)
                 };
 
-                // Click event 
+                // Click event for adding an ingredient
                 addIngredientButton.Click += async (s, e) =>
                 {
                     await ShowAddIngredientPopup(userList);
@@ -108,6 +162,153 @@ namespace Desktop_Frontend.Components
                 contentArea.Children.Add(listExpander);
             }
         }
+
+        /// <summary>
+        /// Updates the ingredient panel based on search text.
+        /// </summary>
+        /// <summary>
+        /// Updates the ingredient panel based on search text.
+        /// Ensures the search box is added first if it's missing.
+        /// </summary>
+        private void UpdateIngredientPanel(StackPanel ingredientPanel, string searchText, UserList userList)
+        {
+            // Check if the search box exists in the panel; if not, add it.
+            if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is TextBox))
+            {
+                TextBox searchBox = new TextBox
+                {
+                    Text = "Search ingredients...", // Initial placeholder text
+                    Foreground = Brushes.Gray,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                // Placeholder behavior
+                searchBox.GotFocus += (s, e) =>
+                {
+                    if (searchBox.Text == "Search ingredients...")
+                    {
+                        searchBox.Text = "";
+                        searchBox.Foreground = Brushes.Black;
+                    }
+                };
+
+                searchBox.LostFocus += (s, e) =>
+                {
+                    if (string.IsNullOrWhiteSpace(searchBox.Text))
+                    {
+                        searchBox.Text = "Search ingredients...";
+                        searchBox.Foreground = Brushes.Gray;
+                    }
+                };
+
+                // Search filter event
+                searchBox.TextChanged += (s, e) =>
+                {
+                    string newSearchText = searchBox.Text.ToLower();
+                    UpdateIngredientPanel(ingredientPanel, newSearchText, userList);
+                };
+
+                ingredientPanel.Children.Insert(0, searchBox);
+            }
+
+            // Clear everything except the search box
+            for (int i = ingredientPanel.Children.Count - 1; i > 0; i--)
+            {
+                ingredientPanel.Children.RemoveAt(i);
+            }
+
+            // Filter and display ingredients that match the search
+            foreach (var ingredient in userList.GetIngredients().Where(ing => ing.GetName().ToLower().Contains(searchText)))
+            {
+                ingredientPanel.Children.Add(CreateIngredientRow(ingredient, userList));
+            }
+        }
+
+
+        /// <summary>
+        /// Resets the search box and displays all ingredients when the list is expanded or collapsed.
+        /// </summary>
+        private void ResetSearchAndDisplayIngredients(TextBox searchBox, StackPanel ingredientPanel, UserList userList)
+        {
+            searchBox.Text = "Search ingredients...";
+            searchBox.Foreground = Brushes.Gray;
+            UpdateIngredientPanel(ingredientPanel, "", userList);
+        }
+
+
+        //public async Task DisplayMyLists(StackPanel contentArea)
+        //{
+        //    if (this.parentPanel == null)
+        //    {
+        //        this.parentPanel = contentArea;
+        //    }
+        //    contentArea.Children.Clear();
+
+        //    // Create and add header
+        //    TextBlock header = new TextBlock
+        //    {
+        //        Text = "My Lists",
+        //        FontSize = 24,
+        //        FontWeight = FontWeights.Bold,
+        //        Foreground = textColor,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        Margin = new Thickness(0, 20, 0, 20)
+        //    };
+        //    contentArea.Children.Add(header);
+
+        //    // Retrieve user's lists from the backend
+        //    List<UserList> myLists = await backend.GetMyLists(user);
+
+        //    // Retrieve colors from App.xaml resources for consistent styling
+        //    SolidColorBrush buttonBackgroundColor = (SolidColorBrush)App.Current.Resources["TertiaryBrush"];
+        //    SolidColorBrush buttonTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrush"];
+
+        //    // Display each list in a collapsible menu
+        //    foreach (var userList in myLists)
+        //    {
+        //        Expander listExpander = new Expander
+        //        {
+        //            Header = userList.GetListName(),
+        //            FontSize = 18,
+        //            Foreground = textColor,
+        //            Margin = new Thickness(0, 10, 0, 10)
+        //        };
+
+        //        StackPanel ingredientPanel = new StackPanel();
+
+        //        // Add each ingredient in the UserList to the ingredient panel
+        //        foreach (var ingredient in userList.GetIngredients())
+        //        {
+        //            ingredientPanel.Children.Add(CreateIngredientRow(ingredient, userList));
+        //        }
+
+        //        // Create and add "Add Ingredient" button at the bottom of each ingredient panel
+        //        Button addIngredientButton = new Button
+        //        {
+        //            Content = "+",
+        //            Width = 30,
+        //            Height = 30,
+        //            Background = Brushes.White,
+        //            HorizontalAlignment = HorizontalAlignment.Center,
+        //            Margin = new Thickness(20, 20, 0, 0)
+        //        };
+
+        //        // Click event 
+        //        addIngredientButton.Click += async (s, e) =>
+        //        {
+        //            await ShowAddIngredientPopup(userList);
+        //        };
+
+        //        // Add the button to the ingredient panel
+        //        ingredientPanel.Children.Add(addIngredientButton);
+
+        //        // Set the ingredient panel as the content of the expander
+        //        listExpander.Content = ingredientPanel;
+
+        //        // Add the expander to the main content area
+        //        contentArea.Children.Add(listExpander);
+        //    }
+        //}
 
 
         /// <summary>
