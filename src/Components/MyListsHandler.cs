@@ -119,6 +119,8 @@ namespace Desktop_Frontend.Components
         {
             // Create a row to display ingredient details
             DockPanel ingredientRow = new DockPanel { Margin = new Thickness(0, 5, 0, 5) };
+
+            // Ingredient details text
             TextBlock ingredientText = new TextBlock
             {
                 Text = $"{ingredient.GetName()} - {ingredient.GetIngType()} | {ingredient.GetAmount()} {ingredient.GetUnit()}",
@@ -126,20 +128,38 @@ namespace Desktop_Frontend.Components
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 10, 0)
             };
+            DockPanel.SetDock(ingredientText, Dock.Left);
             ingredientRow.Children.Add(ingredientText);
+
+            // Panel to hold delete and edit buttons together, aligned to the right
+            StackPanel buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+
+            // Delete button (Trash icon)
+            Button deleteButton = new Button
+            {
+                Content = "\uD83D\uDDD1", // Trash can icon
+                Width = 30,
+                Height = 30,
+                Background = Brushes.White,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            deleteButton.Click += (s, e) => MessageBox.Show("Coming soon: Deleting Ingredients");
+            buttonPanel.Children.Add(deleteButton);
 
             // Edit button
             Button editButton = new Button
             {
-                Content = "\u270E", //edit button icon
+                Content = "\u270E", // Edit button icon
                 Width = 30,
                 Height = 30,
                 Background = Brushes.White,
-                HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(10, 0, 0, 0)
             };
             editButton.Click += (s, e) => MessageBox.Show("Coming soon: Editing Ingredients");
-            ingredientRow.Children.Add(editButton);
+            buttonPanel.Children.Add(editButton);
+
+            // Add the button panel to the DockPanel, aligned to the right
+            ingredientRow.Children.Add(buttonPanel);
 
             // Create border styling for the ingredient row
             Border border = new Border
@@ -154,7 +174,6 @@ namespace Desktop_Frontend.Components
 
             return border;
         }
-
 
         /// <summary>
         /// Shows pop up window for adding an <see cref="Ingredient"/>
