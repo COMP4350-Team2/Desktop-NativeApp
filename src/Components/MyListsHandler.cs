@@ -321,30 +321,10 @@ namespace Desktop_Frontend.Components
                 Foreground = Brushes.Gray
             };
 
-            // Focus event to clear placeholder text
-            searchBox.GotFocus += (s, e) =>
-            {
-                if (searchBox.Text == "Search ingredients...")
-                {
-                    searchBox.Text = "";
-                    searchBox.Foreground = Brushes.Black; // Change text color to black
-                }
-            };
-
-            // Lost focus event to reset placeholder text if empty
-            searchBox.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchBox.Text))
-                {
-                    searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = Brushes.Gray; // Change text color back to gray
-                }
-            };
-
             ComboBox nameBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
             List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
 
-            // Populate ComboBox with all ingredients
+            // Populate ComboBox with all ingredients initially
             foreach (var ing in allIngredients)
             {
                 nameBox.Items.Add(ing.GetName());
@@ -393,18 +373,60 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(unitBox);
 
             // Filter ingredients as user types in the search box
+            searchBox.GotFocus += (s, e) =>
+            {
+                if (searchBox.Text == "Search ingredients...")
+                {
+                    searchBox.Text = "";
+                    searchBox.Foreground = Brushes.Black; // Change text color to black for user input
+                }
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchBox.Text))
+                {
+                    searchBox.Text = "Search ingredients...";
+                    searchBox.Foreground = Brushes.Gray; // Change text color back to gray
+
+                    // Repopulate the ComboBox with all ingredients when the search box is empty
+                    nameBox.Items.Clear();
+                    foreach (var ing in allIngredients)
+                    {
+                        nameBox.Items.Add(ing.GetName());
+                    }
+                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0; // Select the first ingredient
+                }
+            };
+
             searchBox.TextChanged += (s, e) =>
             {
                 string searchText = searchBox.Text.ToLower();
                 nameBox.Items.Clear(); // Clear the ComboBox items
-                foreach (var ing in allIngredients)
+
+                // If the search box is empty, show all ingredients
+                if (string.IsNullOrWhiteSpace(searchText))
                 {
-                    if (ing.GetName().ToLower().Contains(searchText))
+                    foreach (var ing in allIngredients)
                     {
-                        nameBox.Items.Add(ing.GetName()); // Add matching ingredients
+                        nameBox.Items.Add(ing.GetName()); // Add all ingredients back to the ComboBox
                     }
                 }
-                if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0; // Select the first matching item
+                else
+                {
+                    // If there is search text, filter the ingredients
+                    foreach (var ing in allIngredients)
+                    {
+                        if (ing.GetName().ToLower().Contains(searchText))
+                        {
+                            nameBox.Items.Add(ing.GetName()); // Add matching ingredients
+                        }
+                    }
+                }
+
+                // Select the first matching item if available
+                if (nameBox.Items.Count > 0)
+                    nameBox.SelectedIndex = 0;
             };
 
             // Add button
@@ -450,6 +472,7 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             };
+
             panel.Children.Add(addButton);
 
             popup.Content = panel;
