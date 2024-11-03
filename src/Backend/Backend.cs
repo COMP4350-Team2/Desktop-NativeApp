@@ -410,12 +410,14 @@ namespace Desktop_Frontend.Backend
         {
             bool newCall = false;
 
-            DateTime currTime = DateTime.Now;
-
-            if (allIngredients == null || lastAllIngCall == null)
+            if(allIngredients == null || allIngredients?.Count == 0)
             {
-                TimeSpan diff = currTime - lastAllIngCall;
+                newCall = true;
+            }
 
+            if(lastAllIngCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastAllIngCall;
                 TimeSpan threshold = TimeSpan.FromMinutes(5);
 
                 if (diff > threshold)
@@ -435,12 +437,14 @@ namespace Desktop_Frontend.Backend
         {
             bool newCall = false;
 
-            DateTime currTime = DateTime.Now;
-
-            if (allUnits == null || lastAllUnitsCall == null)
+            if (allUnits == null || allUnits?.Count == 0)
             {
-                TimeSpan diff = currTime - lastAllUnitsCall;
+                newCall = true;
+            }
 
+            if (lastAllUnitsCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastAllUnitsCall;
                 TimeSpan threshold = TimeSpan.FromMinutes(5);
 
                 if (diff > threshold)
@@ -460,14 +464,15 @@ namespace Desktop_Frontend.Backend
         {
             bool newCall = false;
 
-            DateTime currTime = DateTime.Now;
-
-            if (myLists == null || lastMyListsCall == null)
+            if (myLists == null || myLists?.Count == 0)
             {
-                TimeSpan diff = currTime - lastMyListsCall;
+                newCall = true;
+            }
 
+            if (lastMyListsCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastMyListsCall;
                 TimeSpan threshold = TimeSpan.FromMinutes(5);
-
                 if (diff > threshold)
                 {
                     newCall = true;
