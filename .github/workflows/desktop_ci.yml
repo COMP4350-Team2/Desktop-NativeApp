@@ -43,6 +43,7 @@ jobs:
           "MY_LISTS=${{ secrets.MY_LISTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "ADD_INGREDIENT=${{ secrets.ADD_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "GET_MEASUREMENTS=${{ secrets.GET_MEASUREMENTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
+          "REMOVE_INGREDIENT=${{ secrets.REMOVE_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
 
       - name: Build project
         run: |

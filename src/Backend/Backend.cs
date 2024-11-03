@@ -16,6 +16,18 @@ namespace Desktop_Frontend.Backend
 
         private HttpClient HttpClient;
 
+        private List<Ingredient> allIngredients;
+
+        private DateTime lastAllIngCall;
+
+        private List<string> allUnits;
+
+        private DateTime lastAllUnitsCall;
+
+        private List<UserList> myLists;
+
+        private DateTime lastMyListsCall;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Backend"/> class with default configuration.
         /// </summary>
@@ -30,6 +42,12 @@ namespace Desktop_Frontend.Backend
             this.config = config;
 
             HttpClient = new HttpClient();
+
+            allIngredients = null;
+
+            allUnits = null;
+
+            myLists = null;
         }
 
         /// <summary>
@@ -41,27 +59,31 @@ namespace Desktop_Frontend.Backend
         /// </returns>
         public async Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            List<Ingredient> ingredients = new List<Ingredient>();
-
-            //Create request
-            string url = config.BackendUrl + config.All_Ing_Endpoint;
-            string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Get, url); ;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            try
+            // Only make the call if needed (otherwise use cached local variable)
+            if (AllIngNewCall())
             {
-                HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateAllIngResponse(response);
-                FillAllIngList(response, ingredients);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Failed to fetch all ingredients");
-            }
+                lastAllIngCall = DateTime.Now;
+                allIngredients?.Clear();
+                allIngredients = new List<Ingredient>();
 
+                //Create request
+                string url = config.BackendUrl + config.All_Ing_Endpoint;
+                string accessToken = user.GetAccessToken();
+                var request = new HttpRequestMessage(HttpMethod.Get, url); ;
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            return ingredients;
+                try
+                {
+                    HttpResponseMessage response = await HttpClient.SendAsync(request);
+                    ValidateAllIngResponse(response);
+                    FillAllIngList(response, allIngredients);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to fetch all ingredients");
+                }
+            }
+            return allIngredients;
         }
 
         /// <summary>
@@ -91,7 +113,7 @@ namespace Desktop_Frontend.Backend
             }
             catch (Exception)
             {
-               success = false;
+                success = false;
             }
 
 
@@ -115,10 +137,10 @@ namespace Desktop_Frontend.Backend
         /// <param name="response">The HTTP response to validate.</param>
         private static void ValidateAllIngResponse(HttpResponseMessage response)
         {
-           if (!response.IsSuccessStatusCode)
-           {
+            if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception();
-           }
+            }
         }
 
         /// <summary>
@@ -155,30 +177,44 @@ namespace Desktop_Frontend.Backend
         /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
-            List<UserList> myLists = new List<UserList>();
-
-            // Create request
-            string url = config.BackendUrl + config.Get_My_Lists_Endpoint;
-            string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            // Get response
-            try
+            // Only make api call if needed (otherwise use cached variable)
+            if (MyListsNewCall())
             {
-                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                lastMyListsCall = DateTime.Now;
+                myLists?.Clear();
+                myLists = new List<UserList>();
 
-                ValidateGetMyListsResponse(response);
+                // Create request
+                string url = config.BackendUrl + config.Get_My_Lists_Endpoint;
+                string accessToken = user.GetAccessToken();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                FillMyLists(response, myLists);
+                // Get response
+                try
+                {
+                    HttpResponseMessage response = await HttpClient.SendAsync(request);
 
+                    ValidateGetMyListsResponse(response);
+
+                    FillMyLists(response, myLists);
+
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to fetch your lists!");
+                }
             }
-            catch (Exception)
+
+            // Return a deep copy of myLists
+            List<UserList> myListsCopy = new List<UserList>();
+
+            for (int i = 0; i < myLists.Count; i++)
             {
-                MessageBox.Show("Failed to fetch your lists!");
+                myListsCopy.Add(myLists[i].CopyList());
             }
 
-            return await Task.FromResult(myLists);
+            return await Task.FromResult(myListsCopy);
         }
 
         /// <summary>
@@ -219,8 +255,8 @@ namespace Desktop_Frontend.Backend
                 foreach (var ingredientItem in listItem.GetProperty("ingredients").EnumerateArray())
                 {
                     string name = ingredientItem.GetProperty("ingredient_name").GetString();
-                    string type = ingredientItem.GetProperty("ingredient_type").GetString(); 
-                    float amount = ingredientItem.GetProperty("amount").GetSingle(); 
+                    string type = ingredientItem.GetProperty("ingredient_type").GetString();
+                    float amount = ingredientItem.GetProperty("amount").GetSingle();
                     string unit = ingredientItem.GetProperty("unit").GetString();
 
                     // Create Ingredient with name, type, amount (float), and unit
@@ -269,6 +305,7 @@ namespace Desktop_Frontend.Backend
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
                 ValidateAddIngToList(response);
                 added = true;
+                AddToMyLists(listName, ingredient);
             }
             catch (Exception)
             {
@@ -291,32 +328,43 @@ namespace Desktop_Frontend.Backend
             }
         }
 
+        /// <summary>
+        /// Returns a list of strings containing the measurement units
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> for authentication.</param>
+        /// <returns>
+        /// List of strings with the allowed measurement units
+        /// </returns>
         public async Task<List<string>> GetAllMeasurements(IUser user)
         {
-            // List of units
-            List<string> units = new List<string>();
-
-            // Create request
-            string url = config.BackendUrl + config.Get_Measurements_Endpoint;
-            string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            // Get response
-            try
+            // Only make the api call if needed (otherwise return the cached variable)
+            if (AllUnitsNewCall())
             {
-                HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateGetAllMeasurements(response);
-                FillMeasurementList(response, units);
+                lastAllUnitsCall = DateTime.Now;
+                allUnits?.Clear();
+                allUnits = new List<string>();
 
+                // Create request
+                string url = config.BackendUrl + config.Get_Measurements_Endpoint;
+                string accessToken = user.GetAccessToken();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Get response
+                try
+                {
+                    HttpResponseMessage response = await HttpClient.SendAsync(request);
+                    ValidateGetAllMeasurements(response);
+                    FillMeasurementList(response, allUnits);
+
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to add fetch units!");
+                }
             }
-            catch (Exception)
-            {
-                MessageBox.Show("Failed to add fetch units!");
-            }
 
-
-            return await Task.FromResult(units);
+            return await Task.FromResult(allUnits);
         }
 
 
@@ -359,6 +407,184 @@ namespace Desktop_Frontend.Backend
                 units.Add(unit);
             }
 
+        }
+
+        /// <summary>
+        /// Returns true if we need to fetch all ingredients again
+        /// </summary>
+        /// <returns>True if we need to fetch ingredients again, false if not</returns>
+        private bool AllIngNewCall()
+        {
+            bool newCall = false;
+
+            if(allIngredients == null || allIngredients?.Count == 0)
+            {
+                newCall = true;
+            }
+
+            if(lastAllIngCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastAllIngCall;
+                TimeSpan threshold = TimeSpan.FromMinutes(5);
+
+                if (diff > threshold)
+                {
+                    newCall = true;
+                }
+            }
+
+            return newCall;
+        }
+
+        /// <summary>
+        /// Returns true if we need to fetch all units again
+        /// </summary>
+        /// <returns>True if we need to fetch units again, false if not</returns>
+        private bool AllUnitsNewCall()
+        {
+            bool newCall = false;
+
+            if (allUnits == null || allUnits?.Count == 0)
+            {
+                newCall = true;
+            }
+
+            if (lastAllUnitsCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastAllUnitsCall;
+                TimeSpan threshold = TimeSpan.FromMinutes(5);
+
+                if (diff > threshold)
+                {
+                    newCall = true;
+                }
+            }
+
+            return newCall;
+        }
+
+        /// <summary>
+        /// Returns true if we need to fetch user's lists again
+        /// </summary>
+        /// <returns>True if we need to fetch user's lists again, false if not</returns>
+        private bool MyListsNewCall()
+        {
+            bool newCall = false;
+
+            if (myLists == null || myLists?.Count == 0)
+            {
+                newCall = true;
+            }
+
+            if (lastMyListsCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastMyListsCall;
+                TimeSpan threshold = TimeSpan.FromMinutes(5);
+                if (diff > threshold)
+                {
+                    newCall = true;
+                }
+            }
+
+            return newCall;
+        }
+
+        /// <summary>
+        /// Adds an ingredient to myList cached variable
+        /// </summary>
+        /// <param name="listName">Name of list to be added to</param>
+        /// <param name="ingredient"><see cref="Ingredient"></see> to add to list</param>
+        private void AddToMyLists(string listName, Ingredient ingredient)
+        {
+            UserList targetList = null;
+            bool found = false;
+            for (int i = 0; i < myLists.Count && !found; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    targetList = myLists[i];
+                    found = true;
+                    targetList.AddIngToList(ingredient.CopyIngredient());
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Removes an <see cref="Ingredient"/> from a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="listName">The name of the list to remove from</param>
+        /// <returns>A bool indicating whether deletion was successfull.</returns>
+        public async Task<bool> RemIngredientFromList(IUser user, Ingredient ingredient, string listName)
+        {
+            bool removed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Rem_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                list_name = listName,
+                ingredient = ingredient.GetName(),
+                unit = ingredient.GetUnit()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateRemoveIngredient(response);
+                removed = true;
+                RemFromMyLists(listName, ingredient);
+            }
+            catch (Exception)
+            {
+                removed = false;
+                MessageBox.Show("Failed to add ingredient to list!");
+            }
+
+            return removed;
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when removing ingredient
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateRemoveIngredient(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Removes an ingredient from myList cached variable
+        /// </summary>
+        /// <param name="listName">Name of list to be removed from</param>
+        /// <param name="ingredient"><see cref="Ingredient"></see> to remove from list</param>
+        private void RemFromMyLists(string listName, Ingredient ingredient)
+        {
+            UserList targetList = null;
+            bool found = false;
+            for (int i = 0; i < myLists.Count && !found; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    targetList = myLists[i];
+                    found = true;
+                    targetList.RemIngFromList(ingredient);
+                }
+            }
         }
     }
 

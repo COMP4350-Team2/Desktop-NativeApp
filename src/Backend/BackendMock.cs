@@ -161,5 +161,28 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(units);
         }
+
+        /// <summary>
+        /// Removes an <see cref="Ingredient"/> from a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="listName">The name of the list to remove from</param>
+        /// <returns>A bool indicating whether deletion was successfull.</returns>
+        public Task<bool> RemIngredientFromList(IUser user, Ingredient ingredient, string listName)
+        {
+            bool removed = false;
+
+            for (int i = 0; i < myLists.Count && !removed; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    myLists[i].RemIngFromList(ingredient);
+                    removed = true;
+                }
+            }
+
+            return Task.FromResult(removed);
+        }
     }
 }

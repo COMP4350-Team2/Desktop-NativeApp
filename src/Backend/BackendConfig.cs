@@ -15,6 +15,7 @@ namespace Desktop_Frontend.Backend
         public string? Get_My_Lists_Endpoint;
         public string? Add_Ing_Endpoint;
         public string? Get_Measurements_Endpoint;
+        public string? Rem_Ing_Endpoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -57,6 +58,7 @@ namespace Desktop_Frontend.Backend
                 Get_My_Lists_Endpoint = Env.GetString("MY_LISTS");
                 Add_Ing_Endpoint = Env.GetString("ADD_INGREDIENT");
                 Get_Measurements_Endpoint = Env.GetString("GET_MEASUREMENTS");
+                Rem_Ing_Endpoint = Env.GetString("REMOVE_INGREDIENT");
             }
 
         }
@@ -69,7 +71,8 @@ namespace Desktop_Frontend.Backend
         {
             return !(string.IsNullOrEmpty(BackendUrl) || string.IsNullOrEmpty(Create_User_Endpoint)
                || string.IsNullOrEmpty(All_Ing_Endpoint) || string.IsNullOrEmpty(Get_My_Lists_Endpoint)
-               || string.IsNullOrEmpty(Add_Ing_Endpoint) || string.IsNullOrEmpty(Get_Measurements_Endpoint));
+               || string.IsNullOrEmpty(Add_Ing_Endpoint) || string.IsNullOrEmpty(Get_Measurements_Endpoint)
+               || string.IsNullOrEmpty(Rem_Ing_Endpoint));
         }
 
         /// <summary>
