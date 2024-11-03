@@ -13,6 +13,8 @@ namespace Desktop_Frontend.Backend
         public string? Create_User_Endpoint;
         public string? All_Ing_Endpoint;
         public string? Get_My_Lists_Endpoint;
+        public string? Add_Ing_Endpoint;
+        public string? Get_Measurements_Endpoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -53,6 +55,8 @@ namespace Desktop_Frontend.Backend
                 Create_User_Endpoint = Env.GetString("CREATE_USER");
                 All_Ing_Endpoint = Env.GetString("ALL_INGREDIENTS");
                 Get_My_Lists_Endpoint = Env.GetString("MY_LISTS");
+                Add_Ing_Endpoint = Env.GetString("ADD_INGREDIENT");
+                Get_Measurements_Endpoint = Env.GetString("GET_MEASUREMENTS");
             }
 
         }
@@ -64,7 +68,8 @@ namespace Desktop_Frontend.Backend
         private bool ValidateEnvVars()
         {
             return !(string.IsNullOrEmpty(BackendUrl) || string.IsNullOrEmpty(Create_User_Endpoint)
-               || string.IsNullOrEmpty(All_Ing_Endpoint) || string.IsNullOrEmpty(Get_My_Lists_Endpoint));
+               || string.IsNullOrEmpty(All_Ing_Endpoint) || string.IsNullOrEmpty(Get_My_Lists_Endpoint)
+               || string.IsNullOrEmpty(Add_Ing_Endpoint) || string.IsNullOrEmpty(Get_Measurements_Endpoint));
         }
 
         /// <summary>

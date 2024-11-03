@@ -35,5 +35,23 @@ namespace Desktop_Frontend.Backend
         /// List of <see cref="UserList"/> objects
         /// </returns>
         public Task<List<UserList>> GetMyLists(IUser user);
+
+        /// <summary>
+        /// Adds an <see cref="Ingredient"/> to a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is adding.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
+        /// <param name="listName">The name of the list to add to</param>
+        /// <returns>A bool indicating whether addition was successfull.</returns>
+        public Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName);
+
+        /// <summary>
+        /// Returns a list of strings containing the measurement units
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> for authentication.</param>
+        /// <returns>
+        /// List of strings with the allowed measurement units
+        /// </returns>
+        public Task<List<string>> GetAllMeasurements(IUser user);
     }
 }

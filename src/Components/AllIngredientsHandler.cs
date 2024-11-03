@@ -85,7 +85,7 @@ namespace Desktop_Frontend.Components
             ingredientListPanel.Children.Clear();
             foreach (var ingredient in ingredients)
             {
-                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient));
+                ingredientListPanel.Children.Add(CreateIngredientRow(ingredient.CopyIngredient()));
             }
         }
 
@@ -159,7 +159,7 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(10, 0, 0, 0)
             };
-            addButton.Click += (s, e) => MessageBox.Show("Coming soon: Adding ingredients to your lists");
+            addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient.CopyIngredient());
             ingredientRow.Children.Add(addButton);
 
             Border border = new Border
@@ -183,6 +183,131 @@ namespace Desktop_Frontend.Components
             };
 
             return border;
+        }
+
+        /// <summary>
+        /// Creates a popup for specifying ingredient amount, unit, and list name when the add button is clicked.
+        /// </summary>
+        /// <param name="ingredient">The ingredient to be added.</param>
+        private async void ShowAddIngredientPopup(Ingredient ingredient)
+        {
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Add Ingredient",
+                Width = 300,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            // Amount input with placeholder 
+            TextBox amountBox = new TextBox
+            {
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Text = "Enter amount", // Placeholder text initially
+                Foreground = Brushes.Gray // Placeholder text color
+            };
+
+            // Placeholder functionality: clear on focus, restore on defocus if empty
+            amountBox.GotFocus += (s, e) =>
+            {
+                if (amountBox.Text == "Enter amount")
+                {
+                    amountBox.Text = "";
+                    amountBox.Foreground = Brushes.Black; 
+                }
+            };
+            amountBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(amountBox.Text))
+                {
+                    amountBox.Text = "Enter amount";
+                    amountBox.Foreground = Brushes.Gray; 
+                }
+            };
+            panel.Children.Add(new TextBlock { Text = "Amount:" });
+            panel.Children.Add(amountBox);
+
+            // Get list of units and populate ComboBox
+            ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            List<string> units = await backend.GetAllMeasurements(user);
+            foreach (var unit in units)
+            {
+                unitBox.Items.Add(unit);
+            }
+            if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0; // Set default selection
+            panel.Children.Add(new TextBlock { Text = "Unit:" });
+            panel.Children.Add(unitBox);
+
+            // Get list of user lists and populate ComboBox
+            ComboBox listBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            List<UserList> userLists = await backend.GetMyLists(user);
+            foreach (var userList in userLists)
+            {
+                listBox.Items.Add(userList.GetListName());
+            }
+            if (listBox.Items.Count > 0) listBox.SelectedIndex = 0; // Set default selection
+            panel.Children.Add(new TextBlock { Text = "List Name:" });
+            panel.Children.Add(listBox);
+
+            // Add button
+            Button addButton = new Button
+            {
+                Content = "Add",
+                Margin = new Thickness(0, 20, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            addButton.Click += async (s, e) =>
+            {
+                // Validate amount input
+                if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
+                {
+                    MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Set ingredient properties
+                ingredient.SetAmount(amount);
+                ingredient.SetUnit(unitBox.SelectedItem.ToString());
+
+
+                // Disable controls while processing
+                addButton.IsEnabled = false;
+                amountBox.IsEnabled = false;
+                unitBox.IsEnabled = false;
+                listBox.IsEnabled = false;
+
+                // Call backend method
+                string listName = listBox.SelectedItem.ToString();
+                bool success = await backend.AddIngredientToList(user, ingredient, listName);
+
+                // Re-enable controls
+                addButton.IsEnabled = true;
+                amountBox.IsEnabled = true;
+                unitBox.IsEnabled = true;
+                listBox.IsEnabled = true;
+
+
+                // Show result message
+                if (success)
+                {
+                    MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                popup.Close();
+            };
+            panel.Children.Add(addButton);
+
+            popup.Content = panel;
+            popup.ShowDialog();
         }
     }
 }

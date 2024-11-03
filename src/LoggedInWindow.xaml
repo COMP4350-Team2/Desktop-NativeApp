@@ -17,7 +17,6 @@
                              FontWeight="Bold" 
                              Margin="10" 
                              TextAlignment="Center"/>
-
                     <!-- All Ingredients Button -->
                     <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" 
                             Background="{StaticResource TertiaryBrush}" Foreground="{StaticResource SecondaryBrush}" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
@@ -139,9 +138,11 @@
             </DockPanel>
         </Border>
 
-        <!-- Content Area -->
-        <StackPanel Name="ContentArea" VerticalAlignment="Stretch" Margin="210,0,0,0">
-            <!-- This is where the ingredients list will be populated -->
-        </StackPanel>
+        <!-- Scrollable Content Area -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="210,0,0,0">
+            <StackPanel Name="ContentArea" VerticalAlignment="Stretch">
+                <!-- This is where the ingredients list will be populated -->
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -5,8 +5,8 @@
     /// </summary>
     public class UserList
     {
-        private string ListName; // Name of the list
-        private List<Ingredient> Ingredients; // List of ingredients in the user's list
+        private string ?ListName; // Name of the list
+        private List<Ingredient> ?Ingredients; // List of ingredients in the user's list
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserList"/> class.
@@ -94,8 +94,25 @@
             {
                 found = Ingredients[i].IsEqual(ingredient);
             }
-
             return found;
+        }
+
+        /// <summary>
+        /// Returns a deep copy of the <see cref="UserList"/>
+        /// </summary>
+        /// <returns>Deep copy of <see cref="UserList"/>.</returns>
+        public UserList CopyList()
+        {
+            List<Ingredient> copyIng = new List<Ingredient>();
+
+            for (int i = 0; i < Ingredients.Count; i++)
+            {
+                copyIng.Add(Ingredients[i]);
+            }
+
+            UserList copyList = new UserList(this.GetListName(), copyIng);
+
+            return copyList;
         }
     }
 }
