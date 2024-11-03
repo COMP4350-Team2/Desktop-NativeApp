@@ -184,5 +184,28 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(removed);
         }
+
+        /// <summary>
+        /// Edits the amount and/or unit <see cref="Ingredient"/> in <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="listName">The name of the list to remove from</param>
+        /// <returns>A bool indicating whether edit was successfull.</returns>
+        public Task<bool> SetIngredient(IUser user, Ingredient oldIng, Ingredient newIng, string listName)
+        {
+            bool added = false;
+
+            for(int i = 0; i < myLists.Count && !added; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    added = myLists[i].EditIngredientInList(oldIng, newIng);
+
+                }
+            }
+
+            return Task.FromResult(added);
+        }
     }
 }

@@ -310,7 +310,6 @@ namespace Desktop_Frontend.Backend
             catch (Exception)
             {
                 added = false;
-                MessageBox.Show("Failed to add ingredient to list!");
             }
 
             return await Task.FromResult(added);
@@ -549,7 +548,6 @@ namespace Desktop_Frontend.Backend
             catch (Exception)
             {
                 removed = false;
-                MessageBox.Show("Failed to add ingredient to list!");
             }
 
             return removed;
@@ -583,6 +581,84 @@ namespace Desktop_Frontend.Backend
                     targetList = myLists[i];
                     found = true;
                     targetList.RemIngFromList(ingredient);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Edits the amount and/or unit <see cref="Ingredient"/> in <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="listName">The name of the list to remove from</param>
+        /// <returns>A bool indicating whether edit was successfull.</returns>
+        public async Task<bool> SetIngredient(IUser user, Ingredient oldIng, Ingredient newIng, string listName)
+        {
+            bool edited = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Set_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                list_name = listName,
+                old_ingredient = oldIng.GetName(),
+                old_unit = oldIng.GetUnit(),
+                new_ingredient = newIng.GetName(),
+                new_amount = newIng.GetAmount(),
+                new_unit = newIng.GetUnit()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateSetIngredient(response);
+                edited = true;
+                SetIngMyList(oldIng, newIng, listName);
+            }
+            catch (Exception)
+            {
+                edited = false;
+            }
+
+            return edited;
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when editing ingredient
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateSetIngredient(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Edits amount and/or unit of an ingredient from myList cached variable
+        /// </summary>
+        /// <param name="oldIng"><see cref="Ingredient"></see> to edit</param>
+        /// <param name="newIng"> New <see cref="Ingredient"></see> with new amount and/or unit</param>
+        /// <param name="listName">Name of list to be used</param>
+        private void SetIngMyList(Ingredient oldIng, Ingredient newIng, string listName)
+        {
+            bool isSet = false;
+            for (int i = 0; i < myLists.Count && !isSet; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    myLists[i].EditIngredientInList(oldIng, newIng);
+                    isSet = true;
                 }
             }
         }
