@@ -275,7 +275,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.White,
                 Margin = new Thickness(10, 0, 0, 0)
             };
-            editButton.Click += (s, e) => MessageBox.Show("Coming soon: Editing Ingredients");
+            editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList);
             buttonPanel.Children.Add(editButton);
 
             // Add the button panel to the DockPanel, aligned to the right
@@ -546,6 +546,90 @@ namespace Desktop_Frontend.Components
             confirmationPopup.ShowDialog();
         }
 
+        /// <summary>
+        /// Opens a pop-up window to edit an ingredient's details (amount and unit).
+        /// Validates input and updates the ingredient in the backend if valid.
+        /// </summary>
+        /// <param name="oldIngredient">The ingredient being edited.</param>
+        /// <param name="userList">The list that contains the ingredient.</param>
+        private async Task ShowEditIngredientPopup(Ingredient oldIngredient, UserList userList)
+        {
+            // Create new window
+            Window popup = new Window
+            {
+                Title = "Edit Ingredient",
+                Width = 300,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
 
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            // Amount
+            TextBox amountBox = new TextBox
+            {
+                Text = oldIngredient.GetAmount().ToString(),
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
+            amountBox.GotFocus += (s, e) =>
+            {
+                if (float.TryParse(amountBox.Text, out float amount) && amount <= 0)
+                {
+                    amountBox.Clear();
+                }
+            };
+
+            panel.Children.Add(new TextBlock { Text = "Amount:" });
+            panel.Children.Add(amountBox);
+
+            // Unit
+            ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            var units = backend.GetAllMeasurements(user).Result;
+            foreach (var unit in units)
+            {
+                unitBox.Items.Add(unit);
+            }
+            unitBox.SelectedItem = oldIngredient.GetUnit();
+
+            panel.Children.Add(new TextBlock { Text = "Unit:" });
+            panel.Children.Add(unitBox);
+
+            Button confirmButton = new Button
+            {
+                Content = "OK",
+                Margin = new Thickness(0, 20, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            confirmButton.Click += async (s, e) =>
+            {
+                if (!float.TryParse(amountBox.Text, out float newAmount) || newAmount <= 0)
+                {
+                    MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                string newUnit = unitBox.SelectedItem?.ToString();
+
+                Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
+                bool success = await backend.SetIngredient(user, oldIngredient, updatedIngredient, userList.GetListName());
+
+                if (success)
+                {
+                    DisplayMyLists(this.parentPanel);
+                    MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    popup.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to update ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+
+            panel.Children.Add(confirmButton);
+            popup.Content = panel;
+            popup.ShowDialog();
+        }
     }
 }
