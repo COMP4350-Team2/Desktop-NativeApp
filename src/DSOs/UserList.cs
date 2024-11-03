@@ -107,12 +107,34 @@
 
             for (int i = 0; i < Ingredients.Count; i++)
             {
-                copyIng.Add(Ingredients[i]);
+                copyIng.Add(Ingredients[i].CopyIngredient());
             }
 
             UserList copyList = new UserList(this.GetListName(), copyIng);
 
             return copyList;
+        }
+
+        /// <summary>
+        /// Edits the amount and/or unit of the <see cref="Ingredient"/>
+        /// </summary>
+        /// <param name="ingredient"> The <see cref="Ingredient"/> to be edited</param>
+        /// <returns>Returns true on success, false on failure.</returns>
+        public bool EditIngredientInList(Ingredient oldIng, Ingredient newIng)
+        {
+            bool edited = false;
+
+            for(int i = 0; i < Ingredients.Count && !edited; i++)
+            {
+                if (Ingredients[i].IsEqual(oldIng))
+                {
+                    RemIngFromList(Ingredients[i]);
+                    AddIngToList(newIng.CopyIngredient());
+                    edited = true;
+                }
+            }
+
+            return edited;
         }
     }
 }
