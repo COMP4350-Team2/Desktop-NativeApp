@@ -78,7 +78,7 @@ namespace Desktop_Frontend.Components
                 // Add each ingredient in the UserList to the ingredient panel
                 foreach (var ingredient in userList.GetIngredients())
                 {
-                    ingredientPanel.Children.Add(CreateIngredientRow(ingredient));
+                    ingredientPanel.Children.Add(CreateIngredientRow(ingredient, userList));
                 }
 
                 // Create and add "Add Ingredient" button at the bottom of each ingredient panel
@@ -115,7 +115,7 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The ingredient to display.</param>
         /// <returns>A Border control containing the ingredient row.</returns>
-        private Border CreateIngredientRow(Ingredient ingredient)
+        private Border CreateIngredientRow(Ingredient ingredient, UserList userList)
         {
             // Create a row to display ingredient details
             DockPanel ingredientRow = new DockPanel { Margin = new Thickness(0, 5, 0, 5) };
@@ -143,7 +143,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.White,
                 Margin = new Thickness(10, 0, 0, 0)
             };
-            deleteButton.Click += (s, e) => MessageBox.Show("Coming soon: Deleting Ingredients");
+            deleteButton.Click += async (s, e) => await ConfirmDeletion(ingredient, userList.GetListName());
             buttonPanel.Children.Add(deleteButton);
 
             // Edit button
@@ -283,6 +283,73 @@ namespace Desktop_Frontend.Components
 
             popup.Content = panel;
             popup.ShowDialog();
+        }
+
+        /// <summary>
+        /// Displays a confirmation popup for deleting an ingredient.
+        /// </summary>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to delete.</param>
+        /// <param name="listName">The list name from which the ingredient should be removed.</param>
+        private async Task ConfirmDeletion(Ingredient ingredient, string listName)
+        {
+            // Create popup window for confirmation
+            Window confirmationPopup = new Window
+            {
+                Title = "Delete Ingredient",
+                Width = 300,
+                Height = 150,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            // Stack panel for layout
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = $"Are you sure you want to delete {ingredient.GetName()}?",
+                Margin = new Thickness(0, 10, 0, 20),
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            // Confirmation buttons
+            Button confirmButton = new Button { Content = "OK", Width = 60, Margin = new Thickness(5) };
+            Button cancelButton = new Button { Content = "Cancel", Width = 60, Margin = new Thickness(5) };
+            panel.Children.Add(new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Children = { confirmButton, cancelButton }
+            });
+
+            // Event handler for cancel button to close the popup
+            cancelButton.Click += (s, e) => confirmationPopup.Close();
+
+            // Event handler for confirm button to initiate deletion
+            confirmButton.Click += async (s, e) =>
+            {
+                // Disable buttons during backend call
+                confirmButton.IsEnabled = false;
+                cancelButton.IsEnabled = false;
+
+                // Call backend to remove ingredient
+                bool success = await backend.RemIngredientFromList(user, ingredient, listName);
+
+                // Display result and close popup
+                if (success)
+                {
+                    MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await DisplayMyLists(parentPanel); // Refresh the list
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                confirmationPopup.Close();
+            };
+
+            confirmationPopup.Content = panel;
+            confirmationPopup.ShowDialog();
         }
 
 
