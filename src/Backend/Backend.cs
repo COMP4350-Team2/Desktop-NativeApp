@@ -328,6 +328,13 @@ namespace Desktop_Frontend.Backend
             }
         }
 
+        /// <summary>
+        /// Returns a list of strings containing the measurement units
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> for authentication.</param>
+        /// <returns>
+        /// List of strings with the allowed measurement units
+        /// </returns>
         public async Task<List<string>> GetAllMeasurements(IUser user)
         {
             // Only make the api call if needed (otherwise return the cached variable)
@@ -498,6 +505,84 @@ namespace Desktop_Frontend.Backend
                     targetList = myLists[i];
                     found = true;
                     targetList.AddIngToList(ingredient.CopyIngredient());
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Removes an <see cref="Ingredient"/> from a <see cref="UserList"/> with the given name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
+        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="listName">The name of the list to remove from</param>
+        /// <returns>A bool indicating whether deletion was successfull.</returns>
+        public async Task<bool> RemIngredientFromList(IUser user, Ingredient ingredient, string listName)
+        {
+            bool removed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Rem_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                list_name = listName,
+                ingredient = ingredient.GetName(),
+                unit = ingredient.GetUnit()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateRemoveIngredient(response);
+                removed = true;
+                RemFromMyLists(listName, ingredient);
+            }
+            catch (Exception)
+            {
+                removed = false;
+                MessageBox.Show("Failed to add ingredient to list!");
+            }
+
+            return removed;
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when removing ingredient
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateRemoveIngredient(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Removes an ingredient from myList cached variable
+        /// </summary>
+        /// <param name="listName">Name of list to be removed from</param>
+        /// <param name="ingredient"><see cref="Ingredient"></see> to remove from list</param>
+        private void RemFromMyLists(string listName, Ingredient ingredient)
+        {
+            UserList targetList = null;
+            bool found = false;
+            for (int i = 0; i < myLists.Count && !found; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    targetList = myLists[i];
+                    found = true;
+                    targetList.RemIngFromList(ingredient);
                 }
             }
         }
