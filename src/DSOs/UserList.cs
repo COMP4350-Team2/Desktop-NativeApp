@@ -80,7 +80,19 @@
         /// Removes an ingredient from the user list.
         /// </summary>
         /// <param name="ingredient">The ingredient to remove from the list.</param>
-        public void RemIngFromList(Ingredient ingredient) { Ingredients.Remove(ingredient); }
+        public void RemIngFromList(Ingredient ingredient)
+        { 
+            bool removed = false;
+
+            for(int i = 0; i < Ingredients.Count && !removed; i++)
+            {
+                if(Ingredients[i].IsEqual(ingredient))
+                {
+                    Ingredients.Remove(Ingredients[i]);
+                    removed = true;
+                }
+            }
+        }
 
         /// <summary>
         /// Checks if an ingredient is already in the user list.
