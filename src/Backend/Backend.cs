@@ -793,6 +793,49 @@ namespace Desktop_Frontend.Backend
 
             return created;
         }
+
+        /// <summary>
+        /// Moves an ingredient from one list to another
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="currListName">The name of the original list where the ingredient is from</param>
+        /// <param name="newListName">The name of the new list where the ingredient is to be moved</param>
+        /// /// <param name="ingredient">The <see cref="Ingredient"></see> to be moved</param>
+        /// <returns>A bool indicating whether moving was successfull.</returns>
+        public async Task<bool> MoveIngredient(IUser user, string currListName, string newListName, Ingredient ingredient)
+        {
+            bool moved = false;
+
+            // Try to add to new list
+            bool addedToNewList = await AddIngredientToList(user, ingredient, newListName);
+
+            // If add successful
+            if (addedToNewList)
+            {
+                // Try to add 
+                bool remFromOldList = await RemIngredientFromList(user, ingredient, currListName);
+
+                // If remove was successful
+                if (remFromOldList)
+                {
+                    // Successfully moved
+                    moved = true;
+                }
+                // If not 
+                else
+                {
+                    // Add it back to old list
+                    await AddIngredientToList(user, ingredient, currListName);
+
+                    // Remove the previously added 
+                    await RemIngredientFromList(user, ingredient, newListName);
+
+                    moved = false;
+                }
+            }
+
+            return moved;
+        }
     }
 
 }
