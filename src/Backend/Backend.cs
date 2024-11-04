@@ -685,8 +685,7 @@ namespace Desktop_Frontend.Backend
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
                 ValidateDeleteList(response);
-                deleted = true;
-                DeleteCachedList(listName);
+                deleted = DeleteCachedList(listName);
             }
             catch (Exception)
             {
@@ -712,7 +711,7 @@ namespace Desktop_Frontend.Backend
         /// Deletes a list from myList cached variable
         /// </summary>
         /// <param name="listName">Name of list to be deleted</param>
-        private void DeleteCachedList(string listName)
+        private bool DeleteCachedList(string listName)
         {
             bool deleted = false;
             for (int i = 0; i < myLists.Count && !deleted; i++)
@@ -723,6 +722,76 @@ namespace Desktop_Frontend.Backend
                     deleted = true;
                 }
             }
+            return deleted;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="UserList"/> with provided name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="listName">The name of the list to be created</param>
+        /// <returns>A bool indicating whether creation was successfull.</returns>
+        public async Task<bool> CreateList(IUser user, string listName)
+        {
+            bool created = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Create_List_Endpoint + listName;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateCreateList(response);     
+                created = CreateCachedList(listName);
+            }
+            catch (Exception)
+            {
+                created = false;
+            }
+
+            return created;
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when creating a list
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateCreateList(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Creates a list in myList cached variable
+        /// </summary>
+        /// <param name="listName">Name of list to be created</param>
+        private bool CreateCachedList(string listName)
+        {
+            bool created = false;
+
+            bool alreadyExists = false;
+
+            for (int i = 0; i < myLists.Count && !alreadyExists; i++)
+            {
+                alreadyExists = (myLists[i].GetListName() == listName);
+            }
+
+            if (!alreadyExists)
+            {
+                List<Ingredient> emptyIngs = new List<Ingredient>();
+                UserList newList = new UserList(listName, emptyIngs);
+                myLists.Add(newList);
+                created = true;
+            }
+
+            return created;
         }
     }
 

@@ -229,5 +229,33 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(deleted);
         }
+
+        /// <summary>
+        /// Creates a <see cref="UserList"/> with provided name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="listName">The name of the list to be created</param>
+        /// <returns>A bool indicating whether creation was successfull.</returns>
+        public Task<bool> CreateList(IUser user, string listName)
+        {
+            bool created = false;
+
+            bool alreadyExists = false;
+
+            for(int i = 0; i < myLists.Count && !alreadyExists; i++)
+            {
+                alreadyExists = (myLists[i].GetListName() == listName);
+            }
+
+            if (!alreadyExists)
+            {
+                List<Ingredient> emptyIngs = new List<Ingredient>();
+                UserList newList = new UserList(listName, emptyIngs);
+                myLists.Add(newList);
+                created = true;
+            }
+
+            return Task.FromResult(created);
+        }
     }
 }
