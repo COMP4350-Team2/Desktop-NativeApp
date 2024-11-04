@@ -207,5 +207,27 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(added);
         }
+
+        /// <summary>
+        /// Removes a <see cref="UserList"/> with provided name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing a list.</param>
+        /// <param name="listName">The name of the list to be deleted</param>
+        /// <returns>A bool indicating whether deletion was successfull.</returns>
+        public Task<bool> DeleteList(IUser user, string listName)
+        {
+            bool deleted = false;
+
+            for(int i = 0; i < myLists.Count && !deleted; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    myLists.RemoveAt(i);
+                    deleted = true;
+                }
+            }
+
+            return Task.FromResult(deleted);
+        }
     }
 }
