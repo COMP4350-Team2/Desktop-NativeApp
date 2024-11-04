@@ -87,5 +87,15 @@ namespace Desktop_Frontend.Backend
         /// <param name="listName">The name of the list to be created</param>
         /// <returns>A bool indicating whether creation was successfull.</returns>
         public Task<bool> CreateList(IUser user, string listName);
+
+        /// <summary>
+        /// Moves an ingredient from one list to another
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="currListName">The name of the original list where the ingredient is from</param>
+        /// <param name="newListName">The name of the new list where the ingredient is to be moved</param>
+        /// /// <param name="ingredient">The <see cref="Ingredient"></see> to be moved</param>
+        /// <returns>A bool indicating whether moving was successfull.</returns>
+        public Task<bool> MoveIngredient(IUser user, string currListName, string newListName, Ingredient ingredient);
     }
 }

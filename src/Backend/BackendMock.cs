@@ -116,7 +116,7 @@ namespace Desktop_Frontend.Backend
         /// <param name="ingredient">The <see cref="Ingredient"/> to be added.</param>
         /// <param name="listName">The name of the list to add to</param>
         /// <returns>A bool indicating whether addition was successfull.</returns>
-        public async Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
+        public Task<bool> AddIngredientToList(IUser user, Ingredient ingredient, string listName)
         {
             bool added = false;
 
@@ -136,7 +136,7 @@ namespace Desktop_Frontend.Backend
                 added = true;
             }
 
-            return added;
+            return Task.FromResult(added);
 
         }
 
@@ -256,6 +256,48 @@ namespace Desktop_Frontend.Backend
             }
 
             return Task.FromResult(created);
+        }
+
+        /// <summary>
+        /// Moves an ingredient from one list to another
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="currListName">The name of the original list where the ingredient is from</param>
+        /// <param name="newListName">The name of the new list where the ingredient is to be moved</param>
+        /// /// <param name="ingredient">The <see cref="Ingredient"></see> to be moved</param>
+        /// <returns>A bool indicating whether moving was successfull.</returns>
+        public async Task<bool> MoveIngredient(IUser user, string currListName, string newListName, Ingredient ingredient)
+        {
+            bool moved = false;
+
+            bool addedToNewList = AddIngredientToList(user, ingredient, newListName).Result;
+
+            // If addition to new list was successful
+            if (addedToNewList)
+            {
+                // Try to remove from old list
+                bool remFromOldList = RemIngredientFromList(user, ingredient, currListName).Result;
+
+                // If remove from old list successful
+                if (remFromOldList)
+                {
+                    // It has moved
+                    moved = true;
+                }
+                // If remove failed
+                else
+                {
+                    // Add it back to old list
+                    await AddIngredientToList(user, ingredient, currListName);
+
+                    // Remove the previously added 
+                    await RemIngredientFromList(user, ingredient, newListName);
+
+                    moved = false;
+                }
+            }
+
+            return await Task.FromResult(moved);
         }
     }
 }

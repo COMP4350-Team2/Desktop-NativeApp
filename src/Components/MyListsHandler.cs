@@ -36,11 +36,6 @@ namespace Desktop_Frontend.Components
         /// Each list includes a search bar to filter ingredients.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
-        /// <summary>
-        /// Displays the "My Lists" section with collapsible ingredient lists for each user list.
-        /// Each list includes a search bar to filter ingredients.
-        /// </summary>
-        /// <param name="contentArea">The panel to display content within.</param>
         public async Task DisplayMyLists(StackPanel contentArea)
         {
             if (this.parentPanel == null)
@@ -312,6 +307,19 @@ namespace Desktop_Frontend.Components
             // Panel to hold delete and edit buttons together, aligned to the right
             StackPanel buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
 
+            // Create move button with text
+            Button moveButton = new Button
+            {
+                Content = "Move",
+                FontSize = 16,
+                Margin = new Thickness(5, 0, 0, 0),
+                Background = Brushes.White
+            };
+            moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList.GetListName(), ingredient);
+
+            // Add move button to the panel 
+            buttonPanel.Children.Add(moveButton);
+
             // Delete button (Trash icon)
             Button deleteButton = new Button
             {
@@ -517,8 +525,10 @@ namespace Desktop_Frontend.Components
                 // Create the ingredient with specified values
                 Ingredient newIngredient = new Ingredient(name, type, amount, unit);
 
+                addButton.IsEnabled = false;
                 // Add ingredient to list via backend and check success
                 bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
+                addButton.IsEnabled = true;
                 if (success)
                 {
                     await DisplayMyLists(parentPanel);
@@ -757,5 +767,73 @@ namespace Desktop_Frontend.Components
             // Add the border (with button) to the content area
             contentArea.Children.Add(border);
         }
+
+        /// <summary>
+        /// Popup for moving an ingredient from list to list
+        /// </summary>
+        private async Task ShowMoveIngredientPopup(string currListName, Ingredient ingredient)
+        {
+            // Create a new Window for the Move Ingredient popup
+            Window moveWindow = new Window
+            {
+                Title = "Move Ingredient",
+                Width = 300,
+                Height = 200,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+
+            StackPanel movePanel = new StackPanel { Margin = new Thickness(10) };
+
+            // ComboBox for list selection
+            ComboBox listComboBox = new ComboBox
+            {
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+
+            // Get lists from backed
+            List<UserList> myLists = await backend.GetMyLists(user);
+
+            // Populate the ComboBox with user's lists, excluding the current one
+            foreach (var list in myLists)
+            {
+                if (list.GetListName() != currListName)
+                {
+                    listComboBox.Items.Add(list.GetListName());
+                }
+            }
+
+            movePanel.Children.Add(new TextBlock { Text = "Select a list to move the ingredient to:", FontWeight = FontWeights.Bold });
+            movePanel.Children.Add(listComboBox);
+
+            // Create OK button
+            Button okButton = new Button { Content = "OK", Margin = new Thickness(0, 10, 0, 0) };
+            okButton.Click += async (s, e) =>
+            {
+                string newListName = (string)listComboBox.SelectedItem;
+                if (newListName != null)
+                {
+                    okButton.IsEnabled = false;
+                    bool success = await backend.MoveIngredient(user, currListName, newListName, ingredient);
+                    okButton.IsEnabled = true;
+                    if (success)
+                    {
+                        MessageBox.Show("Ingredient moved successfully!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to move ingredient. Please try again.");
+                    }
+                }
+                moveWindow.Close();
+            };
+            movePanel.Children.Add(okButton);
+
+            moveWindow.Content = movePanel;
+            moveWindow.ShowDialog(); // Show the popup window modally
+            await DisplayMyLists(this.parentPanel);
+        }
+
+
+
     }
 }
