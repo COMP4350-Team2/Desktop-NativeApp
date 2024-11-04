@@ -64,16 +64,41 @@ namespace Desktop_Frontend.Components
             // Retrieve user's lists from the backend
             List<UserList> myLists = await backend.GetMyLists(user);
 
-            // Retrieve colors from App.xaml resources for consistent styling
-            SolidColorBrush buttonBackgroundColor = (SolidColorBrush)App.Current.Resources["TertiaryBrush"];
-            SolidColorBrush buttonTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrush"];
-
-            // Display each list in a collapsible menu
+            // Display each list in a collapsible menu with a delete button
             foreach (var userList in myLists)
             {
+                // Create a StackPanel to hold the header and delete button
+                StackPanel headerPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+                // Add the list name as a label in the header panel
+                TextBlock listHeader = new TextBlock
+                {
+                    Text = userList.GetListName(),
+                    FontSize = 18,
+                    Foreground = textColor,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                headerPanel.Children.Add(listHeader);
+
+                // Create delete button with trash icon (using Unicode character)
+                Button deleteButton = new Button
+                {
+                    Content = "\uD83D\uDDD1",  // Trash icon Unicode
+                    FontSize = 16,
+                    Margin = new Thickness(5, 0, 0, 0),
+                    Background = Brushes.White
+                };
+
+                // Attach delete button click event to show confirmation and delete list
+                deleteButton.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
+
+                // Add delete button to the header panel
+                headerPanel.Children.Add(deleteButton);
+
+                // Create the Expander for the list
                 Expander listExpander = new Expander
                 {
-                    Header = userList.GetListName(),
+                    Header = headerPanel,
                     FontSize = 18,
                     Foreground = textColor,
                     Margin = new Thickness(0, 10, 0, 10)
@@ -139,8 +164,38 @@ namespace Desktop_Frontend.Components
         }
 
         /// <summary>
-        /// Updates the ingredient panel based on search text.
+        /// Shows a pop up confirming list deletion
         /// </summary>
+        private async Task ConfirmDeleteList(string listName)
+        {
+            // Show a confirmation popup to the user
+            MessageBoxResult result = MessageBox.Show(
+                $"Are you sure you want to delete the list '{listName}'?",
+                "Confirm Deletion",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning
+            );
+
+            // If user confirms deletion
+            if (result == MessageBoxResult.OK)
+            {
+                // Call backend to delete the list and check success/failure
+                bool deletionSuccess = await backend.DeleteList(user, listName);
+
+                // Show success or failure message based on the deletion result
+                if (deletionSuccess)
+                {
+                    MessageBox.Show("List deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    DisplayMyLists(this.parentPanel); // Refresh the displayed lists
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete the list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+
         /// <summary>
         /// Updates the ingredient panel based on search text.
         /// Ensures the search box is added first if it's missing.
