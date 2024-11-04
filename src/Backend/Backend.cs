@@ -589,7 +589,8 @@ namespace Desktop_Frontend.Backend
         /// Edits the amount and/or unit <see cref="Ingredient"/> in <see cref="UserList"/> with the given name
         /// </summary>
         /// <param name="user">The user of type <see cref="IUser"/> who is removing.</param>
-        /// <param name="ingredient">The <see cref="Ingredient"/> to be removed.</param>
+        /// <param name="oldIng">The <see cref="Ingredient"/> to be edited.</param>
+        /// <param name="newIng">The <see cref="Ingredient"/> with updated amount and unit.</param>
         /// <param name="listName">The name of the list to remove from</param>
         /// <returns>A bool indicating whether edit was successfull.</returns>
         public async Task<bool> SetIngredient(IUser user, Ingredient oldIng, Ingredient newIng, string listName)
@@ -659,6 +660,67 @@ namespace Desktop_Frontend.Backend
                 {
                     myLists[i].EditIngredientInList(oldIng, newIng);
                     isSet = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes a <see cref="UserList"/> with provided name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is removing a list.</param>
+        /// <param name="listName">The name of the list to be deleted</param>
+        /// <returns>A bool indicating whether deletion was successfull.</returns>
+        public async Task<bool> DeleteList(IUser user, string listName)
+        {
+            bool deleted = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Del_List_Endpoint + listName;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                ValidateDeleteList(response);
+                deleted = true;
+                DeleteCachedList(listName);
+            }
+            catch (Exception)
+            {
+                deleted = false;
+            }
+
+            return deleted;
+        }
+
+        /// <summary>
+        /// Validates the response from the backend API when deleting a list
+        /// </summary>
+        /// <param name="response">The HTTP response to validate.</param>
+        private static void ValidateDeleteList(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception();
+            }
+        }
+
+        /// <summary>
+        /// Deletes a list from myList cached variable
+        /// </summary>
+        /// <param name="listName">Name of list to be deleted</param>
+        private void DeleteCachedList(string listName)
+        {
+            bool deleted = false;
+            for (int i = 0; i < myLists.Count && !deleted; i++)
+            {
+                if (myLists[i].GetListName() == listName)
+                {
+                    myLists.RemoveAt(i);
+                    deleted = true;
                 }
             }
         }
