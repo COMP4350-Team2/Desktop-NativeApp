@@ -61,6 +61,9 @@ namespace Desktop_Frontend.Components
             };
             contentArea.Children.Add(header);
 
+            // Initialize create list button
+            InitializeCreateListButton(contentArea);
+
             // Retrieve user's lists from the backend
             List<UserList> myLists = await backend.GetMyLists(user);
 
@@ -186,7 +189,7 @@ namespace Desktop_Frontend.Components
                 if (deletionSuccess)
                 {
                     MessageBox.Show("List deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    DisplayMyLists(this.parentPanel); // Refresh the displayed lists
+                    await DisplayMyLists(this.parentPanel); // Refresh the displayed lists
                 }
                 else
                 {
@@ -672,7 +675,7 @@ namespace Desktop_Frontend.Components
 
                 if (success)
                 {
-                    DisplayMyLists(this.parentPanel);
+                    await DisplayMyLists(this.parentPanel);
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     popup.Close();
                 }
@@ -685,6 +688,74 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(confirmButton);
             popup.Content = panel;
             popup.ShowDialog();
+        }
+
+        /// <summary>
+        /// handler for create list button
+        /// </summary>
+        private async void CreateListButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Prompt the user for a new list name
+            string listName = Microsoft.VisualBasic.Interaction.InputBox("Enter the name for the new list:", "Create New List", "");
+
+            // Check if the user entered a valid name
+            if (string.IsNullOrWhiteSpace(listName))
+            {
+                MessageBox.Show("List name cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Attempt to create the new list
+            bool success = await backend.CreateList(user, listName);
+
+            // Show success or failure message based on the result
+            if (success)
+            {
+                MessageBox.Show("List created successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                await DisplayMyLists(parentPanel); // Refresh the list display
+            }
+            else
+            {
+                MessageBox.Show("Failed to create list. Make sure the list does not exist already.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Method to make create list button
+        /// </summary>
+        private void InitializeCreateListButton(StackPanel contentArea)
+        {
+            // Create the button
+            Button createListButton = new Button
+            {
+                Width = 150, 
+                Height = 40, 
+                Background = Brushes.Transparent, 
+                Foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrush"], 
+                FontSize = 14, 
+                FontWeight = FontWeights.Bold,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Content = "Create List",
+                BorderBrush = Brushes.Transparent,
+            };
+
+            // Set the corner radius by wrapping the button in a Border
+            Border border = new Border
+            {
+                Width = 150,
+                Height = 40,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Background = (SolidColorBrush)App.Current.Resources["TertiaryBrush"],
+                CornerRadius = new CornerRadius(20),
+                Child = createListButton
+            };
+
+            // Attach the click event handler
+            createListButton.Click += CreateListButton_Click;
+
+            // Add the border (with button) to the content area
+            contentArea.Children.Add(border);
         }
     }
 }

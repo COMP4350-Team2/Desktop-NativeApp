@@ -79,5 +79,13 @@ namespace Desktop_Frontend.Backend
         /// <param name="listName">The name of the list to be deleted</param>
         /// <returns>A bool indicating whether deletion was successfull.</returns>
         public Task<bool> DeleteList(IUser user, string listName);
+
+        /// <summary>
+        /// Creates a <see cref="UserList"/> with provided name
+        /// </summary>
+        /// <param name="user">The user of type <see cref="IUser"/> who is creating a list.</param>
+        /// <param name="listName">The name of the list to be created</param>
+        /// <returns>A bool indicating whether creation was successfull.</returns>
+        public Task<bool> CreateList(IUser user, string listName);
     }
 }
