@@ -46,6 +46,7 @@ jobs:
           "REMOVE_INGREDIENT=${{ secrets.REMOVE_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "SET_INGREDIENT=${{ secrets.SET_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
           "DELETE_LIST=${{ secrets.DELETE_LIST}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
+          "CREATE_LIST=${{ secrets.CREATE_LIST}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
 
       - name: Build project
         run: |
