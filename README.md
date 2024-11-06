@@ -169,3 +169,16 @@ The team ran these tests on both the Production environment and a Mock environme
 - Enter the amount and/or unit in the popup and click OK.
 - If an ingredient with the same name and unit as the new ingredient exists, the amount entered should be added to that ingredient.
 - If an ingredient with the same name and unit as the new ingredient does not exist, the ingredient should just be edited with the new values.
+
+### User Story: Persistence User
+**Description:** As a user, I want to see the ingredients I previously had in my list when I log in.
+
+**Acceptance Criteria:** 
+- Given that I’m a logged-out user
+- When I enter my details correctly and get logged in
+- Then, the app should keep my previous ingredients list.
+
+#### Test Steps
+- Log into the application
+- Click on `My Lists`
+- All the lists should have the same ingredients as before the log-in.
