@@ -20,16 +20,16 @@ jobs:
       - name: Build the project
         run: |
           cd src
-          dotnet publish -c Release -r win-x64 --self-contained false -o ../publish
+          dotnet publish -c Release -r win-x64 --self-contained false -o ${{ github.workspace }}\publish
 
       - name: Create folder structure for deployment
         run: |
-          # Create necessary folder structure without .env files 
-          mkdir ..\publish\src\Auth0
-          mkdir ..\publish\src\Backend
+          # Create necessary folder structure without .env files (Windows syntax)
+          mkdir ${{ github.workspace }}\publish\src\Auth0
+          mkdir ${{ github.workspace }}\publish\src\Backend
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: Cupboard-Desktop
-          path: ../publish
+          path: ${{ github.workspace }}\publish
