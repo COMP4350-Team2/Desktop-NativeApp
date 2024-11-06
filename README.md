@@ -106,3 +106,22 @@ The team ran these tests on both the Production environment and a Mock environme
 - After logging in, the homepage shows a list of ingredients. Alternatively click `All Ingredients` button.
 - All ingredients are shown on the page. Each ingredient has a `+` button next to it. 
 - Click the `+` button to add ingredient. Shows a message box saying this will be implemented in the future.
+
+
+### User Story: Add Ingredient To List
+**Description:** As a user, I want to search ingredients and add them to one of my lists.
+
+**Acceptance Criteria:** 
+- Given that I’m a logged in user and on my profile
+- I should be able to see a list of my own ingredients that I can open
+- When I click the “add ingredients” button upon opening my list
+- Then I should be presented with a list of commonly available ingredients that I can search through using a search bar.
+
+#### Test Steps
+- After logging in, the homepage shows a list of ingredients. Alternatively click `All Ingredients` button.
+- All ingredients are shown on the page with a search bar. Each ingredient has a `+` button next to it. 
+- Click the `+` button to add ingredient. I will then be able to specify an amount, the unit and the list to add to.
+- After adding, click `My Lists` button to see all lists. Ingredient should be in the list specified.
+- If that ingredient did not exist in that list, a new ingredient should be added.
+- If the ingredient with the same name and unit existed in the list already, the amount of that ingredient should be increased.
+- If the ingredient with the same name but different unit existed in the list already, a new ingredient should be added.
