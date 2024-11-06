@@ -108,7 +108,7 @@ The team ran these tests on both the Production environment and a Mock environme
 - Click the `+` button to add ingredient. Shows a message box saying this will be implemented in the future.
 
 
-### User Story: Ingredient lists board
+### User Story: Remove Ingredients from List
 **Description:** As a user, i should be able to remove an ingredient from my lists.
 
 **Acceptance Criteria:** 
