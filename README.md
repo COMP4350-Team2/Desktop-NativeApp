@@ -155,3 +155,17 @@ The team ran these tests on both the Production environment and a Mock environme
 - If that ingredient did not exist in that list, a new ingredient should be added.
 - If the ingredient with the same name and unit existed in the list already, the amount of that ingredient should be increased.
 - If the ingredient with the same name but different unit existed in the list already, a new ingredient should be added.
+
+### User Story: Set Amount/Unit For Ingredients
+**Description:** As a user, I want to be able to set the amounts/units of ingredients in a list
+
+**Acceptance Criteria:** 
+- Given that I’m in a list on My Lists page
+- When I click on the edit button next to an ingredient.
+- Then, I should be able to edit the amount/unit of ingredient in that list.
+
+#### Test Steps
+- When on a list in `My Lists` page, click on the edit button next to an ingredient.
+- Enter the amount and/or unit in the popup and click OK.
+- If an ingredient with the same name and unit as the new ingredient exists, the amount entered should be added to that ingredient.
+- If an ingredient with the same name and unit as the new ingredient does not exist, the ingredient should just be edited with the new values.
