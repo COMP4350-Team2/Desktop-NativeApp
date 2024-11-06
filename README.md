@@ -108,6 +108,21 @@ The team ran these tests on both the Production environment and a Mock environme
 - Click the `+` button to add ingredient. Shows a message box saying this will be implemented in the future.
 
 
+### User Story: Ingredient lists board
+**Description:** As a user, I want to have a place to view all my lists.
+
+**Acceptance Criteria:** 
+- Given that I’m a logged in user
+- When I click on my profile and click My Lists
+- Then I should be able to see, add or remove all my lists with all the ingredients in them
+
+#### Test Steps
+- After logging in, click on `My Lists` button.
+- It shows a list of all the user's lists.
+- Each list has an expand button which can be clicked to show the contents of that list.
+
+
+
 ### User Story: Remove Ingredients from List
 **Description:** As a user, i should be able to remove an ingredient from my lists.
 
