@@ -1,0 +1,35 @@
+name: CD Workflow
+
+on:
+  release:
+    types: [published]  
+
+jobs:
+  build:
+    runs-on: windows-latest  
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.400'
+
+      - name: Build the project
+        run: |
+          cd src
+          dotnet publish -c Release -r win-x64 --self-contained false -o ../publish
+
+      - name: Create folder structure for deployment
+        run: |
+          # Create necessary folder structure without .env files 
+          mkdir ..\publish\src\Auth0
+          mkdir ..\publish\src\Backend
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Cupboard-Desktop
+          path: ../publish
