@@ -653,7 +653,7 @@ namespace Desktop_Frontend.Components
 
             // Unit
             ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
-            var units = backend.GetAllMeasurements(user).Result;
+            var units = await backend.GetAllMeasurements(user);
             foreach (var unit in units)
             {
                 unitBox.Items.Add(unit);
