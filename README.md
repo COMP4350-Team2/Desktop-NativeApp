@@ -182,3 +182,17 @@ The team ran these tests on both the Production environment and a Mock environme
 - Log into the application
 - Click on `My Lists`
 - All the lists should have the same ingredients as before the log-in.
+
+### User Story: Move Ingredients
+**Description:** As a user, when I'm on a list, I should be able to move any given ingredient to another list of mine.
+
+**Acceptance Criteria:** 
+- Given that I am a logged in user on My Lists page on a list
+- Then I should be able to move an ingredient to another list.
+
+#### Test Steps
+- Click on the `Move` button next to an ingredient.
+- Select the list to move to from the pop-up and click OK.
+- The ingredient should disappear from the current list.
+- If the list to move to already has an ingredient with the same name and unit, the amount of that ingredient should increase. 
+- If the list to move to does not have an ingredient with the same name and unit, a new ingredient should be added.
