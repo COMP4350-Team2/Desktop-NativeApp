@@ -108,6 +108,21 @@ The team ran these tests on both the Production environment and a Mock environme
 - Click the `+` button to add ingredient. Shows a message box saying this will be implemented in the future.
 
 
+### User Story: Ingredient lists board
+**Description:** As a user, i should be able to remove an ingredient from my lists.
+
+**Acceptance Criteria:** 
+- Given that I am logged in and on My Lists page
+- And I navigate to an ingredient on a list
+- And I click on delete ingredient
+- Then the ingredient should be removed from that list
+
+#### Test Steps
+- On the `My Lists` page, click on a list to expand it. It shows ingredients in that list.
+- Click on the delete button next on the ingredient.
+- That should remove that ingredient from that list.
+
+
 ### User Story: Add Ingredient To List
 **Description:** As a user, I want to search ingredients and add them to one of my lists.
 
