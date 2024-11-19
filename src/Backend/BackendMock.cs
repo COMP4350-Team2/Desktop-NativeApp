@@ -24,7 +24,17 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Milk", "Dairy"),
                 new Ingredient("Rice", "Grain"),
                 new Ingredient("Eggs", "Protein"),
-                new Ingredient("Bread", "Grain")
+                new Ingredient("Bread", "Grain"),
+                new Ingredient("Beans", "Pantry"),
+                new Ingredient("Owl", "Poultry"),
+                new Ingredient("Chicken", "Poultry"),
+                new Ingredient("Oats", "Pantry"),
+                new Ingredient("Oranges", "Produce"),
+                new Ingredient("Carrot", "Produce"),
+                new Ingredient("Wheat", "Grain"),
+                new Ingredient("Lentils", "Grain"),
+                new Ingredient("Cookies", "Snacks"),
+                new Ingredient("Chips", "Snacks")
             };
             this.user = user;
 
