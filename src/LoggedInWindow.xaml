@@ -2,145 +2,57 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="LoggedInWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen"
-        Background="{StaticResource PrimaryBrush}">
+        Background="{StaticResource PrimaryBrushA}">
     <Grid Name="MainGrid">
 
-        <!-- Navigation Panel -->
-        <Border BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,0,0,0">
-            <DockPanel LastChildFill="True" Background="{StaticResource SecondaryBrush}">
-                <StackPanel DockPanel.Dock="Top">
-                    <TextBox Name="UsernameTextBox" 
-                             Background="Transparent" 
-                             Foreground="{StaticResource TertiaryBrush}" 
-                             BorderBrush="Transparent" 
-                             FontSize="20"
-                             FontWeight="Bold" 
-                             Margin="10" 
-                             TextAlignment="Center"
-                             IsReadOnly="True"/>
-                    <!-- All Ingredients Button -->
-                    <Button Name="AllIngredientsButton" Width="180" Height="50" Margin="10" Click="AllIngredientsButton_Click" 
-                            Background="{StaticResource TertiaryBrush}" Foreground="{StaticResource SecondaryBrush}" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="All Ingredients">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Control.Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource TertiaryBrush}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <Button.Effect>
-                            <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
-                        </Button.Effect>
-                    </Button>
+        <!-- Navigation Panel with Grid Layout -->
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,0,0,0" Background="{StaticResource PrimaryBrushB}">
+            <!-- Single RowDefinitions block to define the grid layout -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Row for Navigation Buttons -->
+                <RowDefinition Height="*"/>
+                <!-- Spacer Row to push logout button down -->
+                <RowDefinition Height="Auto"/>
+                <!-- Row for Logout Button -->
+            </Grid.RowDefinitions>
 
-                    <!-- My Lists Button -->
-                    <Button Name="MyListsButton" Width="180" Height="50" Margin="10" Click="MyListsButton_Click" 
-                            Background="{StaticResource TertiaryBrush}" Foreground="{StaticResource SecondaryBrush}" FontSize="14" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="My Lists">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Control.Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource TertiaryBrush}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <Button.Effect>
-                            <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
-                        </Button.Effect>
-                    </Button>
+            <!-- Username Section -->
+            <StackPanel Grid.Row="0" Margin="10">
+                <TextBox Name="UsernameTextBox" 
+                         Background="Transparent" 
+                         Foreground="{StaticResource SecondaryBrushB}" 
+                         BorderBrush="Transparent" 
+                         FontSize="24"  
+                         FontWeight="Bold" 
+                         TextAlignment="Center"
+                         IsReadOnly="True"/>
+            </StackPanel>
+
+            <!-- Navigation Buttons Section (Vertically Stacked) -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="10">
+                <!-- All Ingredients Button (Unicode Burger Icon + Text) -->
+                <StackPanel Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="AllIngredientsButton_Click">
+                    <TextBlock Text="🍔" FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" />
+                    <TextBlock Name="AllIngredientsButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Ingredients" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
 
-                <!-- Logout Button at the very bottom -->
-                <Button Name="LogoutButton" Width="180" Height="50" Margin="10" Click="LogoutButton_Click" 
-                        Background="{StaticResource TertiaryBrush}" Foreground="{StaticResource SecondaryBrush}" FontSize="16" FontWeight="Bold" BorderBrush="Transparent" BorderThickness="0"
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10" Content="Log out"
-                        VerticalAlignment="Bottom" DockPanel.Dock="Bottom">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Control.Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                    <Setter Property="RenderTransform">
-                                        <Setter.Value>
-                                            <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource TertiaryBrush}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <Button.Effect>
-                        <DropShadowEffect ShadowDepth="5" Color="#0F4C75" BlurRadius="10" Opacity="0.6"/>
-                    </Button.Effect>
-                </Button>
-            </DockPanel>
-        </Border>
+                <!-- My Lists Button (Unicode List Icon + Text) -->
+                <StackPanel Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="MyListsButton_Click">
+                    <TextBlock Text="📋 " FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" />
+                    <TextBlock Name="MyListsButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Lists" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Log Out Button (Unicode Exclamation Mark + Text) -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="LogoutButton_Click">
+                <TextBlock Text="  ❗" FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" Width="53" />
+                <TextBlock Name="LogoutButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Log out" TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+        </Grid>
 
         <!-- Scrollable Content Area -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="210,0,0,0">
+        <ScrollViewer x:Name="ParentScrollViewer" VerticalScrollBarVisibility="Auto" Margin="200,10,10,10">
             <StackPanel Name="ContentArea" VerticalAlignment="Stretch">
                 <!-- This is where the ingredients list will be populated -->
             </StackPanel>
