@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
@@ -11,7 +12,6 @@ namespace Desktop_Frontend.Components
     /// </summary>
     public class MyListsHandler
     {
-        private readonly SolidColorBrush textColor;
         private readonly IBackend backend;
         private readonly IUser user;
         private StackPanel parentPanel;
@@ -25,8 +25,7 @@ namespace Desktop_Frontend.Components
         /// <param name="user">The user instance for user-specific actions.</param>
         public MyListsHandler(IBackend backend, IUser user)
         {
-            textColor = (SolidColorBrush)App.Current.Resources["TertiaryBrush"]; 
-            this.backend = backend; 
+            this.backend = backend;
             this.user = user;
             parentPanel = null;
         }
@@ -38,6 +37,27 @@ namespace Desktop_Frontend.Components
         /// <param name="contentArea">The panel to display content within.</param>
         public async Task DisplayMyLists(StackPanel contentArea)
         {
+            SolidColorBrush pageHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush listHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush ingredientButtonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush ingredientTxtCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush searchBarBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush searchBarTxtCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush expanderIconCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush expanderBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush dropDownBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush dropDownForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            int pageHeaderFont = 32;
+            int listHeaderFont = 28;
+            int ingredientButtonFont = 28;
+            int searchBarFont = 24;
+            int optionsFont = 20;
+
+
+            double availableWidth = SystemParameters.PrimaryScreenWidth;
+            double itemWidth = availableWidth / 2 - 200;
+
             if (this.parentPanel == null)
             {
                 this.parentPanel = contentArea;
@@ -48,9 +68,9 @@ namespace Desktop_Frontend.Components
             TextBlock header = new TextBlock
             {
                 Text = "My Lists",
-                FontSize = 24,
+                FontSize = pageHeaderFont,
                 FontWeight = FontWeights.Bold,
-                Foreground = textColor,
+                Foreground = pageHeaderTextCol,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 20, 0, 20)
             };
@@ -65,41 +85,90 @@ namespace Desktop_Frontend.Components
             // Display each list in a collapsible menu with a delete button
             foreach (var userList in myLists)
             {
-                // Create a StackPanel to hold the header and delete button
-                StackPanel headerPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                Grid headerGrid = new Grid
+                {
+                    Margin = new Thickness(10)
+                };
 
-                // Add the list name as a label in the header panel
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.2, GridUnitType.Star) }); 
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.3, GridUnitType.Auto) }); 
+
+
+                // Create the list name label
                 TextBlock listHeader = new TextBlock
                 {
                     Text = userList.GetListName(),
-                    FontSize = 18,
-                    Foreground = textColor,
-                    VerticalAlignment = VerticalAlignment.Center
+                    FontSize = listHeaderFont,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = listHeaderTextCol,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(10),
+                    Width = availableWidth 
                 };
-                headerPanel.Children.Add(listHeader);
 
-                // Create delete button with trash icon (using Unicode character)
-                Button deleteButton = new Button
+                // Set the list name to be in the first column
+                Grid.SetColumn(listHeader, 0);
+                headerGrid.Children.Add(listHeader);
+
+                // Initialize the options button 
+                Button optionsButton = new Button
                 {
-                    Content = "\uD83D\uDDD1",  // Trash icon Unicode
-                    FontSize = 16,
-                    Margin = new Thickness(5, 0, 0, 0),
-                    Background = Brushes.White
+                    Content = new TextBlock
+                    {
+                        Text = "...",
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
+                    Margin = new Thickness(10, 10, 5, 20),
+                    FontSize = ingredientButtonFont,
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
+                    Foreground = ingredientButtonCol,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Cursor = Cursors.Hand
                 };
+                optionsButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
 
-                // Attach delete button click event to show confirmation and delete list
-                deleteButton.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
+                // Set the options button in the second column
+                Grid.SetColumn(optionsButton, 1);
+                headerGrid.Children.Add(optionsButton);
 
-                // Add delete button to the header panel
-                headerPanel.Children.Add(deleteButton);
+                // Create the dropdown menu 
+                ContextMenu dropdownMenu = new ContextMenu { Background = dropDownBackground };
 
-                // Create the Expander for the list
+                // Add the options to the menu
+                MenuItem addIngredientOption = new MenuItem { Header = "Add Ingredient" };
+                addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList);
+                addIngredientOption.Foreground = dropDownForeground;
+                addIngredientOption.FontSize = optionsFont;
+                dropdownMenu.Items.Add(addIngredientOption);
+
+                MenuItem renameListOption = new MenuItem { Header = "Rename List" };
+                renameListOption.Click += (s, e) => { MessageBox.Show("To be implemented"); };
+                renameListOption.Foreground = dropDownForeground;
+                renameListOption.FontSize = optionsFont;
+                dropdownMenu.Items.Add(renameListOption);
+
+                MenuItem deleteListOption = new MenuItem { Header = "Delete List" };
+                deleteListOption.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
+                deleteListOption.Foreground = Brushes.Red;
+                deleteListOption.FontSize = optionsFont;
+                deleteListOption.FontWeight = FontWeights.Bold;
+                dropdownMenu.Items.Add(deleteListOption);
+
+                // Show the dropdown menu when the options button is clicked
+                optionsButton.Click += (sender, e) => { dropdownMenu.IsOpen = true; };
+
+                // Create the Expander for the list, using the grid for the header
                 Expander listExpander = new Expander
                 {
-                    Header = headerPanel,
+                    Header = headerGrid,
                     FontSize = 18,
-                    Foreground = textColor,
-                    Margin = new Thickness(0, 10, 0, 10)
+                    Foreground = expanderIconCol,
+                    Margin = new Thickness(30),
+                    BorderThickness = new Thickness(2),
+                    BorderBrush = expanderBorderCol
                 };
 
                 StackPanel ingredientPanel = new StackPanel();
@@ -107,9 +176,16 @@ namespace Desktop_Frontend.Components
                 // Add search box for filtering ingredients
                 TextBox searchBox = new TextBox
                 {
-                    Text = "Search ingredients...", // Initial placeholder text
-                    Foreground = Brushes.Gray,
-                    Margin = new Thickness(0, 0, 0, 10)
+                    Text = "Search ingredients...",
+                    Foreground = searchBarTxtCol,
+                    Background = searchBarBackground,
+                    FontSize = searchBarFont,
+                    Height = 40,
+                    Margin = new Thickness(12, 10, 10, 10),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    VerticalContentAlignment = VerticalAlignment.Bottom,
+                    Width = 2 * itemWidth + 50
                 };
 
                 // Placeholder behavior
@@ -118,7 +194,7 @@ namespace Desktop_Frontend.Components
                     if (searchBox.Text == "Search ingredients...")
                     {
                         searchBox.Text = "";
-                        searchBox.Foreground = Brushes.Black;
+                        searchBox.Foreground = searchBarTxtCol;
                     }
                 };
 
@@ -127,7 +203,7 @@ namespace Desktop_Frontend.Components
                     if (string.IsNullOrWhiteSpace(searchBox.Text))
                     {
                         searchBox.Text = "Search ingredients...";
-                        searchBox.Foreground = Brushes.Gray;
+                        searchBox.Foreground = searchBarTxtCol;
                     }
                 };
 
@@ -136,7 +212,7 @@ namespace Desktop_Frontend.Components
                 // Filter ingredients as user types in the search box
                 searchBox.TextChanged += (s, e) =>
                 {
-                    string searchText = searchBox.Text.ToLower();
+                    string searchText = searchBox.Text.ToLower().Trim();
                     UpdateIngredientPanel(ingredientPanel, searchText, userList);
                 };
 
@@ -161,38 +237,86 @@ namespace Desktop_Frontend.Components
             }
         }
 
+
+
         /// <summary>
         /// Shows a pop up confirming list deletion
         /// </summary>
         private async Task ConfirmDeleteList(string listName)
         {
-            // Show a confirmation popup to the user
-            MessageBoxResult result = MessageBox.Show(
-                $"Are you sure you want to delete the list '{listName}'?",
-                "Confirm Deletion",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Warning
-            );
+            // Define the brushes for the popup background and text
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            // If user confirms deletion
-            if (result == MessageBoxResult.OK)
+            int textFont = 18;
+
+            // Create Popup window
+            Window popup = new Window
             {
-                // Call backend to delete the list and check success/failure
-                bool deletionSuccess = await backend.DeleteList(user, listName);
+                Title = "Deleting " + listName,
+                Width = 500,
+                Height = 200,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
 
-                // Show success or failure message based on the deletion result
-                if (deletionSuccess)
+            // Panel for the popup content
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            // Confirmation message text
+            TextBlock confirmationText = new TextBlock
+            {
+                Text = "Are you sure you want to delete " + listName + "?",
+                Foreground = textColor,
+                FontSize = textFont,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(10)
+            };
+
+            panel.Children.Add(confirmationText);
+
+            // Create the delete confirmation button 
+            Button deleteButton = new Button
+            {
+                Content = "Delete",
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"], 
+                Margin = new Thickness(10, 30, 10, 10)
+            };
+
+            // Handle delete button click
+            deleteButton.Click += async (s, e) =>
+            {
+                deleteButton.IsEnabled = false;
+
+                bool success = await backend.DeleteList(user, listName);
+
+                // Show result message
+                if (success)
                 {
-                    MessageBox.Show("List deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await DisplayMyLists(this.parentPanel); // Refresh the displayed lists
+                    MessageBox.Show("List deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Failed to delete the list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Failed to delete list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }
-        }
 
+                deleteButton.IsEnabled = true;
+
+                await DisplayMyLists(parentPanel); 
+                popup.Close();
+            };
+
+            panel.Children.Add(deleteButton);
+
+            // Set the popup content
+            popup.Content = panel;
+
+            // Show the popup as a modal dialog
+            popup.ShowDialog();
+        }
 
         /// <summary>
         /// Updates the ingredient panel based on search text.
@@ -200,17 +324,34 @@ namespace Desktop_Frontend.Components
         /// </summary>
         private void UpdateIngredientPanel(StackPanel ingredientPanel, string searchText, UserList userList)
         {
+            SolidColorBrush seachBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            int ingBoxHeight = 120;
+            int maxRowsPerPanel = 3;
+            int searchBarFont = 24;
+
+            // Dynamically calculate item width based on the screen size 
+            double availableWidth = SystemParameters.PrimaryScreenWidth;
+            double itemWidth = availableWidth / 2 - 200; 
+
             // Check if the search box exists in the panel; if not, add it.
             if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is TextBox))
             {
+                // Create the search box
                 TextBox searchBox = new TextBox
                 {
                     Text = "Search ingredients...", // Initial placeholder text
-                    Foreground = Brushes.Gray,
-                    Margin = new Thickness(0, 0, 0, 10)
+                    Foreground = seachBoxForeground,
+                    Height = 40,
+                    FontSize = searchBarFont,
+                    Margin = new Thickness(12, 10, 10, 10),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    VerticalContentAlignment = VerticalAlignment.Bottom,
+                    Width = 2 * itemWidth + 50
                 };
 
-                // Placeholder behavior
+                // Placeholder behavior for the search box
                 searchBox.GotFocus += (s, e) =>
                 {
                     if (searchBox.Text == "Search ingredients...")
@@ -225,7 +366,7 @@ namespace Desktop_Frontend.Components
                     if (string.IsNullOrWhiteSpace(searchBox.Text))
                     {
                         searchBox.Text = "Search ingredients...";
-                        searchBox.Foreground = Brushes.Gray;
+                        searchBox.Foreground = seachBoxForeground;
                     }
                 };
 
@@ -245,32 +386,37 @@ namespace Desktop_Frontend.Components
                 ingredientPanel.Children.RemoveAt(i);
             }
 
-            // Filter and display ingredients that match the search
-            foreach (var ingredient in userList.GetIngredients().Where(ing => ing.GetName().ToLower().Contains(searchText)))
+            // Create a ScrollViewer to make the grid scrollable
+            ScrollViewer scrollViewer = new ScrollViewer
             {
-                ingredientPanel.Children.Add(CreateIngredientRow(ingredient, userList));
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto, 
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, 
+                MaxHeight = (maxRowsPerPanel * ingBoxHeight) + 10 
+            };
+
+            // Create a WrapPanel for ingredients
+            WrapPanel ingredientGrid = new WrapPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(5, 0, 0, 20)
+            };
+
+
+            // Filter and display ingredients that match the search
+            foreach (var ingredient in userList.GetIngredients().Where(ing => ing.GetName().ToLower().Contains(searchText) ||
+            ing.GetIngType().ToLower().Contains(searchText)))
+            {
+                Border ingRow = CreateIngredientRow(ingredient, userList, itemWidth, ingBoxHeight);
+                ingredientGrid.Children.Add(ingRow);
             }
 
-            // Add the + button at the bottom
-            Button addIngredientButton = new Button
-            {
-                Content = "+",
-                Width = 30,
-                Height = 30,
-                Background = Brushes.White,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(20, 20, 0, 0)
-            };
+            scrollViewer.Content = ingredientGrid;
 
-            // Click event for adding an ingredient
-            addIngredientButton.Click += async (s, e) =>
-            {
-                await ShowAddIngredientPopup(userList);
-            };
-
-            // Add the button to the ingredient panel
-            ingredientPanel.Children.Add(addIngredientButton);
+            // Add the WrapPanel to the ingredient panel
+            ingredientPanel.Children.Add(scrollViewer);
         }
+
 
 
         /// <summary>
@@ -278,8 +424,9 @@ namespace Desktop_Frontend.Components
         /// </summary>
         private void ResetSearchAndDisplayIngredients(TextBox searchBox, StackPanel ingredientPanel, UserList userList)
         {
+            SolidColorBrush seachBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             searchBox.Text = "Search ingredients...";
-            searchBox.Foreground = Brushes.Gray;
+            searchBox.Foreground = seachBoxForeground;
             UpdateIngredientPanel(ingredientPanel, "", userList);
         }
 
@@ -288,78 +435,136 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The ingredient to display.</param>
         /// <returns>A Border control containing the ingredient row.</returns>
-        private Border CreateIngredientRow(Ingredient ingredient, UserList userList)
+        private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight)
         {
-            // Create a row to display ingredient details
-            DockPanel ingredientRow = new DockPanel { Margin = new Thickness(0, 5, 0, 5) };
+            SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            // Ingredient details text
-            TextBlock ingredientText = new TextBlock
+            int ingTextFont = 24;
+            int buttonFont = 24;
+
+            // Create a DockPanel to display ingredient details
+            DockPanel ingredientRow = new DockPanel
             {
-                Text = $"{ingredient.GetName()} - {ingredient.GetIngType()} | {ingredient.GetAmount()} {ingredient.GetUnit()}",
-                Foreground = textColor,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 10, 0)
+                Margin = new Thickness(10),
+                Width = itemWidth,
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            DockPanel.SetDock(ingredientText, Dock.Left);
-            ingredientRow.Children.Add(ingredientText);
 
-            // Panel to hold delete and edit buttons together, aligned to the right
-            StackPanel buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+            // Ingredient name text
+            TextBlock ingredientNameText = new TextBlock
+            {
+                Text = $"{ingredient.GetName()}",
+                Foreground = ingTextCol,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = ingTextFont,
+                FontWeight = FontWeights.Bold,
+                MaxWidth = parentPanel.ActualWidth / 4,
+            };
 
-            // Create move button with text
+            // Ingredient type text 
+            TextBlock ingredientTypeText = new TextBlock
+            {
+                Text = $" - {ingredient.GetIngType()}",
+                Foreground = ingTextCol,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = ingTextFont,
+                MaxWidth = parentPanel.ActualWidth / 7,
+            };
+
+            // Ingredient amount, unit text 
+            TextBlock ingredientAmountText = new TextBlock
+            {
+                Text = $" | {ingredient.GetAmount()} {ingredient.GetUnit()}",
+                Foreground = ingTextCol,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = ingTextFont,
+                MaxWidth = parentPanel.ActualWidth / 4,
+            };
+
+            DockPanel.SetDock(ingredientNameText, Dock.Left);
+            DockPanel.SetDock(ingredientTypeText, Dock.Left);
+            DockPanel.SetDock(ingredientAmountText, Dock.Left);
+            ingredientRow.Children.Add(ingredientNameText);
+            ingredientRow.Children.Add(ingredientTypeText);
+            ingredientRow.Children.Add(ingredientAmountText);
+
+            // Panel to hold delete, edit, and move buttons
+            StackPanel buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            // Move button
             Button moveButton = new Button
             {
-                Content = "Move",
-                FontSize = 16,
-                Margin = new Thickness(5, 0, 0, 0),
-                Background = Brushes.White
+                Content = "\u21C4",
+                FontSize = buttonFont,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10),
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Foreground = buttonCol,
+                Cursor = Cursors.Hand,
             };
+            moveButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList.GetListName(), ingredient);
 
-            // Add move button to the panel 
-            buttonPanel.Children.Add(moveButton);
-
-            // Delete button (Trash icon)
+            // Delete button
             Button deleteButton = new Button
             {
                 Content = "\uD83D\uDDD1", // Trash can icon
-                Width = 30,
-                Height = 30,
-                Background = Brushes.White,
-                Margin = new Thickness(10, 0, 0, 0)
+                FontSize = buttonFont,
+                FontWeight = FontWeights.Bold,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Foreground = buttonCol,
+                Margin = new Thickness(10),
+                Cursor = Cursors.Hand
             };
+            deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             deleteButton.Click += async (s, e) => await ConfirmDeletion(ingredient, userList.GetListName());
-            buttonPanel.Children.Add(deleteButton);
 
             // Edit button
             Button editButton = new Button
             {
-                Content = "\u270E", // Edit button icon
-                Width = 30,
-                Height = 30,
-                Background = Brushes.White,
-                Margin = new Thickness(10, 0, 0, 0)
+                Content = "\u270E", // Edit icon
+                FontSize = buttonFont,
+                FontWeight = FontWeights.Bold,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Foreground = buttonCol,
+                Margin = new Thickness(10),
+                Cursor = Cursors.Hand
             };
+            editButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList);
-            buttonPanel.Children.Add(editButton);
 
-            // Add the button panel to the DockPanel, aligned to the right
+            // Add buttons to the panel
+            buttonPanel.Children.Add(deleteButton);
+            buttonPanel.Children.Add(editButton);
+            buttonPanel.Children.Add(moveButton);
+
+            // Add the button panel to the DockPanel
             ingredientRow.Children.Add(buttonPanel);
 
             // Create border styling for the ingredient row
             Border border = new Border
             {
-                BorderBrush = Brushes.Gray,
+                BorderBrush = borderCol,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(5),
-                Margin = new Thickness(0, 5, 0, 5),
-                Padding = new Thickness(10),
+                Margin = new Thickness(5),
+                Height = ingBoxHeight, 
                 Child = ingredientRow
             };
 
             return border;
         }
+
+
 
         /// <summary>
         /// Shows pop up window for adding an <see cref="Ingredient"/>
@@ -367,27 +572,50 @@ namespace Desktop_Frontend.Components
         /// <param name="userList">The <see cref="UserList"/> to be added to.</param>
         private async Task ShowAddIngredientPopup(UserList userList)
         {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+
             // Create Popup window
             Window popup = new Window
             {
                 Title = "Add Ingredient",
-                Width = 300,
-                Height = 400, // Increased height to accommodate search
+                Width = 400,
+                Height = 450,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
             };
 
             StackPanel panel = new StackPanel { Margin = new Thickness(10) };
 
-            // Ingredient name input with search functionality
+            double boxWidth = 350;
+            double boxHeight = 30;
+            double fontSize = 18;
+
+            SolidColorBrush boxColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+            SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
             TextBox searchBox = new TextBox
             {
-                Margin = new Thickness(0, 10, 0, 10),
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
                 Text = "Search ingredients...",
-                Foreground = Brushes.Gray
+                Foreground = Brushes.Gray,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = fontSize
             };
 
-            ComboBox nameBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            // Box to show ingredient names
+            ComboBox nameBox = new ComboBox
+            {
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
             List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
 
             // Populate ComboBox with all ingredients initially
@@ -397,7 +625,7 @@ namespace Desktop_Frontend.Components
             }
             if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
 
-            panel.Children.Add(new TextBlock { Text = "Ingredient Name:" });
+            panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(searchBox);
             panel.Children.Add(nameBox);
 
@@ -406,8 +634,16 @@ namespace Desktop_Frontend.Components
             {
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Text = "Enter amount",
-                Foreground = Brushes.Gray
+                Foreground = boxTextColor,
+                Background = boxColor,
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
             };
+
+            // Clear on focus, restore on defocus if empty
             amountBox.GotFocus += (s, e) =>
             {
                 if (amountBox.Text == "Enter amount")
@@ -424,18 +660,27 @@ namespace Desktop_Frontend.Components
                     amountBox.Foreground = Brushes.Gray;
                 }
             };
-            panel.Children.Add(new TextBlock { Text = "Amount:" });
+            panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(amountBox);
 
             // Unit input
-            ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            ComboBox unitBox = new ComboBox
+            {
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
             List<string> units = await backend.GetAllMeasurements(user);
             foreach (var unit in units)
             {
                 unitBox.Items.Add(unit);
             }
             if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0;
-            panel.Children.Add(new TextBlock { Text = "Unit:" });
+
+            panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(unitBox);
 
             // Filter ingredients as user types in the search box
@@ -444,7 +689,7 @@ namespace Desktop_Frontend.Components
                 if (searchBox.Text == "Search ingredients...")
                 {
                     searchBox.Text = "";
-                    searchBox.Foreground = Brushes.Black; // Change text color to black for user input
+                    searchBox.Foreground = Brushes.Black; 
                 }
             };
 
@@ -453,7 +698,7 @@ namespace Desktop_Frontend.Components
                 if (string.IsNullOrWhiteSpace(searchBox.Text))
                 {
                     searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = Brushes.Gray; // Change text color back to gray
+                    searchBox.Foreground = Brushes.Gray; 
 
                     // Repopulate the ComboBox with all ingredients when the search box is empty
                     nameBox.Items.Clear();
@@ -461,21 +706,21 @@ namespace Desktop_Frontend.Components
                     {
                         nameBox.Items.Add(ing.GetName());
                     }
-                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0; // Select the first ingredient
+                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0; 
                 }
             };
 
             searchBox.TextChanged += (s, e) =>
             {
                 string searchText = searchBox.Text.ToLower();
-                nameBox.Items.Clear(); // Clear the ComboBox items
+                nameBox.Items.Clear(); 
 
                 // If the search box is empty, show all ingredients
                 if (string.IsNullOrWhiteSpace(searchText))
                 {
                     foreach (var ing in allIngredients)
                     {
-                        nameBox.Items.Add(ing.GetName()); // Add all ingredients back to the ComboBox
+                        nameBox.Items.Add(ing.GetName()); 
                     }
                 }
                 else
@@ -485,7 +730,7 @@ namespace Desktop_Frontend.Components
                     {
                         if (ing.GetName().ToLower().Contains(searchText))
                         {
-                            nameBox.Items.Add(ing.GetName()); // Add matching ingredients
+                            nameBox.Items.Add(ing.GetName()); 
                         }
                     }
                 }
@@ -495,12 +740,12 @@ namespace Desktop_Frontend.Components
                     nameBox.SelectedIndex = 0;
             };
 
-            // Add button
+            // Add button 
             Button addButton = new Button
             {
                 Content = "Add",
-                Margin = new Thickness(0, 20, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Center
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] // Apply the pre-defined style
             };
 
             addButton.Click += async (s, e) =>
@@ -526,19 +771,25 @@ namespace Desktop_Frontend.Components
                 Ingredient newIngredient = new Ingredient(name, type, amount, unit);
 
                 addButton.IsEnabled = false;
+
                 // Add ingredient to list via backend and check success
                 bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
+
                 addButton.IsEnabled = true;
+                
+                // Show success
                 if (success)
                 {
-                    await DisplayMyLists(parentPanel);
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    popup.Close();
+                    await DisplayMyLists(parentPanel);
                 }
                 else
                 {
                     MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    popup.Close();
                 }
+                
+                
             };
 
             panel.Children.Add(addButton);
@@ -547,6 +798,7 @@ namespace Desktop_Frontend.Components
             popup.ShowDialog();
         }
 
+
         /// <summary>
         /// Displays a confirmation popup for deleting an ingredient.
         /// </summary>
@@ -554,14 +806,18 @@ namespace Desktop_Frontend.Components
         /// <param name="listName">The list name from which the ingredient should be removed.</param>
         private async Task ConfirmDeletion(Ingredient ingredient, string listName)
         {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
             // Create popup window for confirmation
             Window confirmationPopup = new Window
             {
-                Title = "Delete Ingredient",
-                Width = 300,
-                Height = 150,
+                Title = "Deleting " + ingredient.GetName() + " from " + listName,
+                Width = 500,
+                Height = 200,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
             };
 
             // Stack panel for layout
@@ -569,29 +825,34 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(new TextBlock
             {
                 Text = $"Are you sure you want to delete {ingredient.GetName()}?",
-                Margin = new Thickness(0, 10, 0, 20),
-                TextWrapping = TextWrapping.Wrap
+                Margin = new Thickness(10),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = textForeground,
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center
             });
 
-            // Confirmation buttons
-            Button confirmButton = new Button { Content = "OK", Width = 60, Margin = new Thickness(5) };
-            Button cancelButton = new Button { Content = "Cancel", Width = 60, Margin = new Thickness(5) };
+            // Confirmation button 
+            Button confirmButton = new Button
+            {
+                Content = "Delete",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] 
+            };
+
+            // Add the button to the panel
             panel.Children.Add(new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Children = { confirmButton, cancelButton }
+                Children = { confirmButton }
             });
-
-            // Event handler for cancel button to close the popup
-            cancelButton.Click += (s, e) => confirmationPopup.Close();
 
             // Event handler for confirm button to initiate deletion
             confirmButton.Click += async (s, e) =>
             {
-                // Disable buttons during backend call
                 confirmButton.IsEnabled = false;
-                cancelButton.IsEnabled = false;
 
                 // Call backend to remove ingredient
                 bool success = await backend.RemIngredientFromList(user, ingredient, listName);
@@ -600,19 +861,23 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await DisplayMyLists(parentPanel); // Refresh the list
                 }
                 else
                 {
                     MessageBox.Show("Failed to delete ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
+                confirmButton.IsEnabled = true;
+
+                // Update lists after deletion
+                await DisplayMyLists(parentPanel);
                 confirmationPopup.Close();
             };
 
             confirmationPopup.Content = panel;
             confirmationPopup.ShowDialog();
         }
+
 
         /// <summary>
         /// Opens a pop-up window to edit an ingredient's details (amount and unit).
@@ -622,14 +887,20 @@ namespace Desktop_Frontend.Components
         /// <param name="userList">The list that contains the ingredient.</param>
         private async Task ShowEditIngredientPopup(Ingredient oldIngredient, UserList userList)
         {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
             // Create new window
             Window popup = new Window
             {
                 Title = "Edit Ingredient",
-                Width = 300,
-                Height = 250,
+                Width = 400,
+                Height = 350,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
             };
 
             StackPanel panel = new StackPanel { Margin = new Thickness(10) };
@@ -638,7 +909,11 @@ namespace Desktop_Frontend.Components
             TextBox amountBox = new TextBox
             {
                 Text = oldIngredient.GetAmount().ToString(),
-                VerticalContentAlignment = VerticalAlignment.Center
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Width = 350,
+                Height = 40,
+                FontSize = 20
             };
             amountBox.GotFocus += (s, e) =>
             {
@@ -648,11 +923,25 @@ namespace Desktop_Frontend.Components
                 }
             };
 
-            panel.Children.Add(new TextBlock { Text = "Amount:" });
+            panel.Children.Add(new TextBlock
+            {
+                Text = "Amount:",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(10),
+                Foreground = textForeground
+            });
             panel.Children.Add(amountBox);
 
             // Unit
-            ComboBox unitBox = new ComboBox { Margin = new Thickness(0, 10, 0, 10) };
+            ComboBox unitBox = new ComboBox
+            {
+                Width = 350,
+                Height = 40,
+                FontSize = 20,
+                Margin = new Thickness(10)
+            };
             var units = await backend.GetAllMeasurements(user);
             foreach (var unit in units)
             {
@@ -660,14 +949,23 @@ namespace Desktop_Frontend.Components
             }
             unitBox.SelectedItem = oldIngredient.GetUnit();
 
-            panel.Children.Add(new TextBlock { Text = "Unit:" });
+            panel.Children.Add(new TextBlock
+            {
+                Text = "Unit:",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(10),
+                Foreground = textForeground
+            });
             panel.Children.Add(unitBox);
 
+            // Confirmation button 
             Button confirmButton = new Button
             {
-                Content = "OK",
-                Margin = new Thickness(0, 20, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Center
+                Content = "Confirm",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] 
             };
 
             confirmButton.Click += async (s, e) =>
@@ -685,13 +983,13 @@ namespace Desktop_Frontend.Components
 
                 if (success)
                 {
-                    await DisplayMyLists(this.parentPanel);
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    popup.Close();
+                    await DisplayMyLists(this.parentPanel);
                 }
                 else
                 {
                     MessageBox.Show("Failed to update ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    popup.Close();
                 }
             };
 
@@ -700,34 +998,97 @@ namespace Desktop_Frontend.Components
             popup.ShowDialog();
         }
 
+
         /// <summary>
         /// handler for create list button
         /// </summary>
         private async void CreateListButton_Click(object sender, RoutedEventArgs e)
         {
-            // Prompt the user for a new list name
-            string listName = Microsoft.VisualBasic.Interaction.InputBox("Enter the name for the new list:", "Create New List", "");
 
-            // Check if the user entered a valid name
-            if (string.IsNullOrWhiteSpace(listName))
-            {
-                MessageBox.Show("List name cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textboxBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush textboxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
 
-            // Attempt to create the new list
-            bool success = await backend.CreateList(user, listName);
 
-            // Show success or failure message based on the result
-            if (success)
+            int headingFont = 20;
+            int listNameFont = 20;
+
+            SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush headerForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create Popup window
+            Window popup = new Window
             {
-                MessageBox.Show("List created successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await DisplayMyLists(parentPanel); // Refresh the list display
-            }
-            else
+                Title = "New List",
+                Width = 400,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            TextBlock createListHeader = new TextBlock
             {
-                MessageBox.Show("Failed to create list. Make sure the list does not exist already.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                Text = "List Name:",
+                FontSize = headingFont,
+                Foreground = headerForeground,
+                Background = background,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+
+            TextBox listNameBox = new TextBox
+            {
+                Width = 300,
+                Height = 30,
+                FontSize = listNameFont,
+                Margin = new Thickness(10),
+                Background = textboxBackground,
+                Foreground = textboxForeground,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+            // Create the Add button
+            Button createButton = new Button
+            {
+                Content = "Create",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
+            };
+
+
+            createButton.Click += async (s, e) =>
+            {
+                string newListName = listNameBox.Text;
+
+                if (!string.IsNullOrEmpty(newListName))
+                {
+                    bool success = await backend.CreateList(user, newListName);
+
+                    // Show result message
+                    if (success)
+                    {
+                        MessageBox.Show("List created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await DisplayMyLists(parentPanel);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to create list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        popup.Close();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a list name", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            };
+
+            panel.Children.Add(createListHeader);
+            panel.Children.Add(listNameBox);
+            panel.Children.Add(createButton);
+            popup.Content = panel;
+            popup.ShowDialog();
         }
 
         /// <summary>
@@ -735,51 +1096,45 @@ namespace Desktop_Frontend.Components
         /// </summary>
         private void InitializeCreateListButton(StackPanel contentArea)
         {
-            // Create the button
+            // Create the Create List button
             Button createListButton = new Button
             {
-                Width = 150, 
-                Height = 40, 
-                Background = Brushes.Transparent, 
-                Foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrush"], 
-                FontSize = 14, 
-                FontWeight = FontWeights.Bold,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Center,
                 Content = "Create List",
-                BorderBrush = Brushes.Transparent,
-            };
-
-            // Set the corner radius by wrapping the button in a Border
-            Border border = new Border
-            {
-                Width = 150,
-                Height = 40,
+                Margin = new Thickness(25, 30, 10, 10),
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Background = (SolidColorBrush)App.Current.Resources["TertiaryBrush"],
-                CornerRadius = new CornerRadius(20),
-                Child = createListButton
+                Style = (Style)App.Current.Resources["ExpandButtonStyle"] 
             };
 
-            // Attach the click event handler
+            // Attach the click event handler for the Create List button
             createListButton.Click += CreateListButton_Click;
 
-            // Add the border (with button) to the content area
-            contentArea.Children.Add(border);
+            // Add the Create List button to the content area
+            contentArea.Children.Add(createListButton);
         }
+
 
         /// <summary>
         /// Popup for moving an ingredient from list to list
         /// </summary>
         private async Task ShowMoveIngredientPopup(string currListName, Ingredient ingredient)
         {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            int boxHeight = 30;
+            int boxWidth = 400;
+            int headingFont = 20;
+
             // Create a new Window for the Move Ingredient popup
             Window moveWindow = new Window
             {
-                Title = "Move Ingredient",
-                Width = 300,
-                Height = 200,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
+                Title = "Moving " + ingredient.GetName(),
+                Width = 500,
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = background
             };
 
             StackPanel movePanel = new StackPanel { Margin = new Thickness(10) };
@@ -787,7 +1142,11 @@ namespace Desktop_Frontend.Components
             // ComboBox for list selection
             ComboBox listComboBox = new ComboBox
             {
-                Margin = new Thickness(0, 10, 0, 10)
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = headingFont
             };
 
             // Get lists from backed
@@ -802,11 +1161,25 @@ namespace Desktop_Frontend.Components
                 }
             }
 
-            movePanel.Children.Add(new TextBlock { Text = "Select a list to move the ingredient to:", FontWeight = FontWeights.Bold });
+            movePanel.Children.Add(new TextBlock
+            {
+                Text = "Select a list to move the ingredient to:",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Foreground = foreground
+
+            });
             movePanel.Children.Add(listComboBox);
 
             // Create OK button
-            Button okButton = new Button { Content = "OK", Margin = new Thickness(0, 10, 0, 0) };
+            Button okButton = new Button
+            {
+                Content = "Move",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)App.Current.Resources["ExpandButtonStyle"]
+            };
+
             okButton.Click += async (s, e) =>
             {
                 string newListName = (string)listComboBox.SelectedItem;
@@ -818,22 +1191,21 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("Ingredient moved successfully!");
+                        await DisplayMyLists(this.parentPanel);
                     }
                     else
                     {
                         MessageBox.Show("Failed to move ingredient. Please try again.");
+                        moveWindow.Close();
                     }
-                }
-                moveWindow.Close();
+                }               
             };
             movePanel.Children.Add(okButton);
 
             moveWindow.Content = movePanel;
-            moveWindow.ShowDialog(); // Show the popup window modally
-            await DisplayMyLists(this.parentPanel);
+            moveWindow.ShowDialog();
+            
         }
-
-
 
     }
 }
