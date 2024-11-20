@@ -444,6 +444,8 @@ namespace Desktop_Frontend.Components
             int ingTextFont = 24;
             int buttonFont = 24;
 
+            double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
+
             // Create a DockPanel to display ingredient details
             DockPanel ingredientRow = new DockPanel
             {
@@ -460,7 +462,7 @@ namespace Desktop_Frontend.Components
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
                 FontWeight = FontWeights.Bold,
-                MaxWidth = parentPanel.ActualWidth / 4,
+                MaxWidth = availableWidth / 5,
             };
 
             // Ingredient type text 
@@ -470,7 +472,7 @@ namespace Desktop_Frontend.Components
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
-                MaxWidth = parentPanel.ActualWidth / 7,
+                MaxWidth = availableWidth / 7,
             };
 
             // Ingredient amount, unit text 
@@ -480,7 +482,7 @@ namespace Desktop_Frontend.Components
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
-                MaxWidth = parentPanel.ActualWidth / 4,
+                MaxWidth = availableWidth / 4,
             };
 
             DockPanel.SetDock(ingredientNameText, Dock.Left);
