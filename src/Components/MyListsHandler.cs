@@ -462,7 +462,7 @@ namespace Desktop_Frontend.Components
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
                 FontWeight = FontWeights.Bold,
-                MaxWidth = availableWidth / 5,
+                MaxWidth = availableWidth / 7,
             };
 
             // Ingredient type text 
