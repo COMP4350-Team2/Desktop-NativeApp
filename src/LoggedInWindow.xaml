@@ -7,14 +7,10 @@
 
         <!-- Navigation Panel with Grid Layout -->
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="0,0,0,0" Background="{StaticResource PrimaryBrushB}">
-            <!-- Single RowDefinitions block to define the grid layout -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Row for Navigation Buttons -->
                 <RowDefinition Height="*"/>
-                <!-- Spacer Row to push logout button down -->
                 <RowDefinition Height="Auto"/>
-                <!-- Row for Logout Button -->
             </Grid.RowDefinitions>
 
             <!-- Username Section -->
@@ -29,35 +25,42 @@
                          IsReadOnly="True"/>
             </StackPanel>
 
-            <!-- Navigation Buttons Section (Vertically Stacked) -->
+            <!-- Navigation Buttons Section -->
             <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="10">
                 <!-- All Ingredients Button -->
-                <StackPanel Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="AllIngredientsButton_Click">
-                    <TextBlock Text="🍔" FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" />
-                    <TextBlock Name="AllIngredientsButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Ingredients" TextTrimming="CharacterEllipsis"/>
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="AllIngredientsButton_Click">
+                    <Image Source="pack://application:,,,/Assets/Icons/ingredients_icon_white.png" 
+                           Height="30" Width="30" VerticalAlignment="Center" />
+                    <TextBlock Name="AllIngredientsButton" Margin="10,0,0,0" VerticalAlignment="Center" 
+                               Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" 
+                               Text="Ingredients" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
 
                 <!-- My Lists Button -->
-                <StackPanel Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="MyListsButton_Click">
-                    <TextBlock Text="📋 " FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" />
-                    <TextBlock Name="MyListsButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Lists" TextTrimming="CharacterEllipsis"/>
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="MyListsButton_Click">
+                    <Image Source="pack://application:,,,/Assets/Icons/lists_icon_white.png" 
+                           Height="30" Width="30" VerticalAlignment="Center" />
+                    <TextBlock Name="MyListsButton" Margin="10,0,0,0" VerticalAlignment="Center" 
+                               Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" 
+                               Text="Lists" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
             </StackPanel>
 
             <!-- Bottom Section with Logo and Logout Button -->
             <StackPanel Grid.Row="2" Margin="10">
-                <!-- Logo -->
                 <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png" 
                        Height="120"
-                       Width = "180"
+                       Width="180"
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,10"
                        Opacity="0.8" />
 
-                <!-- Log Out Button -->
-                <StackPanel Orientation="Horizontal" Margin="0" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="LogoutButton_Click">
-                    <TextBlock Text="  ❗" FontSize="30" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" Width="53" />
-                    <TextBlock Name="LogoutButton" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" Text="Log out" TextTrimming="CharacterEllipsis"/>
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="LogoutButton_Click">
+                    <Image Source="pack://application:,,,/Assets/Icons/logout_icon_white.png" 
+                           Height="30" Width="30" VerticalAlignment="Center" />
+                    <TextBlock Name="LogoutButton" Margin="10,0,0,0" VerticalAlignment="Center" 
+                               Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" 
+                               Text="Log out" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
