@@ -9,20 +9,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Assets\Logos\Cupboard_Logo_darkmode_1.png" />
-	  <None Remove="Cupboard_Logo.png" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Auth0.OidcClient.WPF" Version="*" />
 		<PackageReference Include="DotNetEnv" Version="*" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Assets\Icons\" />
-	</ItemGroup>
-
-	<ItemGroup>
+	  <Resource Include="Assets\Icons\ingredients_icon_white.png" />
+	  <Resource Include="Assets\Icons\lists_icon_white.png" />
+	  <Resource Include="Assets\Icons\logout_icon_white.png" />
 	  <Resource Include="Assets\Logos\Cupboard_Logo_darkmode_1.png" />
 	</ItemGroup>
 
