@@ -173,19 +173,31 @@ namespace Desktop_Frontend.Components
 
                 StackPanel ingredientPanel = new StackPanel();
 
+                // Create a border for rounded edges
+                Border searchBoxBorder = new Border
+                {
+                    Height = 50,
+                    Margin = new Thickness(12, 10, 10, 10),
+                    CornerRadius = new CornerRadius(5),
+                    BorderBrush = searchBarTxtCol,
+                    BorderThickness = new Thickness(1),
+                    Background = searchBarBackground,
+                    Width = 2 * itemWidth + 50,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
                 // Add search box for filtering ingredients
                 TextBox searchBox = new TextBox
                 {
                     Text = "Search ingredients...",
                     Foreground = searchBarTxtCol,
-                    Background = searchBarBackground,
+                    Background = Brushes.Transparent,
                     FontSize = searchBarFont,
-                    Height = 40,
-                    Margin = new Thickness(12, 10, 10, 10),
-                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Height = 50,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     VerticalContentAlignment = VerticalAlignment.Bottom,
-                    Width = 2 * itemWidth + 50
+                    
                 };
 
                 // Placeholder behavior
@@ -207,7 +219,8 @@ namespace Desktop_Frontend.Components
                     }
                 };
 
-                ingredientPanel.Children.Add(searchBox);
+                searchBoxBorder.Child = searchBox;
+                ingredientPanel.Children.Add(searchBoxBorder);
 
                 // Filter ingredients as user types in the search box
                 searchBox.TextChanged += (s, e) =>
@@ -324,7 +337,8 @@ namespace Desktop_Frontend.Components
         /// </summary>
         private void UpdateIngredientPanel(StackPanel ingredientPanel, string searchText, UserList userList)
         {
-            SolidColorBrush seachBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush searchBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush searchBoxBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
 
             int ingBoxHeight = 120;
             int maxRowsPerPanel = 3;
@@ -335,20 +349,33 @@ namespace Desktop_Frontend.Components
             double itemWidth = availableWidth / 2 - 200; 
 
             // Check if the search box exists in the panel; if not, add it.
-            if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is TextBox))
+            if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is Border))
             {
-                // Create the search box
+                // Create a border for rounded edges
+                Border searchBoxBorder = new Border
+                {
+                    Height = 50,
+                    Margin = new Thickness(12, 10, 10, 10),
+                    CornerRadius = new CornerRadius(5),
+                    BorderBrush = searchBoxForeground,
+                    BorderThickness = new Thickness(1),
+                    Background = searchBoxBackground,
+                    Width = 2 * itemWidth + 50,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                // Add search box for filtering ingredients
                 TextBox searchBox = new TextBox
                 {
-                    Text = "Search ingredients...", // Initial placeholder text
-                    Foreground = seachBoxForeground,
-                    Height = 40,
+                    Text = "Search ingredients...",
+                    Foreground = searchBoxForeground,
+                    Background = Brushes.Transparent,
                     FontSize = searchBarFont,
-                    Margin = new Thickness(12, 10, 10, 10),
-                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Height = 50,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     VerticalContentAlignment = VerticalAlignment.Bottom,
-                    Width = 2 * itemWidth + 50
+
                 };
 
                 // Placeholder behavior for the search box
@@ -366,7 +393,7 @@ namespace Desktop_Frontend.Components
                     if (string.IsNullOrWhiteSpace(searchBox.Text))
                     {
                         searchBox.Text = "Search ingredients...";
-                        searchBox.Foreground = seachBoxForeground;
+                        searchBox.Foreground = searchBoxForeground;
                     }
                 };
 
@@ -377,7 +404,9 @@ namespace Desktop_Frontend.Components
                     UpdateIngredientPanel(ingredientPanel, newSearchText, userList);
                 };
 
-                ingredientPanel.Children.Insert(0, searchBox);
+                searchBoxBorder.Child = searchBox;
+
+                ingredientPanel.Children.Insert(0, searchBoxBorder);
             }
 
             // Clear everything except the search box and the add button
