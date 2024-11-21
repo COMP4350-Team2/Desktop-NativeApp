@@ -200,7 +200,7 @@ namespace Desktop_Frontend.Components
             SolidColorBrush boxTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush boxBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             int boxTextFont = 28;
-            int boxButtonFont = 32;
+            int boxButtonFont = 38;
 
             // Create ingredient row 
             DockPanel ingredientRow = CreateIngredientRowPanel();
@@ -208,7 +208,7 @@ namespace Desktop_Frontend.Components
             // Create a container for the text blocks
             StackPanel textContainer = new StackPanel
             {
-                Orientation = Orientation.Horizontal,
+                Orientation = Orientation.Vertical,
                 MaxWidth = parentPanel.ActualWidth / 4,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
@@ -218,16 +218,17 @@ namespace Desktop_Frontend.Components
             textContainer.Children.Add(ingredientNameText);
 
             // Create and add the ingredient type TextBlock
-            TextBlock ingredientTypeText = CreateTextBlock($" - {ingredient.GetIngType()}", boxTextCol, boxTextFont);
+            TextBlock ingredientTypeText = CreateTextBlock($"Type: {ingredient.GetIngType()}", boxTextCol, boxTextFont);
             textContainer.Children.Add(ingredientTypeText);
 
             // Add text container to the row
+            DockPanel.SetDock(textContainer, Dock.Top);
             ingredientRow.Children.Add(textContainer);
 
             // Create and add the "+" button to the row
             Button addButton = CreateAddButton(boxTextCol, boxButtonFont);
             addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient.CopyIngredient());
-            Panel.SetZIndex(addButton, 1);
+            DockPanel.SetDock(addButton, Dock.Bottom);
             ingredientRow.Children.Add(addButton);
 
             // Wrap the ingredient row in a border
@@ -242,7 +243,7 @@ namespace Desktop_Frontend.Components
         /// <returns>A DockPanel with the correct sizing and configuration.</returns>
         private DockPanel CreateIngredientRowPanel()
         {
-            return new DockPanel { Margin = new Thickness(5) };
+            return new DockPanel { Margin = new Thickness(5)};
         }
 
         /// <summary>
@@ -258,7 +259,8 @@ namespace Desktop_Frontend.Components
                 FontSize = fontSize,
                 FontWeight = fontWeight,
                 VerticalAlignment = VerticalAlignment.Center,
-                TextTrimming = TextTrimming.CharacterEllipsis
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                Margin = new Thickness(10)
             };
         }
 
@@ -283,7 +285,8 @@ namespace Desktop_Frontend.Components
                     FontSize = fontSize,
                     FontWeight = FontWeights.Bold,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    VerticalAlignment = VerticalAlignment.Center,
+                    ToolTip = "Add to list"
                 },
                 Cursor = Cursors.Hand,
                 Style = (Style)Application.Current.Resources["NoHighlightButton"]
