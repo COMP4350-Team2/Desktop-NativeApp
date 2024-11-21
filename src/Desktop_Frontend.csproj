@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\Logos\Cupboard_Logo_darkmode_1.png" />
 	  <None Remove="Cupboard_Logo.png" />
 	</ItemGroup>
 
@@ -18,7 +19,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Assets\Cupboard_Logo.png" />
+	  <Folder Include="Assets\Icons\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Assets\Logos\Cupboard_Logo_darkmode_1.png" />
 	</ItemGroup>
 
 </Project>

@@ -5,16 +5,22 @@
         Background="{StaticResource PrimaryBrushA}">
 
     <Grid>
-        <!-- Background Image -->
-        <Image Source="pack://application:,,,/Cupboard_Logo.png" Stretch="UniformToFill" Opacity="0.1"/>
-
         <!-- Banner with increased height and bottom outline -->
         <Border Background="{StaticResource PrimaryBrushB}" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
             <TextBlock Text="Welcome to Cupboard" Foreground="{StaticResource SecondaryBrushB}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
         </Border>
 
-        <!-- Login Button in the bottom third of the screen -->
-        <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,150">
+        <!-- Image and Login Button Section -->
+        <StackPanel VerticalAlignment="Bottom" Margin="0,150,0,150" HorizontalAlignment="Center">
+            <!-- Image Above Login Button -->
+            <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,20"
+                   MaxWidth="600"
+                   MaxHeight="600"/>
+
+            <!-- Login Button -->
             <Button Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Background="{StaticResource SecondaryBrushB}" Foreground="{StaticResource PrimaryBrushB}" FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
                     Padding="10" Margin="0,0,0,20" BorderBrush="Transparent" BorderThickness="0" Cursor="Hand">
