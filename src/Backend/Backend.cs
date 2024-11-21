@@ -166,6 +166,9 @@ namespace Desktop_Frontend.Backend
                 // Add new ingredient
                 allIng.Add(new Ingredient(name, ingType));
             }
+
+            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
         }
 
         /// <summary>

@@ -36,6 +36,7 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Cookies", "Snacks"),
                 new Ingredient("Chips", "Snacks")
             };
+            ingredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
             this.user = user;
 
             InitMyLists();
