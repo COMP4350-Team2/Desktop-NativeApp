@@ -340,7 +340,7 @@ namespace Desktop_Frontend.Components
             SolidColorBrush searchBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush searchBoxBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
 
-            int ingBoxHeight = 120;
+            int ingBoxHeight = (int) (SystemParameters.PrimaryScreenHeight/5);
             int maxRowsPerPanel = 3;
             int searchBarFont = 24;
 
@@ -470,8 +470,8 @@ namespace Desktop_Frontend.Components
             SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            int ingTextFont = 24;
-            int buttonFont = 24;
+            int ingTextFont = 28;
+            int buttonFont = 28;
 
             double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
 
@@ -491,34 +491,31 @@ namespace Desktop_Frontend.Components
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
                 FontWeight = FontWeights.Bold,
-                MaxWidth = availableWidth / 7,
             };
 
             // Ingredient type text 
             TextBlock ingredientTypeText = new TextBlock
             {
-                Text = $" - {ingredient.GetIngType()}",
+                Text = $"{ingredient.GetIngType()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
-                MaxWidth = availableWidth / 7,
             };
 
             // Ingredient amount, unit text 
             TextBlock ingredientAmountText = new TextBlock
             {
-                Text = $" | {ingredient.GetAmount()} {ingredient.GetUnit()}",
+                Text = $"{ingredient.GetAmount()} {ingredient.GetUnit()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = ingTextFont,
-                MaxWidth = availableWidth / 4,
             };
 
-            DockPanel.SetDock(ingredientNameText, Dock.Left);
-            DockPanel.SetDock(ingredientTypeText, Dock.Left);
-            DockPanel.SetDock(ingredientAmountText, Dock.Left);
+            DockPanel.SetDock(ingredientNameText, Dock.Top);
             ingredientRow.Children.Add(ingredientNameText);
+            DockPanel.SetDock(ingredientTypeText, Dock.Top);
             ingredientRow.Children.Add(ingredientTypeText);
+            DockPanel.SetDock(ingredientAmountText, Dock.Top);
             ingredientRow.Children.Add(ingredientAmountText);
 
             // Panel to hold delete, edit, and move buttons
@@ -579,6 +576,7 @@ namespace Desktop_Frontend.Components
             buttonPanel.Children.Add(moveButton);
 
             // Add the button panel to the DockPanel
+            DockPanel.SetDock(buttonPanel, Dock.Bottom);
             ingredientRow.Children.Add(buttonPanel);
 
             // Create border styling for the ingredient row
