@@ -62,7 +62,7 @@ namespace Desktop_Frontend.Components
             StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
 
             // Create and add the search box
-            TextBox searchBox = CreateSearchBox();
+            Border searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
 
             // Retrieve ingredients
@@ -103,8 +103,8 @@ namespace Desktop_Frontend.Components
             parentPanel.Children.Add(stackPanel);
 
             // Update ingredients list based on search text
-            searchBox.TextChanged += (s, e) =>
-                FilterIngredients(ingredients, searchBox.Text.Trim(), ingredientGrid);
+            ((TextBox)searchBox.Child).TextChanged += (s, e) =>
+                FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
         }
 
         /// <summary>
@@ -146,24 +146,35 @@ namespace Desktop_Frontend.Components
         /// Creates a TextBox for ingredient search with placeholder text.
         /// </summary>
         /// <returns>A configured TextBox for searching ingredients.</returns>
-        private TextBox CreateSearchBox()
+        private Border CreateSearchBox()
         {
             SolidColorBrush boxBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush boxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             int boxFont = 24;
 
+            // Create a border for rounded edges
+            Border searchBoxBorder = new Border
+            {
+                Height = 50,
+                Margin = new Thickness(25, 10, 30, 10),
+                CornerRadius = new CornerRadius(5),
+                BorderBrush = boxForeground,
+                BorderThickness = new Thickness(1),
+                Background = boxBackground
+            };
+
             // Create the search box
             TextBox searchBox = new TextBox
             {
-                Height = 40,
-                Margin = new Thickness(25, 10, 30, 10),
+                Height = 50,
                 Foreground = boxForeground,
-                Background = boxBackground,
+                Background = Brushes.Transparent,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Text = "Search ingredients...",
-                FontSize = boxFont
+                FontSize = boxFont,
+                BorderThickness = new Thickness(0)
             };
 
             // Clear placeholder text when the box is focused
@@ -185,7 +196,9 @@ namespace Desktop_Frontend.Components
                 }
             };
 
-            return searchBox;
+            searchBoxBorder.Child = searchBox;
+
+            return searchBoxBorder;
         }
 
 
