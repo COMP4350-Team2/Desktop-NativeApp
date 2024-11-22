@@ -37,7 +37,7 @@ namespace Desktop_Frontend.Components
         public async Task DisplayIngredientsAsync(StackPanel contentArea)
         {
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            int headerFont = 32;
+            int headerFont = 34;
 
             if (parentPanel == null)
             {
@@ -212,8 +212,10 @@ namespace Desktop_Frontend.Components
             // Define resource-based colors and font sizes
             SolidColorBrush boxTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush boxBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            int boxTextFont = 28;
-            int boxButtonFont = 38;
+            int ingNameFont = 28;
+            int ingTypeFont = 26;
+
+            int boxButtonFont = 40;
 
             // Create ingredient row 
             DockPanel ingredientRow = CreateIngredientRowPanel();
@@ -227,11 +229,11 @@ namespace Desktop_Frontend.Components
             };
 
             // Create and add the ingredient name TextBlock
-            TextBlock ingredientNameText = CreateTextBlock($"{ingredient.GetName()}", boxTextCol, boxTextFont, FontWeights.Bold);
+            TextBlock ingredientNameText = CreateTextBlock($"{ingredient.GetName()}", boxTextCol, ingNameFont, FontWeights.Bold);
             textContainer.Children.Add(ingredientNameText);
 
             // Create and add the ingredient type TextBlock
-            TextBlock ingredientTypeText = CreateTextBlock($"Type: {ingredient.GetIngType()}", boxTextCol, boxTextFont);
+            TextBlock ingredientTypeText = CreateTextBlock($"{ingredient.GetIngType()}", boxTextCol, ingTypeFont);
             textContainer.Children.Add(ingredientTypeText);
 
             // Add text container to the row
@@ -320,7 +322,8 @@ namespace Desktop_Frontend.Components
                 CornerRadius = new CornerRadius(5),
                 Margin = new Thickness(5),
                 Padding = new Thickness(10),
-                Child = child
+                Child = child,
+                Style = (Style)Application.Current.Resources["HoverableBorder"]
             };
         }
 
