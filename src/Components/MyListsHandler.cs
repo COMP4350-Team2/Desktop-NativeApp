@@ -15,6 +15,7 @@ namespace Desktop_Frontend.Components
         private readonly IBackend backend;
         private readonly IUser user;
         private StackPanel parentPanel;
+        private List<Expander> ingExpanders;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyListsHandler"/> class.
@@ -28,6 +29,7 @@ namespace Desktop_Frontend.Components
             this.backend = backend;
             this.user = user;
             parentPanel = null;
+            ingExpanders  = new List<Expander>();
         }
 
         /// <summary>
@@ -62,6 +64,9 @@ namespace Desktop_Frontend.Components
             {
                 this.parentPanel = contentArea;
             }
+
+            ingExpanders.Clear();
+
             contentArea.Children.Clear();
 
             // Create and add header
@@ -111,6 +116,8 @@ namespace Desktop_Frontend.Components
                 Grid.SetColumn(listHeader, 0);
                 headerGrid.Children.Add(listHeader);
 
+                StackPanel ingredientPanel = new StackPanel();
+
                 // Initialize the options button 
                 Button optionsButton = new Button
                 {
@@ -139,7 +146,7 @@ namespace Desktop_Frontend.Components
 
                 // Add the options to the menu
                 MenuItem addIngredientOption = new MenuItem { Header = "Add Ingredient" };
-                addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList);
+                addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList, ingredientPanel);
                 addIngredientOption.Foreground = dropDownForeground;
                 addIngredientOption.FontSize = optionsFont;
                 dropdownMenu.Items.Add(addIngredientOption);
@@ -169,10 +176,10 @@ namespace Desktop_Frontend.Components
                     Margin = new Thickness(30),
                     BorderThickness = new Thickness(2),
                     BorderBrush = expanderBorderCol,
-                    Background = (Brush)Application.Current.Resources["ExpanderBrushA"]
+                    Background = (Brush)Application.Current.Resources["ExpanderBrushA"],
+                    Tag = userList.GetListName()
                 };
 
-                StackPanel ingredientPanel = new StackPanel();
 
                 // Create a border for rounded edges
                 Border searchBoxBorder = new Border
@@ -248,6 +255,8 @@ namespace Desktop_Frontend.Components
 
                 // Add the expander to the main content area
                 contentArea.Children.Add(listExpander);
+
+                ingExpanders.Add(listExpander);
             }
         }
 
@@ -311,6 +320,17 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("List deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    for(int i = 0; i < ingExpanders.Count; i++)
+                    {
+                        if (ingExpanders[i].Tag.ToString() ==  listName)
+                        {
+                            Expander toRemove = ingExpanders[i];
+                            ingExpanders.Remove(toRemove);
+                            parentPanel.Children.Remove(toRemove);
+                            break;
+                        }
+                    }
                 }
                 else
                 {
@@ -319,7 +339,7 @@ namespace Desktop_Frontend.Components
 
                 deleteButton.IsEnabled = true;
 
-                await DisplayMyLists(parentPanel); 
+                //await DisplayMyLists(parentPanel); 
                 popup.Close();
             };
 
@@ -335,7 +355,10 @@ namespace Desktop_Frontend.Components
         /// <summary>
         /// Updates the ingredient panel based on search text.
         /// Ensures the search box is added first if it's missing.
-        /// </summary>
+        ///</summary>
+        /// <param name="ingredientPanel">The panel to update.</param>
+        /// <param name="searchText">The panel to display content within.</param>
+        /// <param name="userList">The <see cref="UserList"/> to user for population.</param>
         private void UpdateIngredientPanel(StackPanel ingredientPanel, string searchText, UserList userList)
         {
             SolidColorBrush searchBoxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -437,7 +460,7 @@ namespace Desktop_Frontend.Components
             foreach (var ingredient in userList.GetIngredients().Where(ing => ing.GetName().ToLower().Contains(searchText) ||
             ing.GetIngType().ToLower().Contains(searchText)))
             {
-                Border ingRow = CreateIngredientRow(ingredient, userList, itemWidth, ingBoxHeight);
+                Border ingRow = CreateIngredientRow(ingredient, userList, itemWidth, ingBoxHeight, ingredientPanel);
                 ingredientGrid.Children.Add(ingRow);
             }
 
@@ -465,7 +488,7 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The ingredient to display.</param>
         /// <returns>A Border control containing the ingredient row.</returns>
-        private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight)
+        private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight, StackPanel ingPanel)
         {
             SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -539,7 +562,7 @@ namespace Desktop_Frontend.Components
                 Cursor = Cursors.Hand,
             };
             moveButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
-            moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList.GetListName(), ingredient);
+            moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList, ingredient, ingPanel);
 
             // Delete button
             Button deleteButton = new Button
@@ -554,7 +577,7 @@ namespace Desktop_Frontend.Components
                 Cursor = Cursors.Hand
             };
             deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
-            deleteButton.Click += async (s, e) => await ConfirmIngDeletion(ingredient, userList.GetListName());
+            deleteButton.Click += async (s, e) => await ConfirmIngDeletion(ingredient, userList, ingPanel);
 
             // Edit button
             Button editButton = new Button
@@ -601,7 +624,7 @@ namespace Desktop_Frontend.Components
         /// Shows pop up window for adding an <see cref="Ingredient"/>
         /// </summary>
         /// <param name="userList">The <see cref="UserList"/> to be added to.</param>
-        private async Task ShowAddIngredientPopup(UserList userList)
+        private async Task ShowAddIngredientPopup(UserList userList, StackPanel ingPanel)
         {
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
 
@@ -805,7 +828,8 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await DisplayMyLists(parentPanel);
+                    userList.AddIngToList(newIngredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
                 {
@@ -827,8 +851,9 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The <see cref="Ingredient"/> to delete.</param>
         /// <param name="listName">The list name from which the ingredient should be removed.</param>
-        private async Task ConfirmIngDeletion(Ingredient ingredient, string listName)
+        private async Task ConfirmIngDeletion(Ingredient ingredient, UserList userList, StackPanel ingPanel)
         {
+            string listName = userList.GetListName();
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
@@ -884,6 +909,8 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    userList.RemIngFromList(ingredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
                 {
@@ -892,8 +919,6 @@ namespace Desktop_Frontend.Components
 
                 confirmButton.IsEnabled = true;
 
-                // Update lists after deletion
-                await DisplayMyLists(parentPanel);
                 confirmationPopup.Close();
             };
 
@@ -1083,7 +1108,7 @@ namespace Desktop_Frontend.Components
 
             createButton.Click += async (s, e) =>
             {
-                string newListName = listNameBox.Text;
+                string newListName = listNameBox.Text.Trim();
 
                 if (!string.IsNullOrEmpty(newListName))
                 {
@@ -1139,8 +1164,9 @@ namespace Desktop_Frontend.Components
         /// <summary>
         /// Popup for moving an ingredient from list to list
         /// </summary>
-        private async Task ShowMoveIngredientPopup(string currListName, Ingredient ingredient)
+        private async Task ShowMoveIngredientPopup(UserList currList, Ingredient ingredient, StackPanel ingPanel)
         {
+            string currListName = currList.GetListName();
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
@@ -1174,6 +1200,7 @@ namespace Desktop_Frontend.Components
 
             // Get lists from backed
             List<UserList> myLists = await backend.GetMyLists(user);
+            UserList toList;
 
             // Populate the ComboBox with user's lists, excluding the current one
             foreach (var list in myLists)
@@ -1191,7 +1218,6 @@ namespace Desktop_Frontend.Components
                 FontWeight = FontWeights.Bold,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Foreground = foreground
-
             });
             movePanel.Children.Add(listComboBox);
 
@@ -1206,7 +1232,9 @@ namespace Desktop_Frontend.Components
             okButton.Click += async (s, e) =>
             {
                 string newListName = (string)listComboBox.SelectedItem;
-                if (newListName != null)
+                toList = myLists.FirstOrDefault(u => u.GetListName() == newListName);
+
+                if (newListName != null && toList != null)
                 {
                     okButton.IsEnabled = false;
                     bool success = await backend.MoveIngredient(user, currListName, newListName, ingredient);
@@ -1214,7 +1242,14 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("Ingredient moved successfully!");
-                        await DisplayMyLists(this.parentPanel);
+
+                        //Rem from curr list and add to new list
+                        currList.RemIngFromList(ingredient);
+                        toList.AddIngToList(ingredient);
+
+                        //Update both
+                        UpdateIngredientPanel(ingPanel, "", currList);
+                        UpdateIngredientPanel(FindIngPanel(newListName), "", toList);
                     }
                     else
                     {
@@ -1229,6 +1264,35 @@ namespace Desktop_Frontend.Components
             moveWindow.ShowDialog();
             
         }
+
+        /// <summary>
+        /// Finds the StackPanel for a certain list with the given name
+        /// </summary>
+        private StackPanel FindIngPanel(string listName)
+        {
+            StackPanel ingPanel = null; 
+            Expander listExpander = null;
+
+            // Iterate through the expanders to find the one with the specified name
+            for (int i = 0; i < ingExpanders.Count; i++)
+            {
+                Expander currExpander = ingExpanders[i];
+                if (currExpander.Tag.ToString() == listName)
+                {
+                    listExpander = currExpander; // Found the matching Expander
+                    break; 
+                }
+            }
+
+            // Check if a matching Expander is found and its Content is a StackPanel
+            if (listExpander != null && listExpander.Content is StackPanel)
+            {
+                ingPanel = (StackPanel)listExpander.Content; // Cast Content to StackPanel
+            }
+
+            return ingPanel; 
+        }
+
 
     }
 }
