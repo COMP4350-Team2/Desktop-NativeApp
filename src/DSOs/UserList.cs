@@ -72,7 +72,20 @@
             else
             {
                 // If the ingredient is not in the list, add it
-                Ingredients.Add(ingredient);
+                //Ingredients.Add(ingredient);
+                // If the ingredient is not in the list, insert it in alphabetical order
+                int insertIndex = Ingredients.FindIndex(i => string.Compare(i.GetName(), ingredient.GetName(), StringComparison.OrdinalIgnoreCase) > 0);
+
+                if (insertIndex == -1)
+                {
+                    // If no larger element is found, add to the end of the list
+                    Ingredients.Add(ingredient);
+                }
+                else
+                {
+                    // Insert at the calculated position
+                    Ingredients.Insert(insertIndex, ingredient);
+                }
             }
         }
 
