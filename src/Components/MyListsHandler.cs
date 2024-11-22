@@ -554,7 +554,7 @@ namespace Desktop_Frontend.Components
                 Cursor = Cursors.Hand
             };
             deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
-            deleteButton.Click += async (s, e) => await ConfirmDeletion(ingredient, userList.GetListName());
+            deleteButton.Click += async (s, e) => await ConfirmIngDeletion(ingredient, userList.GetListName());
 
             // Edit button
             Button editButton = new Button
@@ -810,10 +810,9 @@ namespace Desktop_Frontend.Components
                 else
                 {
                     MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    popup.Close();
                 }
-                
-                
+                popup.Close();
+
             };
 
             panel.Children.Add(addButton);
@@ -828,7 +827,7 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The <see cref="Ingredient"/> to delete.</param>
         /// <param name="listName">The list name from which the ingredient should be removed.</param>
-        private async Task ConfirmDeletion(Ingredient ingredient, string listName)
+        private async Task ConfirmIngDeletion(Ingredient ingredient, string listName)
         {
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -1013,8 +1012,8 @@ namespace Desktop_Frontend.Components
                 else
                 {
                     MessageBox.Show("Failed to update ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    popup.Close();
                 }
+                popup.Close();
             };
 
             panel.Children.Add(confirmButton);
@@ -1099,8 +1098,8 @@ namespace Desktop_Frontend.Components
                     else
                     {
                         MessageBox.Show("Failed to create list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        popup.Close();
                     }
+                    popup.Close();
                 }
                 else
                 {
@@ -1220,8 +1219,8 @@ namespace Desktop_Frontend.Components
                     else
                     {
                         MessageBox.Show("Failed to move ingredient. Please try again.");
-                        moveWindow.Close();
                     }
+                    moveWindow.Close();
                 }               
             };
             movePanel.Children.Add(okButton);
