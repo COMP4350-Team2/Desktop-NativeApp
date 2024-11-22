@@ -48,7 +48,7 @@ namespace Desktop_Frontend.Components
             SolidColorBrush dropDownBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush dropDownForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            int pageHeaderFont = 32;
+            int pageHeaderFont = 34;
             int listHeaderFont = 28;
             int ingredientButtonFont = 28;
             int searchBarFont = 24;
@@ -470,8 +470,8 @@ namespace Desktop_Frontend.Components
             SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            int ingTextFont = 28;
-            int buttonFont = 28;
+            int ingTextFont = 30;
+            int buttonFont = 30;
 
             double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
 
@@ -499,7 +499,7 @@ namespace Desktop_Frontend.Components
                 Text = $"{ingredient.GetIngType()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = ingTextFont,
+                FontSize = ingTextFont - 4,
             };
 
             // Ingredient amount, unit text 
@@ -508,7 +508,7 @@ namespace Desktop_Frontend.Components
                 Text = $"{ingredient.GetAmount()} {ingredient.GetUnit()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = ingTextFont,
+                FontSize = ingTextFont - 4,
             };
 
             DockPanel.SetDock(ingredientNameText, Dock.Top);
@@ -531,7 +531,7 @@ namespace Desktop_Frontend.Components
                 Content = "\u21C4",
                 FontSize = buttonFont,
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(10),
+                Margin = new Thickness(20, 10, 5, 5),
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
@@ -549,7 +549,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
-                Margin = new Thickness(10),
+                Margin = new Thickness(20, 10, 5, 5),
                 Cursor = Cursors.Hand
             };
             deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
@@ -564,7 +564,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
-                Margin = new Thickness(10),
+                Margin = new Thickness(20, 10, 5, 5),
                 Cursor = Cursors.Hand
             };
             editButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
