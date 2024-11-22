@@ -663,7 +663,7 @@ namespace Desktop_Frontend.Components
             {
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Text = "Enter amount",
-                Foreground = boxTextColor,
+                Foreground = Brushes.Gray,
                 Background = boxColor,
                 Margin = new Thickness(10),
                 Height = boxHeight,
@@ -678,7 +678,7 @@ namespace Desktop_Frontend.Components
                 if (amountBox.Text == "Enter amount")
                 {
                     amountBox.Text = "";
-                    amountBox.Foreground = Brushes.Black;
+                    amountBox.Foreground = boxTextColor;
                 }
             };
             amountBox.LostFocus += (s, e) =>
@@ -727,7 +727,7 @@ namespace Desktop_Frontend.Components
                 if (string.IsNullOrWhiteSpace(searchBox.Text))
                 {
                     searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = Brushes.Gray; 
+                    searchBox.Foreground = Brushes.Gray;
 
                     // Repopulate the ComboBox with all ingredients when the search box is empty
                     nameBox.Items.Clear();
@@ -735,25 +735,18 @@ namespace Desktop_Frontend.Components
                     {
                         nameBox.Items.Add(ing.GetName());
                     }
-                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0; 
+                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
                 }
             };
 
             searchBox.TextChanged += (s, e) =>
             {
-                string searchText = searchBox.Text.ToLower();
-                nameBox.Items.Clear(); 
+                string searchText = searchBox.Text.ToLower().Trim();
 
-                // If the search box is empty, show all ingredients
-                if (string.IsNullOrWhiteSpace(searchText))
+                if (!string.IsNullOrWhiteSpace(searchText))
                 {
-                    foreach (var ing in allIngredients)
-                    {
-                        nameBox.Items.Add(ing.GetName()); 
-                    }
-                }
-                else
-                {
+                    nameBox.Items.Clear();
+
                     // If there is search text, filter the ingredients
                     foreach (var ing in allIngredients)
                     {
@@ -762,11 +755,11 @@ namespace Desktop_Frontend.Components
                             nameBox.Items.Add(ing.GetName()); 
                         }
                     }
+                    if (nameBox.Items.Count > 0)
+                    {
+                        nameBox.SelectedIndex = 0;
+                    }
                 }
-
-                // Select the first matching item if available
-                if (nameBox.Items.Count > 0)
-                    nameBox.SelectedIndex = 0;
             };
 
             // Add button 
