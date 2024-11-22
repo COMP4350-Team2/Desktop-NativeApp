@@ -5,12 +5,13 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- Define Colors -->
-        <Color x:Key="PrimaryColA">#1B262C</Color>
+        <Color x:Key="PrimaryColA">#10171C</Color>
         <Color x:Key="PrimaryColB">#0F4C75</Color>
         <Color x:Key="PrimaryColC">#3282B8</Color>
         <Color x:Key="PrimaryColD">#BBE1FA</Color>
         <Color x:Key="SecondaryColA">#000</Color>
         <Color x:Key="SecondaryColB">#FFFFFF</Color>
+        <Color x:Key="ExpanderColA">#1B262C</Color>
 
         <!-- Define Brushes -->
         <SolidColorBrush x:Key="PrimaryBrushA" Color="{StaticResource PrimaryColA}" />
@@ -19,6 +20,8 @@
         <SolidColorBrush x:Key="PrimaryBrushD" Color="{StaticResource PrimaryColD}" />
         <SolidColorBrush x:Key="SecondaryBrushA" Color="{StaticResource SecondaryColA}" />
         <SolidColorBrush x:Key="SecondaryBrushB" Color="{StaticResource SecondaryColB}" />
+        <SolidColorBrush x:Key="ExpanderBrushA" Color="{StaticResource ExpanderColA}" />
+        
 
         <!-- Define the HoverableButton style -->
         <Style x:Key="HoverableButton" TargetType="StackPanel">
@@ -37,7 +40,6 @@
         <Style x:Key="HoverableBorder" TargetType="Border">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#55000000"/>

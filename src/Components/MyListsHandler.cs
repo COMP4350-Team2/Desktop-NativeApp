@@ -168,7 +168,8 @@ namespace Desktop_Frontend.Components
                     Foreground = expanderIconCol,
                     Margin = new Thickness(30),
                     BorderThickness = new Thickness(2),
-                    BorderBrush = expanderBorderCol
+                    BorderBrush = expanderBorderCol,
+                    Background = (Brush)Application.Current.Resources["ExpanderBrushA"]
                 };
 
                 StackPanel ingredientPanel = new StackPanel();
@@ -587,7 +588,8 @@ namespace Desktop_Frontend.Components
                 CornerRadius = new CornerRadius(5),
                 Margin = new Thickness(5),
                 Height = ingBoxHeight, 
-                Child = ingredientRow
+                Child = ingredientRow,
+                Style = (Style)Application.Current.Resources["HoverableBorder"]
             };
 
             return border;
