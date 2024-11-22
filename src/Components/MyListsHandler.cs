@@ -592,7 +592,7 @@ namespace Desktop_Frontend.Components
                 Cursor = Cursors.Hand
             };
             editButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
-            editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList);
+            editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList, ingPanel);
 
             // Add buttons to the panel
             buttonPanel.Children.Add(deleteButton);
@@ -933,7 +933,7 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="oldIngredient">The ingredient being edited.</param>
         /// <param name="userList">The list that contains the ingredient.</param>
-        private async Task ShowEditIngredientPopup(Ingredient oldIngredient, UserList userList)
+        private async Task ShowEditIngredientPopup(Ingredient oldIngredient, UserList userList, StackPanel ingPanel)
         {
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -1032,7 +1032,9 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await DisplayMyLists(this.parentPanel);
+                    userList.RemIngFromList(oldIngredient);
+                    userList.AddIngToList(updatedIngredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
                 {
