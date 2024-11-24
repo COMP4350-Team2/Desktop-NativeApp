@@ -67,7 +67,7 @@ namespace Desktop_Frontend.Components
 
             ingExpanders.Clear();
 
-            contentArea.Children.Clear();
+            parentPanel.Children.Clear();
 
             // Create and add header
             TextBlock header = new TextBlock
@@ -79,10 +79,10 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 20, 0, 20)
             };
-            contentArea.Children.Add(header);
+            parentPanel.Children.Add(header);
 
             // Initialize create list button
-            InitializeCreateListButton(contentArea);
+            InitializeCreateListButton();
 
             // Retrieve user's lists from the backend
             List<UserList> myLists = await backend.GetMyLists(user);
@@ -90,173 +90,7 @@ namespace Desktop_Frontend.Components
             // Display each list in a collapsible menu with a delete button
             foreach (var userList in myLists)
             {
-                Grid headerGrid = new Grid
-                {
-                    Margin = new Thickness(10)
-                };
-
-                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.2, GridUnitType.Star) }); 
-                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.3, GridUnitType.Auto) }); 
-
-
-                // Create the list name label
-                TextBlock listHeader = new TextBlock
-                {
-                    Text = userList.GetListName(),
-                    FontSize = listHeaderFont,
-                    FontWeight = FontWeights.Bold,
-                    Foreground = listHeaderTextCol,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(10),
-                    Width = availableWidth 
-                };
-
-                // Set the list name to be in the first column
-                Grid.SetColumn(listHeader, 0);
-                headerGrid.Children.Add(listHeader);
-
-                StackPanel ingredientPanel = new StackPanel();
-
-                // Initialize the options button 
-                Button optionsButton = new Button
-                {
-                    Content = new TextBlock
-                    {
-                        Text = "...",
-                        VerticalAlignment = VerticalAlignment.Center
-                    },
-                    Margin = new Thickness(10, 10, 5, 20),
-                    FontSize = ingredientButtonFont,
-                    Background = Brushes.Transparent,
-                    BorderBrush = Brushes.Transparent,
-                    Foreground = ingredientButtonCol,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Cursor = Cursors.Hand
-                };
-                optionsButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
-
-                // Set the options button in the second column
-                Grid.SetColumn(optionsButton, 1);
-                headerGrid.Children.Add(optionsButton);
-
-                // Create the dropdown menu 
-                ContextMenu dropdownMenu = new ContextMenu { Background = dropDownBackground };
-
-                // Add the options to the menu
-                MenuItem addIngredientOption = new MenuItem { Header = "Add Ingredient" };
-                addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList, ingredientPanel);
-                addIngredientOption.Foreground = dropDownForeground;
-                addIngredientOption.FontSize = optionsFont;
-                dropdownMenu.Items.Add(addIngredientOption);
-
-                MenuItem renameListOption = new MenuItem { Header = "Rename List" };
-                renameListOption.Click += (s, e) => { MessageBox.Show("To be implemented"); };
-                renameListOption.Foreground = dropDownForeground;
-                renameListOption.FontSize = optionsFont;
-                dropdownMenu.Items.Add(renameListOption);
-
-                MenuItem deleteListOption = new MenuItem { Header = "Delete List" };
-                deleteListOption.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
-                deleteListOption.Foreground = Brushes.Red;
-                deleteListOption.FontSize = optionsFont;
-                deleteListOption.FontWeight = FontWeights.Bold;
-                dropdownMenu.Items.Add(deleteListOption);
-
-                // Show the dropdown menu when the options button is clicked
-                optionsButton.Click += (sender, e) => { dropdownMenu.IsOpen = true; };
-
-                // Create the Expander for the list, using the grid for the header
-                Expander listExpander = new Expander
-                {
-                    Header = headerGrid,
-                    FontSize = 18,
-                    Foreground = expanderIconCol,
-                    Margin = new Thickness(30),
-                    BorderThickness = new Thickness(2),
-                    BorderBrush = expanderBorderCol,
-                    Background = (Brush)Application.Current.Resources["ExpanderBrushA"],
-                    Tag = userList.GetListName()
-                };
-
-
-                // Create a border for rounded edges
-                Border searchBoxBorder = new Border
-                {
-                    Height = 50,
-                    Margin = new Thickness(12, 10, 10, 10),
-                    CornerRadius = new CornerRadius(5),
-                    BorderBrush = searchBarTxtCol,
-                    BorderThickness = new Thickness(1),
-                    Background = searchBarBackground,
-                    Width = 2 * itemWidth + 50,
-                    HorizontalAlignment = HorizontalAlignment.Left
-                };
-
-                // Add search box for filtering ingredients
-                TextBox searchBox = new TextBox
-                {
-                    Text = "Search ingredients...",
-                    Foreground = searchBarTxtCol,
-                    Background = Brushes.Transparent,
-                    FontSize = searchBarFont,
-                    Height = 50,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Bottom,
-                    VerticalContentAlignment = VerticalAlignment.Bottom,
-                    
-                };
-
-                // Placeholder behavior
-                searchBox.GotFocus += (s, e) =>
-                {
-                    if (searchBox.Text == "Search ingredients...")
-                    {
-                        searchBox.Text = "";
-                        searchBox.Foreground = searchBarTxtCol;
-                    }
-                };
-
-                searchBox.LostFocus += (s, e) =>
-                {
-                    if (string.IsNullOrWhiteSpace(searchBox.Text))
-                    {
-                        searchBox.Text = "Search ingredients...";
-                        searchBox.Foreground = searchBarTxtCol;
-                    }
-                };
-
-                searchBoxBorder.Child = searchBox;
-                ingredientPanel.Children.Add(searchBoxBorder);
-
-                // Filter ingredients as user types in the search box
-                searchBox.TextChanged += (s, e) =>
-                {
-                    string searchText = searchBox.Text.ToLower().Trim();
-                    UpdateIngredientPanel(ingredientPanel, searchText, userList);
-                };
-
-                // Event to handle expanding and collapsing
-                listExpander.Expanded += (s, e) =>
-                {
-                    ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
-                };
-                listExpander.Collapsed += (s, e) =>
-                {
-                    ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
-                };
-
-                // Display all ingredients initially
-                UpdateIngredientPanel(ingredientPanel, "", userList);
-
-                // Set the ingredient panel as the content of the expander
-                listExpander.Content = ingredientPanel;
-
-                // Add the expander to the main content area
-                contentArea.Children.Add(listExpander);
-
-                ingExpanders.Add(listExpander);
+                AddListExpander(userList);
             }
         }
 
@@ -1120,7 +954,9 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("List created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await DisplayMyLists(parentPanel);
+                        UserList newList = new UserList(newListName, new List<Ingredient>());
+                        AddListExpander(newList);
+                        //await DisplayMyLists(parentPanel);
                     }
                     else
                     {
@@ -1144,7 +980,7 @@ namespace Desktop_Frontend.Components
         /// <summary>
         /// Method to make create list button
         /// </summary>
-        private void InitializeCreateListButton(StackPanel contentArea)
+        private void InitializeCreateListButton()
         {
             // Create the Create List button
             Button createListButton = new Button
@@ -1159,7 +995,7 @@ namespace Desktop_Frontend.Components
             createListButton.Click += CreateListButton_Click;
 
             // Add the Create List button to the content area
-            contentArea.Children.Add(createListButton);
+            parentPanel.Children.Add(createListButton);
         }
 
 
@@ -1251,7 +1087,23 @@ namespace Desktop_Frontend.Components
 
                         //Update both
                         UpdateIngredientPanel(ingPanel, "", currList);
-                        UpdateIngredientPanel(FindIngPanel(newListName), "", toList);
+                        //UpdateIngredientPanel(FindIngPanel(newListName), "", toList);
+
+                        // Fully rebuild the target `Expander`
+                        Expander targetExpander = ingExpanders.FirstOrDefault(e => e.Tag.ToString() == newListName);
+                        if (targetExpander != null)
+                        {
+                            // Clear the current content
+                            targetExpander.Content = null;
+
+                            // Create a new StackPanel and populate it with ingredients
+                            StackPanel ingredientPanel = new StackPanel();
+                            UpdateIngredientPanel(ingredientPanel, "", toList);
+
+                            // Assign the new panel as the `Expander`'s content
+                            targetExpander.Content = ingredientPanel;
+                        }
+
                     }
                     else
                     {
@@ -1268,31 +1120,196 @@ namespace Desktop_Frontend.Components
         }
 
         /// <summary>
-        /// Finds the StackPanel for a certain list with the given name
+        /// Method to add new expander for a list being created
         /// </summary>
-        private StackPanel FindIngPanel(string listName)
+        /// <param name="userList"> The list to populate expander with</param>
+        private void AddListExpander(UserList userList)
         {
-            StackPanel ingPanel = null; 
-            Expander listExpander = null;
+            SolidColorBrush listHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush ingredientButtonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush searchBarBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush searchBarTxtCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush expanderIconCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush expanderBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush dropDownBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush dropDownForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            // Iterate through the expanders to find the one with the specified name
-            for (int i = 0; i < ingExpanders.Count; i++)
+            int listHeaderFont = 28;
+            int ingredientButtonFont = 28;
+            int searchBarFont = 24;
+            int optionsFont = 20;
+
+            double availableWidth = SystemParameters.PrimaryScreenWidth;
+            double itemWidth = availableWidth / 2 - 200;
+
+            Grid headerGrid = new Grid
             {
-                Expander currExpander = ingExpanders[i];
-                if (currExpander.Tag.ToString() == listName)
+                Margin = new Thickness(10)
+            };
+
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.2, GridUnitType.Star) });
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.3, GridUnitType.Auto) });
+
+
+            // Create the list name label
+            TextBlock listHeader = new TextBlock
+            {
+                Text = userList.GetListName(),
+                FontSize = listHeaderFont,
+                FontWeight = FontWeights.Bold,
+                Foreground = listHeaderTextCol,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(10),
+                Width = availableWidth
+            };
+
+            // Set the list name to be in the first column
+            Grid.SetColumn(listHeader, 0);
+            headerGrid.Children.Add(listHeader);
+
+            StackPanel ingredientPanel = new StackPanel();
+
+            // Initialize the options button 
+            Button optionsButton = new Button
+            {
+                Content = new TextBlock
                 {
-                    listExpander = currExpander; // Found the matching Expander
-                    break; 
-                }
-            }
+                    Text = "...",
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Margin = new Thickness(10, 10, 5, 20),
+                FontSize = ingredientButtonFont,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Foreground = ingredientButtonCol,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = Cursors.Hand
+            };
+            optionsButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
 
-            // Check if a matching Expander is found and its Content is a StackPanel
-            if (listExpander != null && listExpander.Content is StackPanel)
+            // Set the options button in the second column
+            Grid.SetColumn(optionsButton, 1);
+            headerGrid.Children.Add(optionsButton);
+
+            // Create the dropdown menu 
+            ContextMenu dropdownMenu = new ContextMenu { Background = dropDownBackground };
+
+            // Add the options to the menu
+            MenuItem addIngredientOption = new MenuItem { Header = "Add Ingredient" };
+            addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList, ingredientPanel);
+            addIngredientOption.Foreground = dropDownForeground;
+            addIngredientOption.FontSize = optionsFont;
+            dropdownMenu.Items.Add(addIngredientOption);
+
+            MenuItem renameListOption = new MenuItem { Header = "Rename List" };
+            renameListOption.Click += (s, e) => { MessageBox.Show("To be implemented"); };
+            renameListOption.Foreground = dropDownForeground;
+            renameListOption.FontSize = optionsFont;
+            dropdownMenu.Items.Add(renameListOption);
+
+            MenuItem deleteListOption = new MenuItem { Header = "Delete List" };
+            deleteListOption.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
+            deleteListOption.Foreground = Brushes.Red;
+            deleteListOption.FontSize = optionsFont;
+            deleteListOption.FontWeight = FontWeights.Bold;
+            dropdownMenu.Items.Add(deleteListOption);
+
+            // Show the dropdown menu when the options button is clicked
+            optionsButton.Click += (sender, e) => { dropdownMenu.IsOpen = true; };
+
+            // Create the Expander for the list, using the grid for the header
+            Expander listExpander = new Expander
             {
-                ingPanel = (StackPanel)listExpander.Content; // Cast Content to StackPanel
-            }
+                Header = headerGrid,
+                FontSize = 18,
+                Foreground = expanderIconCol,
+                Margin = new Thickness(30),
+                BorderThickness = new Thickness(2),
+                BorderBrush = expanderBorderCol,
+                Background = (Brush)Application.Current.Resources["ExpanderBrushA"],
+                Tag = userList.GetListName()
+            };
 
-            return ingPanel; 
+
+            // Create a border for rounded edges
+            Border searchBoxBorder = new Border
+            {
+                Height = 50,
+                Margin = new Thickness(12, 10, 10, 10),
+                CornerRadius = new CornerRadius(5),
+                BorderBrush = searchBarTxtCol,
+                BorderThickness = new Thickness(1),
+                Background = searchBarBackground,
+                Width = 2 * itemWidth + 50,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            // Add search box for filtering ingredients
+            TextBox searchBox = new TextBox
+            {
+                Text = "Search ingredients...",
+                Foreground = searchBarTxtCol,
+                Background = Brushes.Transparent,
+                FontSize = searchBarFont,
+                Height = 50,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                VerticalContentAlignment = VerticalAlignment.Bottom,
+
+            };
+
+            // Placeholder behavior
+            searchBox.GotFocus += (s, e) =>
+            {
+                if (searchBox.Text == "Search ingredients...")
+                {
+                    searchBox.Text = "";
+                    searchBox.Foreground = searchBarTxtCol;
+                }
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchBox.Text))
+                {
+                    searchBox.Text = "Search ingredients...";
+                    searchBox.Foreground = searchBarTxtCol;
+                }
+            };
+
+            searchBoxBorder.Child = searchBox;
+            ingredientPanel.Children.Add(searchBoxBorder);
+
+            // Filter ingredients as user types in the search box
+            searchBox.TextChanged += (s, e) =>
+            {
+                string searchText = searchBox.Text.ToLower().Trim();
+                UpdateIngredientPanel(ingredientPanel, searchText, userList);
+            };
+
+            // Event to handle expanding and collapsing
+            listExpander.Expanded += (s, e) =>
+            {
+                ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
+            };
+            listExpander.Collapsed += (s, e) =>
+            {
+                ResetSearchAndDisplayIngredients(searchBox, ingredientPanel, userList);
+            };
+
+            // Display all ingredients initially
+            UpdateIngredientPanel(ingredientPanel, "", userList);
+
+            // Set the ingredient panel as the content of the expander
+            listExpander.Content = ingredientPanel;
+
+            // Add the expander to the main content area
+            parentPanel.Children.Add(listExpander);
+
+            ingExpanders.Add(listExpander);
+
         }
 
 
