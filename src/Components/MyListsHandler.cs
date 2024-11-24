@@ -387,6 +387,7 @@ namespace Desktop_Frontend.Components
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
                 Cursor = Cursors.Hand,
+                ToolTip = "Move"
             };
             moveButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList, ingredient, ingPanel);
@@ -401,7 +402,8 @@ namespace Desktop_Frontend.Components
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
                 Margin = new Thickness(20, 10, 5, 5),
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                ToolTip = "Delete"
             };
             deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             deleteButton.Click += async (s, e) => await ConfirmIngDeletion(ingredient, userList, ingPanel);
@@ -416,7 +418,8 @@ namespace Desktop_Frontend.Components
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
                 Margin = new Thickness(20, 10, 5, 5),
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                ToolTip = "Edit"
             };
             editButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
             editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList, ingPanel);
@@ -1178,7 +1181,8 @@ namespace Desktop_Frontend.Components
                 Foreground = ingredientButtonCol,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                ToolTip = "Options"
             };
             optionsButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
 
