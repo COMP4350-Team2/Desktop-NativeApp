@@ -28,7 +28,7 @@
             <!-- Navigation Buttons Section -->
             <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="10">
                 <!-- All Ingredients Button -->
-                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="AllIngredientsButton_Click">
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Stretch" MouseLeftButtonUp="AllIngredientsButton_Click">
                     <Image Source="pack://application:,,,/Assets/Icons/ingredients_icon_white.png" 
                            Height="30" Width="30" VerticalAlignment="Center" />
                     <TextBlock Name="AllIngredientsButton" Margin="10,0,0,0" VerticalAlignment="Center" 
@@ -37,7 +37,7 @@
                 </StackPanel>
 
                 <!-- My Lists Button -->
-                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="MyListsButton_Click">
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Stretch" MouseLeftButtonUp="MyListsButton_Click">
                     <Image Source="pack://application:,,,/Assets/Icons/lists_icon_white.png" 
                            Height="30" Width="30" VerticalAlignment="Center" />
                     <TextBlock Name="MyListsButton" Margin="10,0,0,0" VerticalAlignment="Center" 
@@ -55,7 +55,7 @@
                        Margin="0,0,0,10"
                        Opacity="0.8" />
 
-                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Left" MouseLeftButtonUp="LogoutButton_Click">
+                <StackPanel Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Stretch" MouseLeftButtonUp="LogoutButton_Click">
                     <Image Source="pack://application:,,,/Assets/Icons/logout_icon_white.png" 
                            Height="30" Width="30" VerticalAlignment="Center" />
                     <TextBlock Name="LogoutButton" Margin="10,0,0,0" VerticalAlignment="Center" 
