@@ -16,6 +16,7 @@ namespace Desktop_Frontend.Components
         private readonly IUser user;
         private StackPanel parentPanel;
         private List<Expander> ingExpanders;
+        private ScrollViewer parentScroller;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyListsHandler"/> class.
@@ -37,7 +38,7 @@ namespace Desktop_Frontend.Components
         /// Each list includes a search bar to filter ingredients.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
-        public async Task DisplayMyLists(StackPanel contentArea)
+        public async Task DisplayMyLists(StackPanel contentArea, ScrollViewer parentScroller)
         {
             SolidColorBrush pageHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
@@ -47,6 +48,11 @@ namespace Desktop_Frontend.Components
             if (this.parentPanel == null)
             {
                 this.parentPanel = contentArea;
+            }
+
+            if (this.parentScroller == null)
+            {
+                this.parentScroller = parentScroller;
             }
 
             ingExpanders.Clear();
@@ -283,6 +289,9 @@ namespace Desktop_Frontend.Components
             }
 
             scrollViewer.Content = ingredientGrid;
+
+            // Attach the PreviewMouseWheel and ScrollChanged event handlers
+            scrollViewer.PreviewMouseWheel += InnerScrollViewer_PreviewMouseWheel;
 
             // Add the WrapPanel to the ingredient panel
             ingredientPanel.Children.Add(scrollViewer);
@@ -1295,7 +1304,42 @@ namespace Desktop_Frontend.Components
             ingExpanders.Add(listExpander);
 
         }
+        /// <summary>
+        /// Method to handle bubbling scroll event for list scrollers
+        /// </summary>
+        private void InnerScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            int delta = e.Delta;
+            var scv = sender as ScrollViewer;
+            if (scv == null) return;
+
+            // Check if we're at the bottom or top of the inner ScrollViewer
+            //bool atBottom = scv.ExtentHeight <= (scv.VerticalOffset + scv.ViewportHeight);
+            bool atBottom = scv.VerticalOffset >= scv.ExtentHeight - scv.ViewportHeight;
+            bool atTop = scv.VerticalOffset <= 0.0;
 
 
+            // If at the bottom and scrolling up, transfer control to the parent
+            if (delta < 0 && atBottom)
+            {
+                // Transfer control to the parent ScrollViewer
+                double offset = double.MaxNumber(parentScroller.MaxHeight, parentScroller.VerticalOffset - delta/2);
+                parentScroller.ScrollToVerticalOffset(offset);
+                e.Handled = false;  // Let the parent handle the event (smooth bubbling)
+            }
+            // If at the top and scrolling down, transfer control to the parent
+            else if (delta > 0 && atTop)
+            {
+                // Transfer control to the parent ScrollViewer
+                double offset = double.MaxNumber(0.0, parentScroller.VerticalOffset - delta/2);
+                parentScroller.ScrollToVerticalOffset(offset);
+                e.Handled = false;  // Let the parent handle the event (smooth bubbling)
+            }
+            else
+            {
+                // Let the inner ScrollViewer handle scrolling normally
+                e.Handled = false;  // Allow inner ScrollViewer to handle the event
+            }
+        }
     }
 }

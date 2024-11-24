@@ -67,7 +67,7 @@ namespace Desktop_Frontend
             ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
 
             // Clear current content and display my lists section
-            await myListsHandler.DisplayMyLists(ContentArea);
+            await myListsHandler.DisplayMyLists(ContentArea, ParentScrollViewer);
 
             // Enable buttons again
             SetButtonsEnabled(true);
