@@ -11,14 +11,14 @@
         </Border>
 
         <!-- Image and Login Button Section -->
-        <StackPanel VerticalAlignment="Bottom" Margin="0,150,0,150" HorizontalAlignment="Center">
+        <StackPanel VerticalAlignment="Bottom" Margin="0,200,0,100" HorizontalAlignment="Center">
             <!-- Image Above Login Button -->
             <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
                    Margin="0,0,0,20"
-                   MaxWidth="600"
-                   MaxHeight="600"
+                   MaxWidth="800"
+                   MaxHeight="800"
                    Opacity="0.7"/>
 
             <!-- Login Button -->
