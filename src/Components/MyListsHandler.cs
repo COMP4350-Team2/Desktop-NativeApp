@@ -40,25 +40,9 @@ namespace Desktop_Frontend.Components
         public async Task DisplayMyLists(StackPanel contentArea)
         {
             SolidColorBrush pageHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush listHeaderTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush ingredientButtonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush ingredientTxtCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush searchBarBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
-            SolidColorBrush searchBarTxtCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush expanderIconCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush expanderBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush dropDownBackground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
-            SolidColorBrush dropDownForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
             int pageHeaderFont = 34;
-            int listHeaderFont = 28;
-            int ingredientButtonFont = 28;
-            int searchBarFont = 24;
-            int optionsFont = 20;
 
-
-            double availableWidth = SystemParameters.PrimaryScreenWidth;
-            double itemWidth = availableWidth / 2 - 200;
 
             if (this.parentPanel == null)
             {
