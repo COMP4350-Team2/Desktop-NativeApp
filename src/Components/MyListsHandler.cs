@@ -1327,7 +1327,7 @@ namespace Desktop_Frontend.Components
             if (delta < 0 && atBottom)
             {
                 // Transfer control to the parent ScrollViewer
-                double offset = double.MaxNumber(parentScroller.MaxHeight, parentScroller.VerticalOffset - delta/2);
+                double offset = double.MinNumber(parentScroller.MaxHeight, parentScroller.VerticalOffset - delta/2);
                 parentScroller.ScrollToVerticalOffset(offset);
                 e.Handled = false;  // Let the parent handle the event (smooth bubbling)
             }
