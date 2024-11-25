@@ -1318,7 +1318,6 @@ namespace Desktop_Frontend.Components
             if (scv == null) return;
 
             // Check if we're at the bottom or top of the inner ScrollViewer
-            //bool atBottom = scv.ExtentHeight <= (scv.VerticalOffset + scv.ViewportHeight);
             bool atBottom = scv.VerticalOffset >= scv.ExtentHeight - scv.ViewportHeight;
             bool atTop = scv.VerticalOffset <= 0.0;
 
