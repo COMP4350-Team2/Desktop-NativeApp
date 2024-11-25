@@ -1,7 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Media3D;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 
@@ -380,7 +383,7 @@ namespace Desktop_Frontend.Components
             Button moveButton = new Button
             {
                 Content = "\u21C4",
-                FontSize = buttonFont,
+                FontSize = buttonFont + 6,
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(20, 10, 5, 5),
                 Background = Brushes.Transparent,
@@ -425,9 +428,10 @@ namespace Desktop_Frontend.Components
             editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList, ingPanel);
 
             // Add buttons to the panel
-            buttonPanel.Children.Add(deleteButton);
-            buttonPanel.Children.Add(editButton);
             buttonPanel.Children.Add(moveButton);
+            buttonPanel.Children.Add(editButton);
+            buttonPanel.Children.Add(deleteButton);
+
 
             // Add the button panel to the DockPanel
             DockPanel.SetDock(buttonPanel, Dock.Bottom);
@@ -1134,6 +1138,7 @@ namespace Desktop_Frontend.Components
             int ingredientButtonFont = 28;
             int searchBarFont = 24;
             int optionsFont = 20;
+            int dropDownOptHeight = 50;
 
             double availableWidth = SystemParameters.PrimaryScreenWidth;
             double itemWidth = availableWidth / 2 - 200;
@@ -1198,19 +1203,24 @@ namespace Desktop_Frontend.Components
             addIngredientOption.Click += async (s, e) => await ShowAddIngredientPopup(userList, ingredientPanel);
             addIngredientOption.Foreground = dropDownForeground;
             addIngredientOption.FontSize = optionsFont;
+            addIngredientOption.Height = dropDownOptHeight;
             dropdownMenu.Items.Add(addIngredientOption);
 
             MenuItem renameListOption = new MenuItem { Header = "Rename List" };
             renameListOption.Click += (s, e) => { MessageBox.Show("To be implemented"); };
             renameListOption.Foreground = dropDownForeground;
             renameListOption.FontSize = optionsFont;
+            renameListOption.Height = dropDownOptHeight;
             dropdownMenu.Items.Add(renameListOption);
 
-            MenuItem deleteListOption = new MenuItem { Header = "Delete List" };
+            MenuItem deleteListOption = new MenuItem { Header = "Delete List"};
             deleteListOption.Click += async (s, e) => await ConfirmDeleteList(userList.GetListName());
-            deleteListOption.Foreground = Brushes.Red;
+            deleteListOption.Background = Brushes.Red;
+            deleteListOption.Foreground = dropDownForeground;
             deleteListOption.FontSize = optionsFont;
             deleteListOption.FontWeight = FontWeights.Bold;
+            deleteListOption.Style = (Style)App.Current.Resources["CustomMenuItemStyle"];
+            deleteListOption.Height = dropDownOptHeight;
             dropdownMenu.Items.Add(deleteListOption);
 
             // Show the dropdown menu when the options button is clicked
@@ -1253,7 +1263,9 @@ namespace Desktop_Frontend.Components
                 Height = 50,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Bottom,
-                VerticalContentAlignment = VerticalAlignment.Bottom,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 0, 0),
+                BorderThickness = new Thickness(0)
 
             };
 

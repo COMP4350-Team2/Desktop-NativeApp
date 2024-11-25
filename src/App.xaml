@@ -22,6 +22,20 @@
         <SolidColorBrush x:Key="SecondaryBrushB" Color="{StaticResource SecondaryColB}" />
         <SolidColorBrush x:Key="ExpanderBrushA" Color="{StaticResource ExpanderColA}" />
 
+        <Style x:Key="CustomMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border Name="Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="35, 0, 0, 0" Content="{TemplateBinding Header}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
         <!-- ContextMenu Style -->
         <Style TargetType="{x:Type ContextMenu}">
             <Setter Property="OverridesDefaultStyle" Value="True" />

@@ -174,7 +174,8 @@ namespace Desktop_Frontend.Components
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Text = "Search ingredients...",
                 FontSize = boxFont,
-                BorderThickness = new Thickness(0)
+                BorderThickness = new Thickness(0),
+                Margin = new Thickness(10, 0, 0 , 0)
             };
 
             // Clear placeholder text when the box is focused
