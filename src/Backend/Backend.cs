@@ -604,16 +604,18 @@ namespace Desktop_Frontend.Backend
             bool edited = false;
 
             // Create request
-            string url = config.BackendUrl + config.Set_Ing_Endpoint;
+            string url = config.BackendUrl + config.Move_Ing_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Patch, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var body = new
             {
-                list_name = listName,
+                old_list_name = listName,
                 old_ingredient = oldIng.GetName(),
+                old_amount = oldIng.GetAmount(),
                 old_unit = oldIng.GetUnit(),
+                new_list_name = listName,
                 new_ingredient = newIng.GetName(),
                 new_amount = newIng.GetAmount(),
                 new_unit = newIng.GetUnit()
@@ -635,6 +637,7 @@ namespace Desktop_Frontend.Backend
             {
                 edited = false;
             }
+
 
             return edited;
         }
