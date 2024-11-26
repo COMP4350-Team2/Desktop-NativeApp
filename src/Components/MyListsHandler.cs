@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 
@@ -393,13 +394,18 @@ namespace Desktop_Frontend.Components
             // Move button
             Button moveButton = new Button
             {
-                Content = "\u21C4",
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/move_ing_icon_white.png")),
+                    Height = 24, 
+                    Width = 24,  
+                    Stretch = Stretch.Uniform 
+                },
                 FontSize = buttonFont + 6,
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(20, 10, 5, 5),
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                Foreground = buttonCol,
                 Cursor = Cursors.Hand,
                 ToolTip = "Move"
             };
@@ -409,7 +415,13 @@ namespace Desktop_Frontend.Components
             // Delete button
             Button deleteButton = new Button
             {
-                Content = "\uD83D\uDDD1", // Trash can icon
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_ing_icon_white.png")),
+                    Height = 34,
+                    Width = 34,
+                    Stretch = Stretch.Uniform
+                },
                 FontSize = buttonFont,
                 FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
@@ -425,7 +437,13 @@ namespace Desktop_Frontend.Components
             // Edit button
             Button editButton = new Button
             {
-                Content = "\u270E", // Edit icon
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/edit_ing_icon_white.png")),
+                    Height = 34,
+                    Width = 34,
+                    Stretch = Stretch.Uniform
+                },
                 FontSize = buttonFont,
                 FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
