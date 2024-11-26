@@ -1016,7 +1016,7 @@ namespace Desktop_Frontend.Components
             {
                 Title = "Moving " + ingredient.GetName(),
                 Width = 500,
-                Height = 300,
+                Height = 250,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Background = background
             };
