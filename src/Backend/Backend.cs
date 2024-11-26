@@ -842,6 +842,65 @@ namespace Desktop_Frontend.Backend
 
             return moved;
         }
+
+        /// <summary>
+        /// Method to rename a list
+        /// </summary>
+        /// <param name="user"> The user who is renaming lists</param>
+        /// <param name="currListName"> Current name of the list to change </param>
+        /// <param name="newListName"> New name for the list </param>
+        /// <returns></returns>
+        public async Task<bool> RenameList(IUser user, string currListName, string newListName)
+        {
+            bool renamed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Rename_List_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                old_list_name = currListName,
+                new_list_name = newListName
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                RenameCacheList(currListName, newListName);
+                renamed = true;
+            }
+            catch (Exception)
+            {
+                renamed = false;
+            }
+
+
+
+            return renamed;
+        }
+
+        private void RenameCacheList(string currListName, string newListName)
+        {
+            bool renamed = false;
+
+            for (int i = 0; i < myLists.Count && !renamed; i++)
+            {
+                if (myLists[i].GetListName() == currListName)
+                {
+                    myLists[i].SetListName(newListName);
+                    renamed = true;
+                }
+            }
+        }
     }
 
 }

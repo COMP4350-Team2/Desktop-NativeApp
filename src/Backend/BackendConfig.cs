@@ -19,6 +19,7 @@ namespace Desktop_Frontend.Backend
         public string? Set_Ing_Endpoint;
         public string? Del_List_Endpoint;
         public string? Create_List_Endpoint;
+        public string? Rename_List_Endpoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -65,6 +66,7 @@ namespace Desktop_Frontend.Backend
                 Set_Ing_Endpoint = Env.GetString("SET_INGREDIENT");
                 Del_List_Endpoint = Env.GetString("DELETE_LIST");
                 Create_List_Endpoint = Env.GetString("CREATE_LIST");
+                Rename_List_Endpoint = Env.GetString("RENAME_LIST");
             }
 
         }
@@ -79,7 +81,8 @@ namespace Desktop_Frontend.Backend
                || string.IsNullOrEmpty(All_Ing_Endpoint) || string.IsNullOrEmpty(Get_My_Lists_Endpoint)
                || string.IsNullOrEmpty(Add_Ing_Endpoint) || string.IsNullOrEmpty(Get_Measurements_Endpoint)
                || string.IsNullOrEmpty(Rem_Ing_Endpoint) || string.IsNullOrEmpty(Set_Ing_Endpoint)
-               || string.IsNullOrEmpty(Del_List_Endpoint) || string.IsNullOrEmpty(Create_List_Endpoint));
+               || string.IsNullOrEmpty(Del_List_Endpoint) || string.IsNullOrEmpty(Create_List_Endpoint) 
+               || string.IsNullOrEmpty(Rename_List_Endpoint));
         }
 
         /// <summary>

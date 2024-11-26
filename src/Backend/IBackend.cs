@@ -97,5 +97,14 @@ namespace Desktop_Frontend.Backend
         /// /// <param name="ingredient">The <see cref="Ingredient"></see> to be moved</param>
         /// <returns>A bool indicating whether moving was successfull.</returns>
         public Task<bool> MoveIngredient(IUser user, string currListName, string newListName, Ingredient ingredient);
+
+        /// <summary>
+        /// Method to rename a list
+        /// </summary>
+        /// <param name="user"> The user who is renaming lists</param>
+        /// <param name="currListName"> Current name of the list to change </param>
+        /// <param name="newListName"> New name for the list </param>
+        /// <returns></returns>
+        public Task<bool> RenameList(IUser user, string currListName, string newListName);
     }
 }
