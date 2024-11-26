@@ -351,8 +351,7 @@ namespace Desktop_Frontend.Components
             Window popup = new Window
             {
                 Title = "Adding " + ingredient.GetName(),
-                Width = 400,
-                Height = 450,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background

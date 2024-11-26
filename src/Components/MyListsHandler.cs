@@ -101,8 +101,7 @@ namespace Desktop_Frontend.Components
             Window popup = new Window
             {
                 Title = "Deleting " + listName,
-                Width = 500,
-                Height = 200,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background
@@ -130,7 +129,9 @@ namespace Desktop_Frontend.Components
             {
                 Content = "Delete",
                 Style = (Style)Application.Current.Resources["ExpandButtonStyle"], 
-                Margin = new Thickness(10, 30, 10, 10)
+                Margin = new Thickness(10, 30, 10, 10),
+                Background = Brushes.Red,
+                Foreground = Brushes.White
             };
 
             // Handle delete button click
@@ -463,8 +464,7 @@ namespace Desktop_Frontend.Components
             Window popup = new Window
             {
                 Title = "Add Ingredient",
-                Width = 400,
-                Height = 450,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background
@@ -692,8 +692,7 @@ namespace Desktop_Frontend.Components
             Window confirmationPopup = new Window
             {
                 Title = "Deleting " + ingredient.GetName() + " from " + listName,
-                Width = 500,
-                Height = 200,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background
@@ -717,7 +716,9 @@ namespace Desktop_Frontend.Components
             {
                 Content = "Delete",
                 Margin = new Thickness(10, 30, 10, 10),
-                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] 
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"],
+                Background = Brushes.Red,
+                Foreground = Brushes.White
             };
 
             // Add the button to the panel
@@ -775,8 +776,7 @@ namespace Desktop_Frontend.Components
             Window popup = new Window
             {
                 Title = "Edit Ingredient",
-                Width = 400,
-                Height = 350,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background
@@ -902,8 +902,7 @@ namespace Desktop_Frontend.Components
             Window popup = new Window
             {
                 Title = "New List",
-                Width = 400,
-                Height = 250,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = background
@@ -1015,8 +1014,7 @@ namespace Desktop_Frontend.Components
             Window moveWindow = new Window
             {
                 Title = "Moving " + ingredient.GetName(),
-                Width = 500,
-                Height = 250,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Background = background
             };
