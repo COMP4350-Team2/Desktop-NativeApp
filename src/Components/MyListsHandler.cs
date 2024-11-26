@@ -336,31 +336,44 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient name text
+            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            int nameFont = int.Max(ingTextFont - 2 * (ingredient.GetName().Length / 15), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
                 Text = $"{ingredient.GetName()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = ingTextFont,
+                FontSize = nameFont,
                 FontWeight = FontWeights.Bold,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
             };
 
             // Ingredient type text 
+            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            int typeFont = int.Max(ingTextFont - 2 * (ingredient.GetIngType().Length / 15), ingTextFont / 2);
             TextBlock ingredientTypeText = new TextBlock
             {
                 Text = $"{ingredient.GetIngType()}",
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = ingTextFont - 4,
+                FontSize = typeFont - 4,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
             };
 
             // Ingredient amount, unit text 
+            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
+            int amountFont = int.Max(ingTextFont - 2 * (amountText.Length / 15), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
             {
-                Text = $"{ingredient.GetAmount()} {ingredient.GetUnit()}",
+                Text = amountText,
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = ingTextFont - 4,
+                FontSize = amountFont - 4,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
             };
 
             DockPanel.SetDock(ingredientNameText, Dock.Top);

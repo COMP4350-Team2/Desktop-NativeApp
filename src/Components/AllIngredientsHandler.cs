@@ -268,6 +268,8 @@ namespace Desktop_Frontend.Components
         /// <returns>A texblock to filled in ingredient border.</returns>
         private TextBlock CreateTextBlock(string text, SolidColorBrush foreground, int fontSize, FontWeight fontWeight = default)
         {
+            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            fontSize = int.Max(fontSize - 2 * (text.Length/15), fontSize/2);
             return new TextBlock
             {
                 Text = text,
@@ -276,6 +278,7 @@ namespace Desktop_Frontend.Components
                 FontWeight = fontWeight,
                 VerticalAlignment = VerticalAlignment.Center,
                 TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(10)
             };
         }
