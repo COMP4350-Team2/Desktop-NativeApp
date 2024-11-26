@@ -63,7 +63,7 @@
                     VerticalAlignment="Center" 
                     Padding="10" 
                     Margin="0, 0, 0, 20"
-                    MouseLeftButtonUp="LogoutButton_Click">
+                    Click ="LogoutButton_Click">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                             <Image Source="pack://application:,,,/Assets/Icons/logout_icon_white.png" 
