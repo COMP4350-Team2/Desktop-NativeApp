@@ -742,7 +742,8 @@ namespace Desktop_Frontend.Backend
             bool created = false;
 
             // Create request
-            string url = config.BackendUrl + config.Create_List_Endpoint + listName;
+            string url = config.BackendUrl + config.Create_List_Endpoint;
+            url = url.Replace("{list_name}", listName);
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
