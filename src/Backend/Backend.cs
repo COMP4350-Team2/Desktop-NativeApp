@@ -681,7 +681,8 @@ namespace Desktop_Frontend.Backend
             bool deleted = false;
 
             // Create request
-            string url = config.BackendUrl + config.Del_List_Endpoint + listName;
+            string url = config.BackendUrl + config.Del_List_Endpoint;
+            url = url.Replace("{list_name}", listName);
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
