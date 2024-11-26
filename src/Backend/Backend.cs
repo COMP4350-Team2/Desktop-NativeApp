@@ -812,34 +812,6 @@ namespace Desktop_Frontend.Backend
         {
             bool moved = false;
 
-            //// Try to add to new list
-            //bool addedToNewList = await AddIngredientToList(user, ingredient, newListName);
-
-            //// If add successful
-            //if (addedToNewList)
-            //{
-            //    // Try to add 
-            //    bool remFromOldList = await RemIngredientFromList(user, ingredient, currListName);
-
-            //    // If remove was successful
-            //    if (remFromOldList)
-            //    {
-            //        // Successfully moved
-            //        moved = true;
-            //    }
-            //    // If not 
-            //    else
-            //    {
-            //        // Add it back to old list
-            //        await AddIngredientToList(user, ingredient, currListName);
-
-            //        // Remove the previously added 
-            //        await RemIngredientFromList(user, ingredient, newListName);
-
-            //        moved = false;
-            //    }
-            //}
-
             // Create request
             string url = config.BackendUrl + config.Move_Ing_Endpoint;
             string accessToken = user.GetAccessToken();
