@@ -34,7 +34,8 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Wheat", "Grain"),
                 new Ingredient("Lentils", "Grain"),
                 new Ingredient("Cookies", "Snacks"),
-                new Ingredient("Chips", "Snacks")
+                new Ingredient("Chips", "Snacks"),
+                new Ingredient("LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG", "long long long long long long long long")
             };
             ingredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
             this.user = user;
