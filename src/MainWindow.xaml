@@ -2,39 +2,54 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Cupboard" WindowState="Maximized" WindowStartupLocation="CenterScreen"
-        Background="{StaticResource PrimaryBrush}">
+        Background="{StaticResource PrimaryBrushA}">
 
     <Grid>
-        <!-- Background Image -->
-        <Image Source="pack://application:,,,/Cupboard_Logo.png" Stretch="UniformToFill" Opacity="0.1"/>
-
-        <!-- Banner with increased height and bottom outline -->
-        <Border Background="{StaticResource SecondaryBrush}" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
-            <TextBlock Text="Welcome to Cupboard" Foreground="{StaticResource TertiaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
+        <!-- Top Banner -->
+        <Border Background="{StaticResource PrimaryBrushB}" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0" Margin="0, 0, 0, 10">
+            <TextBlock Text="Welcome to Cupboard" Foreground="{StaticResource SecondaryBrushB}" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
         </Border>
 
-        <!-- Login Button in the bottom third of the screen -->
-        <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,150">
-            <Button Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{StaticResource TertiaryBrush}" Foreground="{StaticResource SecondaryBrush}" FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
-                    Padding="10" Margin="0,0,0,20" BorderBrush="Transparent" BorderThickness="0">
-                <!-- Rounded corners and shadow for a professional look -->
+        <!-- Main Content Section -->
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,50" HorizontalAlignment="Center">
+            <!-- Proportional Rows -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo -->
+            <Viewbox Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20" MaxWidth="600" MaxHeight="400">
+                <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
+                       Stretch="Uniform" Opacity="0.7"/>
+            </Viewbox>
+
+            <!-- Login Button -->
+            <Button Grid.Row="1" Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center"
+                    Background="{StaticResource SecondaryBrushB}" Foreground="{StaticResource PrimaryBrushB}" 
+                    FontSize="24" FontWeight="Bold" Click="LoginButton_Click" Padding="10" Margin="0,0,0,20" 
+                    BorderBrush="Transparent" BorderThickness="0" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
-                        <Setter Property="Control.Template">
+                        <!-- Rounded corners template -->
+                        <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" 
+                                            Padding="{TemplateBinding Padding}">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrushB}"/>
+                        <!-- Hover and Press Triggers -->
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter Property="Background" Value="{StaticResource PrimaryBrushB}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrushA}"/>
                                 <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
                                 <Setter Property="RenderTransform">
                                     <Setter.Value>
@@ -43,8 +58,8 @@
                                 </Setter>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                <Setter Property="Foreground" Value="{StaticResource TertiaryBrush}"/>
+                                <Setter Property="Background" Value="{StaticResource PrimaryBrushA}"/>
+                                <Setter Property="Foreground" Value="{StaticResource SecondaryBrushB}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -55,7 +70,8 @@
             </Button>
 
             <!-- Below Button Text -->
-            <TextBlock Text="Log in to continue" Foreground="{StaticResource TertiaryBrush}" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
-        </StackPanel>
+            <TextBlock Grid.Row="2" Text="Log in to continue" Foreground="{StaticResource SecondaryBrushB}" 
+                       HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+        </Grid>
     </Grid>
 </Window>

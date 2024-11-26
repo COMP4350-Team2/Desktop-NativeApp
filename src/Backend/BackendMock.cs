@@ -24,8 +24,20 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Milk", "Dairy"),
                 new Ingredient("Rice", "Grain"),
                 new Ingredient("Eggs", "Protein"),
-                new Ingredient("Bread", "Grain")
+                new Ingredient("Bread", "Grain"),
+                new Ingredient("Beans", "Pantry"),
+                new Ingredient("Owl", "Poultry"),
+                new Ingredient("Chicken", "Poultry"),
+                new Ingredient("Oats", "Pantry"),
+                new Ingredient("Oranges", "Produce"),
+                new Ingredient("Carrot", "Produce"),
+                new Ingredient("Wheat", "Grain"),
+                new Ingredient("Lentils", "Grain"),
+                new Ingredient("Cookies", "Snacks"),
+                new Ingredient("Chips", "Snacks"),
+                new Ingredient("LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG", "long long long long long long long long")
             };
+            ingredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
             this.user = user;
 
             InitMyLists();
@@ -58,9 +70,9 @@ namespace Desktop_Frontend.Backend
         /// A task representing the asynchronous operation, with a value indicating
         /// whether the user creation was successful. Always returns true.
         /// </returns>
-        public async Task<bool> CreateUser(IUser user)
+        public Task<bool> CreateUser(IUser user)
         {
-            return await Task.FromResult(true);
+            return Task.FromResult(true);
         }
 
         /// <summary>
@@ -89,10 +101,13 @@ namespace Desktop_Frontend.Backend
             myLists = new List<UserList>();
 
             List<Ingredient> groceryIngs = new List<Ingredient>();
+            groceryIngs.Add(new Ingredient("LONG LONG LONG LONG LONG LONG LONG", "LONG LONG LONG LONG LONG LONG LONG", 1, "count"));
             groceryIngs.Add(new Ingredient("Chicken", "Poultry", 2000, "g"));
             groceryIngs.Add(new Ingredient("Beef", "Meat", 250, "g"));
             groceryIngs.Add(new Ingredient("Rabbit", "Meat", 1, "count"));
             groceryIngs.Add(new Ingredient("Chicken", "Poultry", 8, "count"));
+            groceryIngs.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
 
 
             List<Ingredient> pantryIngs = new List<Ingredient>();
@@ -100,6 +115,8 @@ namespace Desktop_Frontend.Backend
             pantryIngs.Add(new Ingredient("Milk", "Dairy", 250, "ml"));
             pantryIngs.Add(new Ingredient("Cereal", "Pantry", 500, "g"));
             pantryIngs.Add(new Ingredient("Carrot", "Produce", 4, "count"));
+            pantryIngs.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
 
             UserList groceryList = new UserList("Grocery", groceryIngs);
             UserList pantryList = new UserList("Pantry", pantryIngs);

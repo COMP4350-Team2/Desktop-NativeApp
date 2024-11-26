@@ -4,11 +4,152 @@
              xmlns:local="clr-namespace:Desktop_Frontend"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Color x:Key="PrimaryColor">#1B262C</Color>
-        <Color x:Key="SecondaryColor">#0F4C75</Color>
-        <Color x:Key="TertiaryColor">#FFFFFF</Color>
-        <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
-        <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}" />
-        <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource TertiaryColor}" />
+        <!-- Define Colors -->
+        <Color x:Key="PrimaryColA">#10171C</Color>
+        <Color x:Key="PrimaryColB">#0F4C75</Color>
+        <Color x:Key="PrimaryColC">#3282B8</Color>
+        <Color x:Key="PrimaryColD">#BBE1FA</Color>
+        <Color x:Key="SecondaryColA">#000</Color>
+        <Color x:Key="SecondaryColB">#FFFFFF</Color>
+        <Color x:Key="ExpanderColA">#1B262C</Color>
+
+        <!-- Define Brushes -->
+        <SolidColorBrush x:Key="PrimaryBrushA" Color="{StaticResource PrimaryColA}" />
+        <SolidColorBrush x:Key="PrimaryBrushB" Color="{StaticResource PrimaryColB}" />
+        <SolidColorBrush x:Key="PrimaryBrushC" Color="{StaticResource PrimaryColC}" />
+        <SolidColorBrush x:Key="PrimaryBrushD" Color="{StaticResource PrimaryColD}" />
+        <SolidColorBrush x:Key="SecondaryBrushA" Color="{StaticResource SecondaryColA}" />
+        <SolidColorBrush x:Key="SecondaryBrushB" Color="{StaticResource SecondaryColB}" />
+        <SolidColorBrush x:Key="ExpanderBrushA" Color="{StaticResource ExpanderColA}" />
+
+        <Style x:Key="CustomMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border Name="Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="35, 0, 0, 0" Content="{TemplateBinding Header}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- ContextMenu Style -->
+        <Style TargetType="{x:Type ContextMenu}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border BorderThickness="1" CornerRadius="4" BorderBrush="{StaticResource PrimaryBrushB}" x:Name="Border" Background="{StaticResource PrimaryBrushB}">
+                            <StackPanel ClipToBounds="True" Orientation="Vertical" IsItemsHost="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrushB}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Define the HoverableButton style -->
+        <Style x:Key="HoverableButton" TargetType="StackPanel">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#55000000"/>
+                    <!-- Darker highlight with low opacity -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Define the HoverableBorder style -->
+        <Style x:Key="HoverableBorder" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#55000000"/>
+                    <!-- Darker highlight with low opacity -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- Define the NoHighlightButton style -->
+        <Style x:Key="NoHighlightButton" TargetType="Button">
+            <!-- Default appearance -->
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Padding" Value="0"/>
+
+            <!-- Template to define the button layout -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Remove highlighting on hover -->
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Expand Button Style-->
+        <Style x:Key="ExpandButtonStyle" TargetType="Button">
+            <!-- Default appearance -->
+            <Setter Property="Background" Value="{StaticResource SecondaryBrushB}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrushB}"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+
+            <!-- Template to define the button layout with rounded corners -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Hover effect to expand the button -->
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>

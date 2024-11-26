@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Desktop_Frontend.Backend;
 using Desktop_Frontend.Components;
 using Desktop_Frontend.DSOs;
@@ -62,8 +63,11 @@ namespace Desktop_Frontend
             // Temporarily disable all buttons
             SetButtonsEnabled(false);
 
+            // Enable the scrollbar
+            ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+
             // Clear current content and display my lists section
-            await myListsHandler.DisplayMyLists(ContentArea);
+            await myListsHandler.DisplayMyLists(ContentArea, ParentScrollViewer);
 
             // Enable buttons again
             SetButtonsEnabled(true);
@@ -78,6 +82,9 @@ namespace Desktop_Frontend
             // Temporarily disable all buttons
             SetButtonsEnabled(false);
 
+            // Remove the scrollbar
+            ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
             // Display all ingredients using the handler
             await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
 
@@ -91,6 +98,9 @@ namespace Desktop_Frontend
         /// </summary>
         private async void InitializeContentSpace()
         {
+            // Remove the scrollbar
+            ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
             // Display all ingredients when the window is initialized
             await allIngredientsHandler.DisplayIngredientsAsync(ContentArea);
         }

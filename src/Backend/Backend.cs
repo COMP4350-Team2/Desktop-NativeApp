@@ -166,6 +166,9 @@ namespace Desktop_Frontend.Backend
                 // Add new ingredient
                 allIng.Add(new Ingredient(name, ingType));
             }
+
+            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
         }
 
         /// <summary>
@@ -246,11 +249,14 @@ namespace Desktop_Frontend.Backend
             // Clear existing data in myLists
             myLists.Clear();
 
+
             // Traverse JSON to extract lists and ingredients
             foreach (var listItem in root.EnumerateArray())
             {
                 string listName = listItem.GetProperty("list_name").GetString();
-                var ingredients = new List<Ingredient>();
+                List<Ingredient> ingredients = new List<Ingredient>();
+
+                UserList currList = new UserList(listName, ingredients);
 
                 foreach (var ingredientItem in listItem.GetProperty("ingredients").EnumerateArray())
                 {
@@ -259,12 +265,12 @@ namespace Desktop_Frontend.Backend
                     float amount = ingredientItem.GetProperty("amount").GetSingle();
                     string unit = ingredientItem.GetProperty("unit").GetString();
 
-                    // Create Ingredient with name, type, amount (float), and unit
-                    ingredients.Add(new Ingredient(name, type, amount, unit));
+
+                    currList.AddIngToList(new Ingredient(name, type, amount, unit));
                 }
 
                 // Add the list to myLists
-                myLists.Add(new UserList(listName, ingredients));
+                myLists.Add(currList);
             }
 
         }
