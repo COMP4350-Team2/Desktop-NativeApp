@@ -528,20 +528,13 @@ namespace Desktop_Frontend.Backend
 
             // Create request
             string url = config.BackendUrl + config.Rem_Ing_Endpoint;
+            url = url
+                .Replace("{list_name}", listName)
+                .Replace("{ingredient}", ingredient.GetName())
+                .Replace("{unit}", ingredient.GetUnit());
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var body = new
-            {
-                list_name = listName,
-                ingredient = ingredient.GetName(),
-                unit = ingredient.GetUnit()
-            };
-
-            string jsonBody = JsonSerializer.Serialize(body);
-
-            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
 
             // Get response
             try
