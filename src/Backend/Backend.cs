@@ -290,7 +290,7 @@ namespace Desktop_Frontend.Backend
             // Create request
             string url = config.BackendUrl + config.Add_Ing_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var body = new
@@ -812,35 +812,82 @@ namespace Desktop_Frontend.Backend
         {
             bool moved = false;
 
-            // Try to add to new list
-            bool addedToNewList = await AddIngredientToList(user, ingredient, newListName);
+            //// Try to add to new list
+            //bool addedToNewList = await AddIngredientToList(user, ingredient, newListName);
 
-            // If add successful
-            if (addedToNewList)
+            //// If add successful
+            //if (addedToNewList)
+            //{
+            //    // Try to add 
+            //    bool remFromOldList = await RemIngredientFromList(user, ingredient, currListName);
+
+            //    // If remove was successful
+            //    if (remFromOldList)
+            //    {
+            //        // Successfully moved
+            //        moved = true;
+            //    }
+            //    // If not 
+            //    else
+            //    {
+            //        // Add it back to old list
+            //        await AddIngredientToList(user, ingredient, currListName);
+
+            //        // Remove the previously added 
+            //        await RemIngredientFromList(user, ingredient, newListName);
+
+            //        moved = false;
+            //    }
+            //}
+
+            // Create request
+            string url = config.BackendUrl + config.Move_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Patch, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
             {
-                // Try to add 
-                bool remFromOldList = await RemIngredientFromList(user, ingredient, currListName);
+                old_list_name = currListName,
+                old_ingredient = ingredient.GetName(),
+                old_amount = ingredient.GetAmount(),
+                old_unit = ingredient.GetUnit(),
+                new_list_name = newListName,
+                new_ingredient = ingredient.GetName(),
+                new_amount = ingredient.GetAmount(),
+                new_unit = ingredient.GetUnit()
+            };
 
-                // If remove was successful
-                if (remFromOldList)
-                {
-                    // Successfully moved
-                    moved = true;
-                }
-                // If not 
-                else
-                {
-                    // Add it back to old list
-                    await AddIngredientToList(user, ingredient, currListName);
+            string jsonBody = JsonSerializer.Serialize(body);
 
-                    // Remove the previously added 
-                    await RemIngredientFromList(user, ingredient, newListName);
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
 
-                    moved = false;
-                }
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                moved = true;
+                MoveCachedIngredient(ingredient, currListName, newListName);
+            }
+            catch (Exception)
+            {
+                moved = false;
             }
 
             return moved;
+        }
+
+        /// <summary>
+        /// Moves the ingredient from list to list in cache
+        /// </summary>
+        /// <param name="toMove"> Ingredient to move</param>
+        /// <param name="fromList"> Original list</param>
+        /// <param name="toList"> New list </param>
+        private void MoveCachedIngredient(Ingredient toMove, string fromList, string toList)
+        {
+            RemFromMyLists(fromList, toMove);
+            AddToMyLists(toList, toMove);
         }
 
         /// <summary>
