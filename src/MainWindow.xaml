@@ -5,39 +5,47 @@
         Background="{StaticResource PrimaryBrushA}">
 
     <Grid>
-        <!-- Banner with increased height and bottom outline -->
-        <Border Background="{StaticResource PrimaryBrushB}" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0">
-            <TextBlock Text="Welcome to Cupboard" Foreground="{StaticResource SecondaryBrushB}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
+        <!-- Top Banner -->
+        <Border Background="{StaticResource PrimaryBrushB}" Height="120" VerticalAlignment="Top" BorderBrush="Transparent" BorderThickness="0" Margin="0, 0, 0, 10">
+            <TextBlock Text="Welcome to Cupboard" Foreground="{StaticResource SecondaryBrushB}" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold"/>
         </Border>
 
-        <!-- Image and Login Button Section -->
-        <StackPanel VerticalAlignment="Bottom" Margin="0,200,0,100" HorizontalAlignment="Center">
-            <!-- Image Above Login Button -->
-            <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Margin="0,0,0,20"
-                   MaxWidth="600"
-                   MaxHeight="400"
-                   Opacity="0.7"/>
+        <!-- Main Content Section -->
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,50" HorizontalAlignment="Center">
+            <!-- Proportional Rows -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo -->
+            <Viewbox Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20" MaxWidth="600" MaxHeight="400">
+                <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
+                       Stretch="Uniform" Opacity="0.7"/>
+            </Viewbox>
 
             <!-- Login Button -->
-            <Button Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{StaticResource SecondaryBrushB}" Foreground="{StaticResource PrimaryBrushB}" FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
-                    Padding="10" Margin="0,0,0,20" BorderBrush="Transparent" BorderThickness="0" Cursor="Hand">
-                <!-- Rounded corners and shadow -->
+            <Button Grid.Row="1" Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center"
+                    Background="{StaticResource SecondaryBrushB}" Foreground="{StaticResource PrimaryBrushB}" 
+                    FontSize="24" FontWeight="Bold" Click="LoginButton_Click" Padding="10" Margin="0,0,0,20" 
+                    BorderBrush="Transparent" BorderThickness="0" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
-                        <Setter Property="Control.Template">
+                        <!-- Rounded corners template -->
+                        <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" 
+                                            Padding="{TemplateBinding Padding}">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                         <Setter Property="Foreground" Value="{StaticResource PrimaryBrushB}"/>
+                        <!-- Hover and Press Triggers -->
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="{StaticResource PrimaryBrushB}"/>
@@ -62,7 +70,8 @@
             </Button>
 
             <!-- Below Button Text -->
-            <TextBlock Text="Log in to continue" Foreground="{StaticResource SecondaryBrushB}" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
-        </StackPanel>
+            <TextBlock Grid.Row="2" Text="Log in to continue" Foreground="{StaticResource SecondaryBrushB}" 
+                       HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+        </Grid>
     </Grid>
 </Window>
