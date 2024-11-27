@@ -340,8 +340,8 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient name text
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
-            int nameFont = int.Max(ingTextFont - 2 * (ingredient.GetName().Length / 15), ingTextFont / 2);
+            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
+            int nameFont = int.Max(ingTextFont - 2 * (ingredient.GetName().Length / 10), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
                 Text = $"{ingredient.GetName()}",
@@ -354,8 +354,8 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient type text 
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
-            int typeFont = int.Max(ingTextFont - 2 * (ingredient.GetIngType().Length / 15), ingTextFont / 2);
+            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
+            int typeFont = int.Max(ingTextFont - 2 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
             TextBlock ingredientTypeText = new TextBlock
             {
                 Text = $"{ingredient.GetIngType()}",
@@ -367,9 +367,9 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient amount, unit text 
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
             string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
-            int amountFont = int.Max(ingTextFont - 2 * (amountText.Length / 15), ingTextFont / 2);
+            int amountFont = int.Max(ingTextFont - 2 * (amountText.Length / 10), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
             {
                 Text = amountText,
