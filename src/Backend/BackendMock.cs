@@ -316,5 +316,28 @@ namespace Desktop_Frontend.Backend
 
             return await Task.FromResult(moved);
         }
+
+        /// <summary>
+        /// Method to rename a list
+        /// </summary>
+        /// <param name="user"> The user who is renaming lists</param>
+        /// <param name="currListName"> Current name of the list to change </param>
+        /// <param name="newListName"> New name for the list </param>
+        /// <returns></returns>
+        public Task<bool> RenameList(IUser user, string currListName, string newListName)
+        {
+            bool renamed = false;
+
+            for (int i = 0; i < myLists.Count && !renamed; i++)
+            {
+                if (myLists[i].GetListName() == currListName)
+                {
+                    myLists[i].SetListName(newListName);
+                    renamed = true;
+                }
+            }
+
+            return Task.FromResult(renamed);
+        }
     }
 }

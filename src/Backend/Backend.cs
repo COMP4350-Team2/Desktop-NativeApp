@@ -290,7 +290,7 @@ namespace Desktop_Frontend.Backend
             // Create request
             string url = config.BackendUrl + config.Add_Ing_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var body = new
@@ -528,20 +528,13 @@ namespace Desktop_Frontend.Backend
 
             // Create request
             string url = config.BackendUrl + config.Rem_Ing_Endpoint;
+            url = url
+                .Replace("{list_name}", listName)
+                .Replace("{ingredient}", ingredient.GetName())
+                .Replace("{unit}", ingredient.GetUnit());
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var body = new
-            {
-                list_name = listName,
-                ingredient = ingredient.GetName(),
-                unit = ingredient.GetUnit()
-            };
-
-            string jsonBody = JsonSerializer.Serialize(body);
-
-            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
 
             // Get response
             try
@@ -604,16 +597,18 @@ namespace Desktop_Frontend.Backend
             bool edited = false;
 
             // Create request
-            string url = config.BackendUrl + config.Set_Ing_Endpoint;
+            string url = config.BackendUrl + config.Move_Ing_Endpoint;
             string accessToken = user.GetAccessToken();
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            var request = new HttpRequestMessage(HttpMethod.Patch, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var body = new
             {
-                list_name = listName,
+                old_list_name = listName,
                 old_ingredient = oldIng.GetName(),
+                old_amount = oldIng.GetAmount(),
                 old_unit = oldIng.GetUnit(),
+                new_list_name = listName,
                 new_ingredient = newIng.GetName(),
                 new_amount = newIng.GetAmount(),
                 new_unit = newIng.GetUnit()
@@ -635,6 +630,7 @@ namespace Desktop_Frontend.Backend
             {
                 edited = false;
             }
+
 
             return edited;
         }
@@ -681,7 +677,8 @@ namespace Desktop_Frontend.Backend
             bool deleted = false;
 
             // Create request
-            string url = config.BackendUrl + config.Del_List_Endpoint + listName;
+            string url = config.BackendUrl + config.Del_List_Endpoint;
+            url = url.Replace("{list_name}", listName);
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -742,7 +739,8 @@ namespace Desktop_Frontend.Backend
             bool created = false;
 
             // Create request
-            string url = config.BackendUrl + config.Create_List_Endpoint + listName;
+            string url = config.BackendUrl + config.Create_List_Endpoint;
+            url = url.Replace("{list_name}", listName);
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -812,35 +810,116 @@ namespace Desktop_Frontend.Backend
         {
             bool moved = false;
 
-            // Try to add to new list
-            bool addedToNewList = await AddIngredientToList(user, ingredient, newListName);
+            // Create request
+            string url = config.BackendUrl + config.Move_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Patch, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            // If add successful
-            if (addedToNewList)
+            var body = new
             {
-                // Try to add 
-                bool remFromOldList = await RemIngredientFromList(user, ingredient, currListName);
+                old_list_name = currListName,
+                old_ingredient = ingredient.GetName(),
+                old_amount = ingredient.GetAmount(),
+                old_unit = ingredient.GetUnit(),
+                new_list_name = newListName,
+                new_ingredient = ingredient.GetName(),
+                new_amount = ingredient.GetAmount(),
+                new_unit = ingredient.GetUnit()
+            };
 
-                // If remove was successful
-                if (remFromOldList)
-                {
-                    // Successfully moved
-                    moved = true;
-                }
-                // If not 
-                else
-                {
-                    // Add it back to old list
-                    await AddIngredientToList(user, ingredient, currListName);
+            string jsonBody = JsonSerializer.Serialize(body);
 
-                    // Remove the previously added 
-                    await RemIngredientFromList(user, ingredient, newListName);
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
 
-                    moved = false;
-                }
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                moved = true;
+                MoveCachedIngredient(ingredient, currListName, newListName);
+            }
+            catch (Exception)
+            {
+                moved = false;
             }
 
             return moved;
+        }
+
+        /// <summary>
+        /// Moves the ingredient from list to list in cache
+        /// </summary>
+        /// <param name="toMove"> Ingredient to move</param>
+        /// <param name="fromList"> Original list</param>
+        /// <param name="toList"> New list </param>
+        private void MoveCachedIngredient(Ingredient toMove, string fromList, string toList)
+        {
+            RemFromMyLists(fromList, toMove);
+            AddToMyLists(toList, toMove);
+        }
+
+        /// <summary>
+        /// Method to rename a list
+        /// </summary>
+        /// <param name="user"> The user who is renaming lists</param>
+        /// <param name="currListName"> Current name of the list to change </param>
+        /// <param name="newListName"> New name for the list </param>
+        /// <returns></returns>
+        public async Task<bool> RenameList(IUser user, string currListName, string newListName)
+        {
+            bool renamed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Rename_List_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                old_list_name = currListName,
+                new_list_name = newListName
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                RenameCacheList(currListName, newListName);
+                renamed = true;
+            }
+            catch (Exception)
+            {
+                renamed = false;
+            }
+
+            return renamed;
+        }
+
+        /// <summary>
+        /// Renames the list in the cached response
+        /// </summary>
+        /// <param name="currListName"> The list to rename </param>
+        /// <param name="newListName"> The new name for list </param>
+        private void RenameCacheList(string currListName, string newListName)
+        {
+            bool renamed = false;
+
+            for (int i = 0; i < myLists.Count && !renamed; i++)
+            {
+                if (myLists[i].GetListName() == currListName)
+                {
+                    myLists[i].SetListName(newListName);
+                    renamed = true;
+                }
+            }
         }
     }
 

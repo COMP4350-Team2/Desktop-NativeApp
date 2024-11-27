@@ -44,6 +44,8 @@ Type `dotnet --version` in terminal to check version on your system.
     SET_INGREDIENT=
     DELETE_LIST=
     CREATE_LIST=
+    RENAME_LIST=
+    MOVE_INGREDIENT=
     ```   
 
 - Not having these files will run a Mock version of the system.
