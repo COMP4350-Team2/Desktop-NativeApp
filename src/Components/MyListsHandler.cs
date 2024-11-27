@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.DirectoryServices.ActiveDirectory;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -1460,33 +1461,53 @@ namespace Desktop_Frontend.Components
 
                 string newListName = newNameBox.Text.ToString().Trim();
 
-                bool success = await backend.RenameList(user, listName, newListName);
+                List<UserList> allLists = await backend.GetMyLists(user);
 
-                // Show result message
-                if (success)
+                bool alreadyExists = false;
+
+                for(int i = 0; i < allLists.Count && !alreadyExists; i++)
                 {
-                    MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    listHeader.Text = newListName;
-                    userList.SetListName(newListName);
-
-                    for(int i = 0; i < ingExpanders.Count; i++)
+                    if (allLists[i].GetListName() == newListName)
                     {
-                        if (ingExpanders[i].Tag.ToString() == listName)
-                        {
-                            ingExpanders[i].Tag = newListName;
-                            break;
-                        }
+                        MessageBox.Show($"{newListName} already exists", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        alreadyExists = true;
                     }
                 }
-                else
+
+                if (!alreadyExists)
                 {
-                    MessageBox.Show("Failed to rename list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    bool success = await backend.RenameList(user, listName, newListName);
+
+                    // Show result message
+                    if (success)
+                    {
+                        MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        listHeader.Text = newListName;
+                        userList.SetListName(newListName);
+
+                        for (int i = 0; i < ingExpanders.Count; i++)
+                        {
+                            if (ingExpanders[i].Tag.ToString() == listName)
+                            {
+                                ingExpanders[i].Tag = newListName;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to rename list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    popup.Close();
+
                 }
+
 
                 renameButton.IsEnabled = true;
                 newNameBox.IsEnabled = true;
 
-                popup.Close();
             };
 
             panel.Children.Add(renameButton);
