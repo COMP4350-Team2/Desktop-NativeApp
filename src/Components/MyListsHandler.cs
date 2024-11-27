@@ -888,8 +888,12 @@ namespace Desktop_Frontend.Components
 
                 string newUnit = unitBox.SelectedItem?.ToString();
 
+                confirmButton.IsEnabled = false;
+
                 Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
                 bool success = await backend.SetIngredient(user, oldIngredient, updatedIngredient, userList.GetListName());
+
+                confirmButton.IsEnabled = true;
 
                 if (success)
                 {
@@ -975,6 +979,7 @@ namespace Desktop_Frontend.Components
 
                 if (!string.IsNullOrEmpty(newListName))
                 {
+                    createButton.IsEnabled = false;
                     bool success = await backend.CreateList(user, newListName);
 
                     // Show result message
@@ -989,6 +994,7 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show("Failed to create list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+                    createButton.IsEnabled = true;
                     popup.Close();
                 }
                 else
