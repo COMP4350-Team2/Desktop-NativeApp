@@ -903,6 +903,11 @@ namespace Desktop_Frontend.Backend
             return renamed;
         }
 
+        /// <summary>
+        /// Renames the list in the cached response
+        /// </summary>
+        /// <param name="currListName"> The list to rename </param>
+        /// <param name="newListName"> The new name for list </param>
         private void RenameCacheList(string currListName, string newListName)
         {
             bool renamed = false;
