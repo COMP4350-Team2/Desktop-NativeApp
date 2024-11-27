@@ -1251,7 +1251,7 @@ namespace Desktop_Frontend.Components
             dropdownMenu.Items.Add(addIngredientOption);
 
             MenuItem renameListOption = new MenuItem { Header = "Rename List" };
-            renameListOption.Click += async (s, e) => await RenameList(listExpander.Tag.ToString(), listHeader);
+            renameListOption.Click += async (s, e) => await RenameList(listExpander.Tag.ToString(), listHeader, userList);
             renameListOption.Foreground = dropDownForeground;
             renameListOption.FontSize = optionsFont;
             renameListOption.Height = dropDownOptHeight;
@@ -1391,9 +1391,10 @@ namespace Desktop_Frontend.Components
         /// Method called when rename list is clicked from options dropdown
         /// </summary>
         /// <param name="listName"> Name of the list being renamed</param>
-        /// <param name="listHeader"> header containing the list name (for editing)</param>
+        /// <param name="listHeader"> Header containing the list name (for editing)</param>
+        /// <param name="userList"> UserList to be renamed (for editing)</param>
         /// <returns></returns>
-        private async Task RenameList(string listName, TextBlock listHeader)
+        private async Task RenameList(string listName, TextBlock listHeader, UserList userList)
         {
             // Define the brushes for the popup background and text
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
@@ -1466,6 +1467,7 @@ namespace Desktop_Frontend.Components
                 {
                     MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     listHeader.Text = newListName;
+                    userList.SetListName(newListName);
 
                     for(int i = 0; i < ingExpanders.Count; i++)
                     {
