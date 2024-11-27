@@ -329,6 +329,8 @@ namespace Desktop_Frontend.Components
 
             double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
 
+            int ingButtonsDim = ingBoxHeight / 5;
+
             // Create a DockPanel to display ingredient details
             DockPanel ingredientRow = new DockPanel
             {
@@ -398,8 +400,8 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/move_ing_icon_white.png")),
-                    Height = 24, 
-                    Width = 24,  
+                    Height = ingButtonsDim, 
+                    Width = ingButtonsDim,  
                     Stretch = Stretch.Uniform 
                 },
                 FontSize = buttonFont + 6,
@@ -419,8 +421,8 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_ing_icon_white.png")),
-                    Height = 34,
-                    Width = 34,
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
                 FontSize = buttonFont,
@@ -441,8 +443,8 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/edit_ing_icon_white.png")),
-                    Height = 34,
-                    Width = 34,
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
                 FontSize = buttonFont,
