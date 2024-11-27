@@ -900,8 +900,6 @@ namespace Desktop_Frontend.Backend
                 renamed = false;
             }
 
-
-
             return renamed;
         }
 
