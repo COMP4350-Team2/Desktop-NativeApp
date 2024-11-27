@@ -21,33 +21,6 @@ jobs:
         with:
           dotnet-version: '8.0.400' 
 
-      - name: Create AUTH0.env file
-        run: |
-          if (!(Test-Path src\Auth0)) {
-            New-Item -ItemType Directory -Path src\Auth0
-          }
-          "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" | Out-File -Append -FilePath src\Auth0\AUTH0.env
-          "AUTH0_API_IDENTIFIER=${{ secrets.AUTH0_API_IDENTIFIER }}" | Out-File -Append -FilePath src\Auth0\AUTH0.env
-          "AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}" | Out-File -Append -FilePath src\Auth0\AUTH0.env
-          "AUTH0_CALLBACK_URL=${{ secrets.AUTH0_CALLBACK_URL }}" | Out-File -Append -FilePath src\Auth0\AUTH0.env
-          "AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}" | Out-File -Append -FilePath src\Auth0\AUTH0.env
-
-      - name: Create BACKEND.env file
-        run: |
-          if (!(Test-Path src\Backend)) {
-            New-Item -ItemType Directory -Path src\Backend
-          }
-          "BACKEND_URL=${{ secrets.BACKEND_URL }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "CREATE_USER=${{ secrets.CREATE_USER }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "ALL_INGREDIENTS=${{ secrets.ALL_INGREDIENTS }}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "MY_LISTS=${{ secrets.MY_LISTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "ADD_INGREDIENT=${{ secrets.ADD_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "GET_MEASUREMENTS=${{ secrets.GET_MEASUREMENTS}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "REMOVE_INGREDIENT=${{ secrets.REMOVE_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "SET_INGREDIENT=${{ secrets.SET_INGREDIENT}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "DELETE_LIST=${{ secrets.DELETE_LIST}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-          "CREATE_LIST=${{ secrets.CREATE_LIST}}" | Out-File -Append -FilePath src\Backend\BACKEND.env
-
       - name: Build project
         run: |
           cd src
