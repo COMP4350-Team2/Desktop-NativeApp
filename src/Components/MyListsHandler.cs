@@ -988,7 +988,6 @@ namespace Desktop_Frontend.Components
                         MessageBox.Show("List created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         UserList newList = new UserList(newListName, new List<Ingredient>());
                         AddListExpander(newList);
-                        //await DisplayMyLists(parentPanel);
                     }
                     else
                     {
@@ -1227,6 +1226,19 @@ namespace Desktop_Frontend.Components
             Grid.SetColumn(optionsButton, 1);
             headerGrid.Children.Add(optionsButton);
 
+            // Create the Expander for the list, using the grid for the header
+            Expander listExpander = new Expander
+            {
+                Header = headerGrid,
+                FontSize = 18,
+                Foreground = expanderIconCol,
+                Margin = new Thickness(30),
+                BorderThickness = new Thickness(2),
+                BorderBrush = expanderBorderCol,
+                Background = (Brush)Application.Current.Resources["ExpanderBrushA"],
+                Tag = userList.GetListName()
+            };
+
             // Create the dropdown menu 
             ContextMenu dropdownMenu = new ContextMenu { Background = dropDownBackground };
 
@@ -1239,7 +1251,7 @@ namespace Desktop_Frontend.Components
             dropdownMenu.Items.Add(addIngredientOption);
 
             MenuItem renameListOption = new MenuItem { Header = "Rename List" };
-            renameListOption.Click += (s, e) => { MessageBox.Show("To be implemented"); };
+            renameListOption.Click += async (s, e) => await RenameList(listExpander.Tag.ToString(), listHeader);
             renameListOption.Foreground = dropDownForeground;
             renameListOption.FontSize = optionsFont;
             renameListOption.Height = dropDownOptHeight;
@@ -1257,20 +1269,6 @@ namespace Desktop_Frontend.Components
 
             // Show the dropdown menu when the options button is clicked
             optionsButton.Click += (sender, e) => { dropdownMenu.IsOpen = true; };
-
-            // Create the Expander for the list, using the grid for the header
-            Expander listExpander = new Expander
-            {
-                Header = headerGrid,
-                FontSize = 18,
-                Foreground = expanderIconCol,
-                Margin = new Thickness(30),
-                BorderThickness = new Thickness(2),
-                BorderBrush = expanderBorderCol,
-                Background = (Brush)Application.Current.Resources["ExpanderBrushA"],
-                Tag = userList.GetListName()
-            };
-
 
             // Create a border for rounded edges
             Border searchBoxBorder = new Border
@@ -1387,6 +1385,115 @@ namespace Desktop_Frontend.Components
                 // Let the inner ScrollViewer handle scrolling normally
                 e.Handled = false;  // Allow inner ScrollViewer to handle the event
             }
+        }
+
+        /// <summary>
+        /// Method called when rename list is clicked from options dropdown
+        /// </summary>
+        /// <param name="listName"> Name of the list being renamed</param>
+        /// <param name="listHeader"> header containing the list name (for editing)</param>
+        /// <returns></returns>
+        private async Task RenameList(string listName, TextBlock listHeader)
+        {
+            // Define the brushes for the popup background and text
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            int textFont = 18;
+
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Renaming " + listName,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            // Panel for the popup content
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            // Confirmation message text
+            TextBlock confirmationText = new TextBlock
+            {
+                Text = "Enter new name for list",
+                Foreground = textColor,
+                FontSize = textFont,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(10)
+            };
+
+            panel.Children.Add(confirmationText);
+
+            // Amount
+            TextBox newNameBox = new TextBox
+            {
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 20,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                Width = 400,
+                Height = 50,
+                Margin = new Thickness(10)
+            };
+
+            panel.Children.Add(newNameBox);
+
+            // Create the delete confirmation button 
+            Button renameButton = new Button
+            {
+                Content = "Rename",
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"],
+                Margin = new Thickness(10, 30, 10, 10),
+            };
+
+            // Handle delete button click
+            renameButton.Click += async (s, e) =>
+            {
+                renameButton.IsEnabled = false;
+
+                newNameBox.IsEnabled = false;
+
+                string newListName = newNameBox.Text.ToString().Trim();
+
+                bool success = await backend.RenameList(user, listName, newListName);
+
+                // Show result message
+                if (success)
+                {
+                    MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    listHeader.Text = newListName;
+
+                    for(int i = 0; i < ingExpanders.Count; i++)
+                    {
+                        if (ingExpanders[i].Tag.ToString() == listName)
+                        {
+                            ingExpanders[i].Tag = newListName;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Failed to rename list. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                renameButton.IsEnabled = true;
+                newNameBox.IsEnabled = true;
+
+                popup.Close();
+            };
+
+            panel.Children.Add(renameButton);
+
+            // Set the popup content
+            popup.Content = panel;
+
+            // Show the popup as a modal dialog
+            popup.ShowDialog();
         }
     }
 }
