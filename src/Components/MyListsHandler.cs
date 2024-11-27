@@ -1,5 +1,4 @@
-﻿using System.DirectoryServices.ActiveDirectory;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -326,8 +325,6 @@ namespace Desktop_Frontend.Components
 
             int ingTextFont = 30;
             int buttonFont = 30;
-
-            double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
 
             int ingButtonsDim = ingBoxHeight / 5;
 
