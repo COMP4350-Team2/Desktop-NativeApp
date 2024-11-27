@@ -13,24 +13,33 @@
 
         <!-- Main Content Section -->
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,50" HorizontalAlignment="Center">
-            <!-- Proportional Rows -->
+            <!-- Proportional Rows (Dynamic resizing using star sizing) -->
             <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <!-- This row will take up remaining space -->
                 <RowDefinition Height="Auto"/>
+                <!-- Fixed height for the login button -->
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <!-- Fixed height for the below text -->
             </Grid.RowDefinitions>
 
-            <!-- Logo -->
-            <Viewbox Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20" MaxWidth="600" MaxHeight="400">
+            <!-- Logo (Image) -->
+            <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,200,0,10">
                 <Image Source="pack://application:,,,/Assets/Logos/Cupboard_Logo_darkmode_1.png"
-                       Stretch="Uniform" Opacity="0.7"/>
-            </Viewbox>
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Stretch="None"
+                       Opacity="0.7"
+                       Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" 
+                />
+            </Grid>
 
             <!-- Login Button -->
-            <Button Grid.Row="1" Name="LoginButton" Content="Login" Width="200" Height="70" HorizontalAlignment="Center"
+            <Button Grid.Row="1" Name="LoginButton" Content="Login" Width="200" Height="70"
                     Background="{StaticResource SecondaryBrushB}" Foreground="{StaticResource PrimaryBrushB}" 
-                    FontSize="24" FontWeight="Bold" Click="LoginButton_Click" Padding="10" Margin="0,0,0,20" 
-                    BorderBrush="Transparent" BorderThickness="0" Cursor="Hand">
+                    FontSize="24" FontWeight="Bold" Click="LoginButton_Click"
+                    Padding="10" BorderBrush="Transparent" BorderThickness="0" Cursor="Hand"
+                    Margin="0,0,0,20">
                 <Button.Style>
                     <Style TargetType="Button">
                         <!-- Rounded corners template -->
