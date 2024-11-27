@@ -16,6 +16,7 @@ namespace Desktop_Frontend.Components
         private readonly IBackend backend;
         private readonly IUser user;
         private StackPanel parentPanel;
+        private ScrollViewer scrollViewer;
 
         /// <summary>
         /// Initializes an instance of the <see cref="AllIngredientsHandler"/> class.
@@ -27,6 +28,7 @@ namespace Desktop_Frontend.Components
             this.backend = backend;
             this.user = user;
             parentPanel = null;
+            scrollViewer = null;
         }
 
         /// <summary>
@@ -76,16 +78,16 @@ namespace Desktop_Frontend.Components
                 Margin = new Thickness(20, 10, 10, 10)
             };
 
-            // Populate the grid with ingredients
-            PopulateIngredientGrid(ingredients, ingredientGrid);
-
             // Create a ScrollViewer to make the ingredient grid scrollable
-            ScrollViewer scrollViewer = new ScrollViewer
+            scrollViewer = new ScrollViewer
             {
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 Margin = new Thickness(0, 10, 0, 0)
             };
+
+            // Populate the grid with ingredients
+            PopulateIngredientGrid(ingredients, ingredientGrid);
 
             // Set the ingredient grid as the content of the ScrollViewer
             scrollViewer.Content = ingredientGrid;
@@ -114,6 +116,8 @@ namespace Desktop_Frontend.Components
         /// <param name="ingredientGrid">The grid to populate with ingredient rows.</param>
         private void PopulateIngredientGrid(List<Ingredient> ingredients, UniformGrid ingredientGrid)
         {
+            scrollViewer.ScrollToVerticalOffset(0);
+
             ingredientGrid.Children.Clear();
 
             // Populate grid with ingredients
