@@ -320,11 +320,9 @@ namespace Desktop_Frontend.Components
         private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight, StackPanel ingPanel)
         {
             SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
             int ingTextFont = 34;
-            int buttonFont = 30;
 
             int ingButtonsDim = ingBoxHeight / 6;
             Thickness ingButtonPadding = new Thickness(10, 10, 10, 2);
@@ -338,8 +336,8 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient name text
-            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
-            int nameFont = int.Max(ingTextFont - 2 * (ingredient.GetName().Length / 10), ingTextFont / 2);
+            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
+            int nameFont = int.Max(ingTextFont - 4 * (ingredient.GetName().Length / 10), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
                 Text = $"{ingredient.GetName()}",
@@ -352,8 +350,8 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient type text 
-            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
-            int typeFont = int.Max(ingTextFont - 2 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
+            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
+            int typeFont = int.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
             TextBlock ingredientTypeText = new TextBlock
             {
                 Text = $"{ingredient.GetIngType()}",
@@ -365,9 +363,9 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient amount, unit text 
-            // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
+            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
             string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
-            int amountFont = int.Max(ingTextFont - 2 * (amountText.Length / 10), ingTextFont / 2);
+            int amountFont = int.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
             {
                 Text = amountText,
@@ -402,8 +400,6 @@ namespace Desktop_Frontend.Components
                     Width = ingButtonsDim,  
                     Stretch = Stretch.Uniform 
                 },
-                FontSize = buttonFont + 6,
-                FontWeight = FontWeights.Bold,
                 Margin = ingButtonPadding,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
@@ -423,11 +419,8 @@ namespace Desktop_Frontend.Components
                     Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
-                FontSize = buttonFont,
-                FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                Foreground = buttonCol,
                 Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Delete"
@@ -445,11 +438,8 @@ namespace Desktop_Frontend.Components
                     Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
-                FontSize = buttonFont,
-                FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                Foreground = buttonCol,
                 Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Edit"
