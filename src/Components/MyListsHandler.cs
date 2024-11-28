@@ -323,10 +323,11 @@ namespace Desktop_Frontend.Components
             SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            int ingTextFont = 30;
+            int ingTextFont = 34;
             int buttonFont = 30;
 
-            int ingButtonsDim = ingBoxHeight / 5;
+            int ingButtonsDim = ingBoxHeight / 6;
+            Thickness ingButtonPadding = new Thickness(10, 10, 10, 2);
 
             // Create a DockPanel to display ingredient details
             DockPanel ingredientRow = new DockPanel
@@ -403,7 +404,7 @@ namespace Desktop_Frontend.Components
                 },
                 FontSize = buttonFont + 6,
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Cursor = Cursors.Hand,
@@ -427,7 +428,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Delete"
             };
@@ -449,7 +450,7 @@ namespace Desktop_Frontend.Components
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Foreground = buttonCol,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Edit"
             };
