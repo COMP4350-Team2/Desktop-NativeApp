@@ -156,20 +156,35 @@ namespace Desktop_Frontend.Backend
             // Parse the JSON response
             var jsonBody = JsonDocument.Parse(body);
 
-            // Enumerate through each ingredient in the root array
-            foreach (JsonElement item in jsonBody.RootElement.EnumerateArray())
-            {
-                // Extract the name and type from the JSON object
-                string? name = item.GetProperty("name").GetString();
-                string? ingType = item.GetProperty("type").GetString();
+            // Access the root object directly
+            JsonElement root = jsonBody.RootElement;
 
-                // Add new ingredient
-                allIng.Add(new Ingredient(name, ingType));
+            // Process common ingredients
+            if (root.TryGetProperty("common_ingredients", out JsonElement commonIngredients))
+            {
+                foreach (JsonElement item in commonIngredients.EnumerateArray())
+                {
+                    string? name = item.GetProperty("name").GetString();
+                    string? type = item.GetProperty("type").GetString();
+                    allIng.Add(new Ingredient(name, type));
+                }
             }
 
-            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+            // Process custom ingredients
+            if (root.TryGetProperty("custom_ingredients", out JsonElement customIngredients))
+            {
+                foreach (JsonElement item in customIngredients.EnumerateArray())
+                {
+                    string? name = item.GetProperty("name").GetString();
+                    string? type = item.GetProperty("type").GetString();
+                    allIng.Add(new Ingredient(name, type, true));
+                }
+            }
 
+            // Sort ingredients alphabetically by name
+            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
         }
+
 
         /// <summary>
         /// Retrieves the user's lists of ingredients.
@@ -209,15 +224,7 @@ namespace Desktop_Frontend.Backend
                 }
             }
 
-            // Return a deep copy of myLists
-            List<UserList> myListsCopy = new List<UserList>();
-
-            for (int i = 0; i < myLists.Count; i++)
-            {
-                myListsCopy.Add(myLists[i].CopyList());
-            }
-
-            return await Task.FromResult(myListsCopy);
+            return await Task.FromResult(myLists);
         }
 
         /// <summary>
