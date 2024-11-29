@@ -35,7 +35,13 @@ namespace Desktop_Frontend.Backend
                 new Ingredient("Lentils", "Grain"),
                 new Ingredient("Cookies", "Snacks"),
                 new Ingredient("Chips", "Snacks"),
-                new Ingredient("LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG", "long long long long long long long long")
+                new Ingredient("LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG", "long long long long long long long long"),
+                new Ingredient("Custom Ing 1", "custom type 1", true),
+                new Ingredient("Custom Ing 2", "custom type 2", true),
+                new Ingredient("Custom Ing 3", "custom type 3", true),
+                new Ingredient("Custom Ing 4", "custom type 4", true),
+                new Ingredient("Custom Ing 5", "custom type 5", true)
+
             };
             ingredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
             this.user = user;
