@@ -665,10 +665,14 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
+                Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+                newIngredient.SetAmount(amount);
+                newIngredient.SetUnit(unit);
+                //string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
+                
 
                 // Create the ingredient with specified values
-                Ingredient newIngredient = new Ingredient(name, type, amount, unit);
+                //Ingredient newIngredient = new Ingredient(name, type, amount, unit);
 
                 addButton.IsEnabled = false;
 
@@ -681,7 +685,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.AddIngToList(newIngredient);
+                    //userList.AddIngToList(newIngredient);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -881,7 +885,10 @@ namespace Desktop_Frontend.Components
 
                 confirmButton.IsEnabled = false;
 
-                Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
+                //Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
+                Ingredient updatedIngredient = oldIngredient.CopyIngredient();
+                updatedIngredient.SetUnit(newUnit);
+                updatedIngredient.SetAmount(newAmount);
                 bool success = await backend.SetIngredient(user, oldIngredient, updatedIngredient, userList.GetListName());
 
                 confirmButton.IsEnabled = true;
@@ -889,8 +896,8 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.RemIngFromList(oldIngredient);
-                    userList.AddIngToList(updatedIngredient);
+                    //userList.RemIngFromList(oldIngredient);
+                    //userList.AddIngToList(updatedIngredient);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -1104,8 +1111,8 @@ namespace Desktop_Frontend.Components
                         MessageBox.Show("Ingredient moved successfully!");
 
                         //Rem from curr list and add to new list
-                        currList.RemIngFromList(ingredient);
-                        toList.AddIngToList(ingredient);
+                        //currList.RemIngFromList(ingredient);
+                        //toList.AddIngToList(ingredient);
 
                         //Update both
                         UpdateIngredientPanel(ingPanel, "", currList);
