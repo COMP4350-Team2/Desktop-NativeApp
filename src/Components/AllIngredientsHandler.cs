@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Desktop_Frontend.Components
 {
@@ -220,7 +221,7 @@ namespace Desktop_Frontend.Components
             int ingNameFont = 28;
             int ingTypeFont = 26;
 
-            int boxButtonFont = 40;
+            int boxButtonFont = 45;
 
             // Create ingredient row 
             DockPanel ingredientRow = CreateIngredientRowPanel();
@@ -245,14 +246,55 @@ namespace Desktop_Frontend.Components
             DockPanel.SetDock(textContainer, Dock.Top);
             ingredientRow.Children.Add(textContainer);
 
-            // Create and add the "+" button to the row
+            // Create a Grid to align the "+" button and custom icon
+            Grid bottomGrid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+
+            // Define two columns: one for the icon and one for the button
+            bottomGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }); // Icon column
+            bottomGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Spacer
+            bottomGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }); // Button column
+
+            // Add custom icon if needed
+            if (ingredient.IsCustom())
+            {
+                // Create an Image control for the custom icon
+                Image customIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                    Width = 30,
+                    Height = 30,
+                    Margin = new Thickness(5, 0, 0, 0)
+                };
+
+                // Place the icon in the first column
+                Grid.SetColumn(customIcon, 0);
+                bottomGrid.Children.Add(customIcon);
+                ingredientRow.Tag = "custom";
+            }
+
+            // Create and add the "+" button
             Button addButton = CreateAddButton(boxTextCol, boxButtonFont);
             addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient.CopyIngredient());
-            DockPanel.SetDock(addButton, Dock.Bottom);
-            ingredientRow.Children.Add(addButton);
+
+            // Place the button in the last column
+            Grid.SetColumn(addButton, 2);
+            bottomGrid.Children.Add(addButton);
+
+            // Add the bottomGrid to the DockPanel
+            DockPanel.SetDock(bottomGrid, Dock.Bottom);
+            ingredientRow.Children.Add(bottomGrid);
 
             // Wrap the ingredient row in a border
             Border border = CreateIngredientBorder(boxBorderCol, ingredientRow);
+
+            if(ingredient.IsCustom())
+            {
+                border.ToolTip = "Custom Ingredient";
+            }
 
             return border;
         }
