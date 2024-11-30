@@ -19,6 +19,7 @@ namespace Desktop_Frontend.Components
         private StackPanel parentPanel;
         private ScrollViewer scrollViewer;
         private string selectedCatagory;
+        private List<Ingredient> ingredients;
 
         /// <summary>
         /// Initializes an instance of the <see cref="AllIngredientsHandler"/> class.
@@ -44,7 +45,8 @@ namespace Desktop_Frontend.Components
             int headerFont = 34;
 
             // Retrieve ingredients
-            List<Ingredient> ingredients = await backend.GetAllIngredients(user);
+            //List<Ingredient> ingredients = await backend.GetAllIngredients(user);
+            ingredients = await backend.GetAllIngredients(user);
 
             // Create the ingredient grid
             UniformGrid ingredientGrid = new UniformGrid
@@ -102,7 +104,7 @@ namespace Desktop_Frontend.Components
                 ToolTip = "Create Custom Ingredient"
             };
 
-            createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(); 
+            createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(ingredientGrid); 
        
        
 
@@ -267,7 +269,7 @@ namespace Desktop_Frontend.Components
             // Populate grid with ingredients
             foreach (var ingredient in ingredients)
             {
-                Border ingredientBorder = CreateIngredientRow(ingredient.CopyIngredient());
+                Border ingredientBorder = CreateIngredientRow(ingredient.CopyIngredient(), ingredientGrid);
                 ingredientGrid.Children.Add(ingredientBorder); // Add ingredient to grid
             }
         }
@@ -365,7 +367,7 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The ingredient to display in the row.</param>
         /// <returns>A styled Border containing the ingredient row.</returns>
-        private Border CreateIngredientRow(Ingredient ingredient)
+        private Border CreateIngredientRow(Ingredient ingredient, UniformGrid ingGrid)
         {
             // Define resource-based colors and font sizes
             SolidColorBrush boxTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -426,6 +428,31 @@ namespace Desktop_Frontend.Components
                 Grid.SetColumn(customIcon, 0);
                 bottomGrid.Children.Add(customIcon);
                 ingredientRow.Tag = "custom";
+
+                // Delete button
+                Button deleteButton = new Button
+                {
+                    Content = new Image
+                    {
+                        Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_ing_icon_white.png")),
+                        Height = 30,
+                        Width = 30,
+                        Stretch = Stretch.Uniform
+                    },
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
+                    Cursor = Cursors.Hand,
+                    ToolTip = "Delete",
+                    Style = (Style)Application.Current.Resources["NoHighlightButton"],
+                    Margin = new Thickness(0)
+                };
+
+                deleteButton.Click += async (s, e) => await DeleteCustomIngredientPopup(ingredient, ingGrid);
+
+                // Place the button in the last column
+                Grid.SetColumn(deleteButton, 1);
+                bottomGrid.Children.Add(deleteButton);
+
             }
 
             // Create and add the "+" button
@@ -494,8 +521,8 @@ namespace Desktop_Frontend.Components
         {
             return new Button
             {
-                Width = 30,
-                Height = 30,
+                Width = 40,
+                Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(5),
                 Background = Brushes.Transparent,
@@ -507,7 +534,7 @@ namespace Desktop_Frontend.Components
                     FontSize = fontSize,
                     FontWeight = FontWeights.Bold,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Bottom,
                     ToolTip = "Add to list"
                 },
                 Cursor = Cursors.Hand,
@@ -717,7 +744,7 @@ namespace Desktop_Frontend.Components
         /// <summary>
         /// Shows a dialog box when creating a custom ingredient
         /// </summary>
-        private async Task CreateCustomIngredientPopop()
+        private async Task CreateCustomIngredientPopop(UniformGrid ingGrid)
         {
 
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
@@ -810,6 +837,7 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("Custom ingredient created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        FilterIngredients(ingredients, "", ingGrid);
                     }
                     else
                     {
@@ -831,6 +859,86 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(createButton);
             popup.Content = panel;
             popup.ShowDialog();
+        }
+
+
+        /// <summary>
+        /// Shows a dialog box to confirm deleting a custom ingredient
+        /// </summary>
+        /// <param name="ingredient"> The ingredient to be deleted </param>
+        /// <param name="ingredient"> The ingredient to be deleted </param>
+        private async Task DeleteCustomIngredientPopup(Ingredient ingredient, UniformGrid ingGrid)
+        {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create popup window for confirmation
+            Window confirmationPopup = new Window
+            {
+                Title = "Deleting " + ingredient.GetName(),
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            // Stack panel for layout
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = $"Are you sure you want to delete {ingredient.GetName()}?",
+                Margin = new Thickness(10),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = textForeground,
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center
+            });
+
+            // Confirmation button 
+            Button confirmButton = new Button
+            {
+                Content = "Delete",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"],
+                Background = Brushes.Red,
+                Foreground = Brushes.White
+            };
+
+            // Add the button to the panel
+            panel.Children.Add(new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Children = { confirmButton }
+            });
+
+            // Event handler for confirm button to initiate deletion
+            confirmButton.Click += async (s, e) =>
+            {
+                confirmButton.IsEnabled = false;
+
+                // Call backend to remove ingredient
+                bool success = await backend.DeleteCustomIngredient(user, ingredient);
+
+                // Display result and close popup
+                if (success)
+                {
+                    MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    FilterIngredients(ingredients, "", ingGrid);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                confirmButton.IsEnabled = true;
+
+                confirmationPopup.Close();
+            };
+
+            confirmationPopup.Content = panel;
+            confirmationPopup.ShowDialog();
         }
 
     }
