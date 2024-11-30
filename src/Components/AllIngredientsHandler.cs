@@ -36,7 +36,6 @@ namespace Desktop_Frontend.Components
 
         /// <summary>
         /// Asynchronously displays all ingredients in the specified panel.
-        /// Creates a search box for filtering the ingredients list in real-time.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
         public async Task DisplayIngredientsAsync(StackPanel contentArea)
@@ -77,12 +76,78 @@ namespace Desktop_Frontend.Components
             // Create a StackPanel to hold the toggle button group and the rest of the UI
             StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
 
-            // Add the toggle button group for category selection
+            // Create a Grid with 3 columns: first fixed width for the button, second auto width for the toggle panel, third fixed width for spacing
+            Grid grid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+
+            // Define column definitions
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(45 + (parentPanel.ActualWidth / 5)) }); // Fixed width for the Create button
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Auto width for the toggle panel
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(parentPanel.ActualWidth / 5) }); // Fixed width for spacing
+
+            // Create the Create Ingredient button
+            Button createIngButton = new Button
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(25, 5, 10, 10),
+                Style = (Style)App.Current.Resources["ExpandButtonStyle"],
+                Background = Brushes.Transparent,
+                BorderBrush = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"],
+                BorderThickness = new Thickness(2),
+                Width = 150,
+                Height = 60,
+                ToolTip = "Create Custom Ingredient"
+            };
+
+            createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(); 
+       
+       
+
+            // Create a StackPanel to hold the icon and the "+" text inside the button
+            StackPanel buttonContent = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Add the icon
+            Image icon = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                Height = 30,
+                Width = 30,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            buttonContent.Children.Add(icon);
+
+            // Add the "+" sign after the icon
+            TextBlock plusSign = new TextBlock
+            {
+                Text = "+",
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 32,
+                FontWeight = FontWeights.Bold,
+                Foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"]
+            };
+            buttonContent.Children.Add(plusSign);
+
+            // Set the content of the button to the stack with icon and text
+            createIngButton.Content = buttonContent;
+
+            // Place the Create Ingredient button in the first column
+            Grid.SetColumn(createIngButton, 0);
+            grid.Children.Add(createIngButton);
+
+            // Create the toggle button group (this will go in the second column)
             StackPanel toggleButtonGroup = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 10)
+                Margin = new Thickness(10, 0, 10, 0) // Add some margin for separation
             };
 
             // Define toggle buttons for each option
@@ -120,8 +185,12 @@ namespace Desktop_Frontend.Components
             toggleButtonGroup.Children.Add(commonButton);
             toggleButtonGroup.Children.Add(customButton);
 
-            // Add the toggle button group to the stack panel
-            stackPanel.Children.Add(toggleButtonGroup);
+            // Place the toggle button group in the second column (centered)
+            Grid.SetColumn(toggleButtonGroup, 1);
+            grid.Children.Add(toggleButtonGroup);
+
+            // Add the grid to the main StackPanel (stackPanel)
+            stackPanel.Children.Add(grid);
 
             // Add the search box and the rest of the content below the toggle button group
             Border searchBox = CreateSearchBox();
@@ -178,7 +247,8 @@ namespace Desktop_Frontend.Components
                 Padding = new Thickness(10, 5, 10, 5),
                 Style = (Style)App.Current.Resources["RoundedToggleButtonStyle"],
                 Foreground = toggleForeground,
-                Width = parentPanel.ActualHeight/4,
+                Width = parentPanel.ActualWidth/6,
+                Height = parentPanel.ActualWidth / 32,
                 Cursor = Cursors.Hand
             };
         }
@@ -640,6 +710,125 @@ namespace Desktop_Frontend.Components
 
             panel.Children.Add(addButton);
 
+            popup.Content = panel;
+            popup.ShowDialog();
+        }
+
+        /// <summary>
+        /// Shows a dialog box when creating a custom ingredient
+        /// </summary>
+        private async Task CreateCustomIngredientPopop()
+        {
+
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textboxBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush textboxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+
+
+            int headingFont = 20;
+            int listNameFont = 20;
+
+            SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush headerForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Create Custom Ingredient",
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            TextBlock ingNameHeader = new TextBlock
+            {
+                Text = "Name:",
+                FontSize = headingFont,
+                Foreground = headerForeground,
+                Background = background,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+
+            TextBox ingNameBox = new TextBox
+            {
+                Width = 300,
+                Height = 30,
+                FontSize = listNameFont,
+                Margin = new Thickness(10),
+                Background = textboxBackground,
+                Foreground = textboxForeground,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+            TextBlock ingTypeHeader = new TextBlock
+            {
+                Text = "Type:",
+                FontSize = headingFont,
+                Foreground = headerForeground,
+                Background = background,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+
+            TextBox ingTypeBox = new TextBox
+            {
+                Width = 300,
+                Height = 30,
+                FontSize = listNameFont,
+                Margin = new Thickness(10),
+                Background = textboxBackground,
+                Foreground = textboxForeground,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+
+            // Create the Add button
+            Button createButton = new Button
+            {
+                Content = "Create",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
+            };
+
+
+            createButton.Click += async (s, e) =>
+            {
+                string ingName = ingNameBox.Text.Trim();
+                string ingType = ingTypeBox.Text.Trim();
+
+
+                if (!string.IsNullOrEmpty(ingName) && !string.IsNullOrEmpty(ingType))
+                {
+                    Ingredient newCustom = new Ingredient(ingName, ingType, true);
+                    createButton.IsEnabled = false;
+                    bool success = await backend.CreateCustomIngredient(user, newCustom);
+
+                    // Show result message
+                    if (success)
+                    {
+                        MessageBox.Show("Custom ingredient created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to create custom ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    createButton.IsEnabled = true;
+                    popup.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a name and type", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            };
+
+            panel.Children.Add(ingNameHeader);
+            panel.Children.Add(ingNameBox);
+            panel.Children.Add(ingTypeHeader);
+            panel.Children.Add(ingTypeBox);
+            panel.Children.Add(createButton);
             popup.Content = panel;
             popup.ShowDialog();
         }
