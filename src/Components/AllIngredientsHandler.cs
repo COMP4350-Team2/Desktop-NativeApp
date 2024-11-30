@@ -39,88 +39,21 @@ namespace Desktop_Frontend.Components
         /// Creates a search box for filtering the ingredients list in real-time.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
-        //public async Task DisplayIngredientsAsync(StackPanel contentArea)
-        //{
-        //    SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-        //    int headerFont = 34;
-
-        //    if (parentPanel == null)
-        //    {
-        //        parentPanel = contentArea;
-        //    }
-
-        //    parentPanel.Children.Clear();
-
-        //    // Create and add header
-        //    TextBlock header = new TextBlock
-        //    {
-        //        Text = "All Ingredients",
-        //        FontSize = headerFont,
-        //        FontWeight = FontWeights.Bold,
-        //        Foreground = headerText,
-        //        HorizontalAlignment = HorizontalAlignment.Center,
-        //        Margin = new Thickness(0, 20, 0, 20)
-        //    };
-        //    parentPanel.Children.Add(header);
-
-        //    // Create a StackPanel to hold the selection, the search box and scrollable content
-        //    StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
-
-        //    // NEW COMPONENT HERE
-
-        //    // Create and add the search box
-        //    Border searchBox = CreateSearchBox();
-        //    stackPanel.Children.Add(searchBox);
-
-        //    // Retrieve ingredients
-        //    List<Ingredient> ingredients = await backend.GetAllIngredients(user);
-
-        //    // Create the ingredient grid
-        //    UniformGrid ingredientGrid = new UniformGrid
-        //    {
-        //        Rows = (int)Math.Ceiling((double)ingredients.Count / 3), // Calculate rows dynamically
-        //        Columns = 3, // 3 items per row
-        //        Margin = new Thickness(20, 10, 10, 10)
-        //    };
-
-        //    // Create a ScrollViewer to make the ingredient grid scrollable
-        //    scrollViewer = new ScrollViewer
-        //    {
-        //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        //        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-        //        Margin = new Thickness(0, 10, 0, 0)
-        //    };
-
-        //    // Populate the grid with ingredients
-        //    PopulateIngredientGrid(ingredients, ingredientGrid);
-
-        //    // Set the ingredient grid as the content of the ScrollViewer
-        //    scrollViewer.Content = ingredientGrid;
-
-        //    // Calculate the available height for the scrollable area by subtracting the height of the header and search box
-        //    double availableHeight = parentPanel.ActualHeight - header.ActualHeight - searchBox.ActualHeight - parentPanel.ActualHeight / 7;
-
-        //    // Set the height of the ScrollViewer dynamically based on available space
-        //    scrollViewer.Height = availableHeight > 0 ? availableHeight : 300; // Default to 300 if available space is too small
-
-        //    // Add the ScrollViewer to the StackPanel
-        //    stackPanel.Children.Add(scrollViewer);
-
-        //    // Add the StackPanel to the parent panel
-        //    parentPanel.Children.Add(stackPanel);
-
-        //    // Update ingredients list based on search text
-        //    ((TextBox)searchBox.Child).TextChanged += (s, e) =>
-        //        FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
-        //}
-
         public async Task DisplayIngredientsAsync(StackPanel contentArea)
         {
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush radioButtonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-
             int headerFont = 34;
-            int radioButtonFont = 24;
+
+            // Retrieve ingredients
+            List<Ingredient> ingredients = await backend.GetAllIngredients(user);
+
+            // Create the ingredient grid
+            UniformGrid ingredientGrid = new UniformGrid
+            {
+                Rows = (int)Math.Ceiling((double)ingredients.Count / 3), // Calculate rows dynamically
+                Columns = 3, // 3 items per row
+                Margin = new Thickness(20, 10, 10, 10)
+            };
 
             if (parentPanel == null)
             {
@@ -128,8 +61,6 @@ namespace Desktop_Frontend.Components
             }
 
             parentPanel.Children.Clear();
-
-            int radioButtonSize = (int)(parentPanel.ActualWidth / 5);
 
             // Create and add header
             TextBlock header = new TextBlock
@@ -143,77 +74,58 @@ namespace Desktop_Frontend.Components
             };
             parentPanel.Children.Add(header);
 
-            // Create a StackPanel to hold the selection, the search box, and scrollable content
+            // Create a StackPanel to hold the toggle button group and the rest of the UI
             StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
 
-            // Add the radio button group above the search bar
-            StackPanel radioButtonPanel = new StackPanel
+            // Add the toggle button group for category selection
+            StackPanel toggleButtonGroup = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 10),
-                Background = Brushes.Transparent
+                Margin = new Thickness(0, 10, 0, 10)
             };
 
+            // Define toggle buttons for each option
+            ToggleButton allButton = CreateToggleButton("All", isChecked: true);
+            ToggleButton commonButton = CreateToggleButton("Common");
+            ToggleButton customButton = CreateToggleButton("Custom");
 
-            // Create radio buttons
-            RadioButton allButton = new RadioButton
+            // Group toggle buttons to allow only one active at a time
+            allButton.Checked += (s, e) =>
             {
-                Content = "All",
-                IsChecked = true,
-                Margin = new Thickness(10, 0, 10, 0),
-                Foreground = radioButtonCol,
-                FontSize = radioButtonFont,
-                FontWeight = FontWeights.Bold,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                //Height = radioButtonSize,
-                Width = radioButtonSize
+                commonButton.IsChecked = false;
+                customButton.IsChecked = false;
+                this.selectedCatagory = "All";
+                FilterIngredients(ingredients, "", ingredientGrid);
             };
-            RadioButton commonButton = new RadioButton
+
+            commonButton.Checked += (s, e) =>
             {
-                Content = "Common Only",
-                Margin = new Thickness(10, 0, 10, 0),
-                Foreground = radioButtonCol,
-                FontSize = radioButtonFont,
-                FontWeight = FontWeights.Bold,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                //Height = radioButtonSize,
-                Width = radioButtonSize
+                allButton.IsChecked = false;
+                customButton.IsChecked = false;
+                this.selectedCatagory = "Common";
+                FilterIngredients(ingredients, "", ingredientGrid);
             };
-            RadioButton customButton = new RadioButton
+
+            customButton.Checked += (s, e) =>
             {
-                Content = "Custom Only",
-                Margin = new Thickness(10, 0, 10, 0),
-                Foreground = radioButtonCol,
-                FontSize = radioButtonFont,
-                FontWeight = FontWeights.Bold,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                //Height = radioButtonSize,
-                Width = radioButtonSize
+                allButton.IsChecked = false;
+                commonButton.IsChecked = false;
+                this.selectedCatagory = "Custom";
+                FilterIngredients(ingredients, "", ingredientGrid);
             };
 
-            // Add radio buttons to the panel
-            radioButtonPanel.Children.Add(allButton);
-            radioButtonPanel.Children.Add(commonButton);
-            radioButtonPanel.Children.Add(customButton);
+            // Add buttons to the group
+            toggleButtonGroup.Children.Add(allButton);
+            toggleButtonGroup.Children.Add(commonButton);
+            toggleButtonGroup.Children.Add(customButton);
 
-            // Add the radio button panel to the stack panel
-            stackPanel.Children.Add(radioButtonPanel);
+            // Add the toggle button group to the stack panel
+            stackPanel.Children.Add(toggleButtonGroup);
 
-            // Add the search box
+            // Add the search box and the rest of the content below the toggle button group
             Border searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
-
-            // Retrieve ingredients
-            List<Ingredient> ingredients = await backend.GetAllIngredients(user);
-
-            // Create the ingredient grid
-            UniformGrid ingredientGrid = new UniformGrid
-            {
-                Rows = (int)Math.Ceiling((double)ingredients.Count / 3), // Calculate rows dynamically
-                Columns = 3, // 3 items per row
-                Margin = new Thickness(20, 10, 10, 10)
-            };
 
             // Create a ScrollViewer to make the ingredient grid scrollable
             scrollViewer = new ScrollViewer
@@ -241,33 +153,35 @@ namespace Desktop_Frontend.Components
             // Add the StackPanel to the parent panel
             parentPanel.Children.Add(stackPanel);
 
-            // Update the ingredients list based on the selected radio button and search text
-            allButton.Checked += (s, e) =>
-            {
-                this.selectedCatagory = "All";
-                FilterIngredients(ingredients, "", ingredientGrid);
-            };
-
-            commonButton.Checked += (s, e) =>
-            {
-                this.selectedCatagory = "Common";
-                FilterIngredients(ingredients, "", ingredientGrid);
-            };
-
-            customButton.Checked += (s, e) =>
-            {
-                this.selectedCatagory = "Custom";
-                FilterIngredients(ingredients, "", ingredientGrid);
-            };
-
             // Update ingredients list based on search text
             ((TextBox)searchBox.Child).TextChanged += (s, e) =>
                 FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
         }
 
+        /// <summary>
+        /// Helper method to create toggle buttons on top of page
+        /// </summary>
+        /// <param name="text"> Text in the button </param>
+        /// <param name="isChecked"> bool indicating whether it is checked </param>
+        /// <returns> ToggleButton created </returns>
+        private ToggleButton CreateToggleButton(string text, bool isChecked = false)
+        {
+            SolidColorBrush toggleForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-
-
+            return new ToggleButton
+            {
+                Content = text,
+                IsChecked = isChecked,
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10),
+                Padding = new Thickness(10, 5, 10, 5),
+                Style = (Style)App.Current.Resources["RoundedToggleButtonStyle"],
+                Foreground = toggleForeground,
+                Width = parentPanel.ActualHeight/4,
+                Cursor = Cursors.Hand
+            };
+        }
 
         /// <summary>
         /// Populates the grid with ingredients, ensuring 4 items per row.
@@ -446,7 +360,12 @@ namespace Desktop_Frontend.Components
 
             // Create and add the "+" button
             Button addButton = CreateAddButton(boxTextCol, boxButtonFont);
-            addButton.Click += (s, e) => ShowAddIngredientPopup(ingredient.CopyIngredient());
+            addButton.Click += async (s, e) =>
+            {
+                addButton.IsEnabled = false;
+                await ShowAddIngredientPopup(ingredient.CopyIngredient());
+                addButton.IsEnabled = true;
+            };
 
             // Place the button in the last column
             Grid.SetColumn(addButton, 2);
@@ -550,7 +469,7 @@ namespace Desktop_Frontend.Components
         /// Creates a popup for specifying ingredient amount, unit, and list name when the add button is clicked.
         /// </summary>
         /// <param name="ingredient">The ingredient to be added.</param>
-        private async void ShowAddIngredientPopup(Ingredient ingredient)
+        private async Task ShowAddIngredientPopup(Ingredient ingredient)
         {
             int boxWidth = 300;
             int boxHeight = 30;
