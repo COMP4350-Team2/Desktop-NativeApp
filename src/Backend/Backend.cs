@@ -929,6 +929,49 @@ namespace Desktop_Frontend.Backend
                 }
             }
         }
+
+        /// <summary>
+        /// Method to create a custom ingredient
+        /// </summary>
+        /// <param name="user"> User creating the ingredient</param>
+        /// <param name="customIng"> The ingredient to be created </param>
+        /// <returns> True on success, false on failure </returns>
+        public async Task<bool> CreateCustomIngredient(IUser user, Ingredient customIng)
+        {
+            bool created = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Create_Custom_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                ingredient = customIng.GetName(),
+                type = customIng.GetIngType()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                allIngredients.Add(customIng);
+                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+                created = true;
+            }
+            catch (Exception)
+            {
+                created = false;
+            }
+
+            return created;
+        }
     }
 
 }
