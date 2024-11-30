@@ -1246,6 +1246,7 @@ namespace Desktop_Frontend.Components
             addIngredientOption.Foreground = dropDownForeground;
             addIngredientOption.FontSize = optionsFont;
             addIngredientOption.Height = dropDownOptHeight;
+            addIngredientOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(addIngredientOption);
 
             MenuItem renameListOption = new MenuItem { Header = "Rename List" };
@@ -1253,6 +1254,7 @@ namespace Desktop_Frontend.Components
             renameListOption.Foreground = dropDownForeground;
             renameListOption.FontSize = optionsFont;
             renameListOption.Height = dropDownOptHeight;
+            renameListOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(renameListOption);
 
             MenuItem deleteListOption = new MenuItem { Header = "Delete List"};
@@ -1263,6 +1265,7 @@ namespace Desktop_Frontend.Components
             deleteListOption.FontWeight = FontWeights.Bold;
             deleteListOption.Style = (Style)App.Current.Resources["CustomMenuItemStyle"];
             deleteListOption.Height = dropDownOptHeight;
+            deleteListOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(deleteListOption);
 
             // Show the dropdown menu when the options button is clicked
