@@ -972,6 +972,49 @@ namespace Desktop_Frontend.Backend
 
             return created;
         }
+
+        /// <summary>
+        /// Backend method to delete a custom ingredient
+        /// </summary>
+        /// <param name="user"> User who is removing ingredient </param>
+        /// <param name="ingredient"> The ingredient to be removed</param>
+        /// <returns></returns>
+        public async Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient)
+        {
+            bool deleted = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Custom_Ing_Endpoint;
+            url = url.Replace("{ingredient}", ingredient.GetName());
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                for (int i = 0; i < allIngredients.Count; i++)
+                {
+                    Ingredient curr = allIngredients[i];
+                    if (curr.GetName() == ingredient.GetName() &&
+                        curr.GetIngType() == ingredient.GetIngType() &&
+                        curr.IsCustom() == ingredient.IsCustom())
+                    {
+                        allIngredients.Remove(curr);
+                        deleted = true;
+                    }
+                }
+                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+            }
+            catch (Exception)
+            {
+                deleted = false;
+            }
+
+            return deleted;
+        }
     }
 
 }
