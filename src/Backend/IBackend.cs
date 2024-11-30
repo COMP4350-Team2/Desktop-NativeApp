@@ -106,5 +106,13 @@ namespace Desktop_Frontend.Backend
         /// <param name="newListName"> New name for the list </param>
         /// <returns></returns>
         public Task<bool> RenameList(IUser user, string currListName, string newListName);
+
+        /// <summary>
+        /// Method to create a custom ingredient
+        /// </summary>
+        /// <param name="user"> User creating the ingredient</param>
+        /// <param name="customIng"> The ingredient to be created </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateCustomIngredient(IUser user, Ingredient customIng);
     }
 }
