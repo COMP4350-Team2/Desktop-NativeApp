@@ -1481,7 +1481,7 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         listHeader.Text = newListName;
-                        userList.SetListName(newListName);
+                        //userList.SetListName(newListName);
 
                         for (int i = 0; i < ingExpanders.Count; i++)
                         {
