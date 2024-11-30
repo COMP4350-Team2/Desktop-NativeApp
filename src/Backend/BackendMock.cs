@@ -59,13 +59,13 @@ namespace Desktop_Frontend.Backend
         /// </returns>
         public Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            List<Ingredient> copy = new List<Ingredient>();
+            //List<Ingredient> copy = new List<Ingredient>();
 
-            for (int i = 0; i < ingredients.Count; i++)
-            {
-                copy.Add(ingredients[i].CopyIngredient());
-            }
-            return Task.FromResult(copy);
+            //for (int i = 0; i < ingredients.Count; i++)
+            //{
+            //    copy.Add(ingredients[i].CopyIngredient());
+            //}
+            return Task.FromResult(ingredients);
         }
 
         /// <summary>
@@ -90,12 +90,12 @@ namespace Desktop_Frontend.Backend
         /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
-            List<UserList> copy = new List<UserList>();
+           // List<UserList> copy = new List<UserList>();
 
-           for (int i = 0; i < myLists.Count; i++)
-           {
-                copy.Add(myLists[i].CopyList());
-           }
+           //for (int i = 0; i < myLists.Count; i++)
+           //{
+           //     copy.Add(myLists[i].CopyList());
+           //}
            return await Task.FromResult(myLists);
         }
 
@@ -344,6 +344,21 @@ namespace Desktop_Frontend.Backend
             }
 
             return Task.FromResult(renamed);
+        }
+
+        /// <summary>
+        /// Method to create a custom ingredient
+        /// </summary>
+        /// <param name="user"> User creating the ingredient</param>
+        /// <param name="customIng"> The ingredient to be created </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateCustomIngredient(IUser user, Ingredient customIng)
+        {
+            ingredients.Add(customIng);
+
+            ingredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
+            return Task.FromResult(true);
         }
     }
 }
