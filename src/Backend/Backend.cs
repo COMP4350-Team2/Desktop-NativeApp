@@ -305,7 +305,8 @@ namespace Desktop_Frontend.Backend
                 list_name = listName,
                 ingredient = ingredient.GetName(),
                 amount = ingredient.GetAmount(),
-                unit = ingredient.GetUnit()
+                unit = ingredient.GetUnit(),
+                is_custom_ingredient = ingredient.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
