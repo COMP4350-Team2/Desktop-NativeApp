@@ -18,6 +18,7 @@ namespace Desktop_Frontend.Components
         private readonly IUser user;
         private StackPanel parentPanel;
         private ScrollViewer scrollViewer;
+        private string selectedCatagory;
 
         /// <summary>
         /// Initializes an instance of the <see cref="AllIngredientsHandler"/> class.
@@ -30,6 +31,7 @@ namespace Desktop_Frontend.Components
             this.user = user;
             parentPanel = null;
             scrollViewer = null;
+            selectedCatagory = "All";
         }
 
         /// <summary>
@@ -37,10 +39,88 @@ namespace Desktop_Frontend.Components
         /// Creates a search box for filtering the ingredients list in real-time.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
+        //public async Task DisplayIngredientsAsync(StackPanel contentArea)
+        //{
+        //    SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+        //    int headerFont = 34;
+
+        //    if (parentPanel == null)
+        //    {
+        //        parentPanel = contentArea;
+        //    }
+
+        //    parentPanel.Children.Clear();
+
+        //    // Create and add header
+        //    TextBlock header = new TextBlock
+        //    {
+        //        Text = "All Ingredients",
+        //        FontSize = headerFont,
+        //        FontWeight = FontWeights.Bold,
+        //        Foreground = headerText,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        Margin = new Thickness(0, 20, 0, 20)
+        //    };
+        //    parentPanel.Children.Add(header);
+
+        //    // Create a StackPanel to hold the selection, the search box and scrollable content
+        //    StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
+
+        //    // NEW COMPONENT HERE
+
+        //    // Create and add the search box
+        //    Border searchBox = CreateSearchBox();
+        //    stackPanel.Children.Add(searchBox);
+
+        //    // Retrieve ingredients
+        //    List<Ingredient> ingredients = await backend.GetAllIngredients(user);
+
+        //    // Create the ingredient grid
+        //    UniformGrid ingredientGrid = new UniformGrid
+        //    {
+        //        Rows = (int)Math.Ceiling((double)ingredients.Count / 3), // Calculate rows dynamically
+        //        Columns = 3, // 3 items per row
+        //        Margin = new Thickness(20, 10, 10, 10)
+        //    };
+
+        //    // Create a ScrollViewer to make the ingredient grid scrollable
+        //    scrollViewer = new ScrollViewer
+        //    {
+        //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        //        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        //        Margin = new Thickness(0, 10, 0, 0)
+        //    };
+
+        //    // Populate the grid with ingredients
+        //    PopulateIngredientGrid(ingredients, ingredientGrid);
+
+        //    // Set the ingredient grid as the content of the ScrollViewer
+        //    scrollViewer.Content = ingredientGrid;
+
+        //    // Calculate the available height for the scrollable area by subtracting the height of the header and search box
+        //    double availableHeight = parentPanel.ActualHeight - header.ActualHeight - searchBox.ActualHeight - parentPanel.ActualHeight / 7;
+
+        //    // Set the height of the ScrollViewer dynamically based on available space
+        //    scrollViewer.Height = availableHeight > 0 ? availableHeight : 300; // Default to 300 if available space is too small
+
+        //    // Add the ScrollViewer to the StackPanel
+        //    stackPanel.Children.Add(scrollViewer);
+
+        //    // Add the StackPanel to the parent panel
+        //    parentPanel.Children.Add(stackPanel);
+
+        //    // Update ingredients list based on search text
+        //    ((TextBox)searchBox.Child).TextChanged += (s, e) =>
+        //        FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
+        //}
+
         public async Task DisplayIngredientsAsync(StackPanel contentArea)
         {
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush radioButtonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
             int headerFont = 34;
+            int radioButtonFont = 24;
 
             if (parentPanel == null)
             {
@@ -48,6 +128,8 @@ namespace Desktop_Frontend.Components
             }
 
             parentPanel.Children.Clear();
+
+            int radioButtonSize = (int)(parentPanel.ActualWidth / 5);
 
             // Create and add header
             TextBlock header = new TextBlock
@@ -61,10 +143,64 @@ namespace Desktop_Frontend.Components
             };
             parentPanel.Children.Add(header);
 
-            // Create a StackPanel to hold the search box and scrollable content
+            // Create a StackPanel to hold the selection, the search box, and scrollable content
             StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
 
-            // Create and add the search box
+            // Add the radio button group above the search bar
+            StackPanel radioButtonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10),
+                Background = Brushes.Transparent
+            };
+
+
+            // Create radio buttons
+            RadioButton allButton = new RadioButton
+            {
+                Content = "All",
+                IsChecked = true,
+                Margin = new Thickness(10, 0, 10, 0),
+                Foreground = radioButtonCol,
+                FontSize = radioButtonFont,
+                FontWeight = FontWeights.Bold,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                //Height = radioButtonSize,
+                Width = radioButtonSize
+            };
+            RadioButton commonButton = new RadioButton
+            {
+                Content = "Common Only",
+                Margin = new Thickness(10, 0, 10, 0),
+                Foreground = radioButtonCol,
+                FontSize = radioButtonFont,
+                FontWeight = FontWeights.Bold,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                //Height = radioButtonSize,
+                Width = radioButtonSize
+            };
+            RadioButton customButton = new RadioButton
+            {
+                Content = "Custom Only",
+                Margin = new Thickness(10, 0, 10, 0),
+                Foreground = radioButtonCol,
+                FontSize = radioButtonFont,
+                FontWeight = FontWeights.Bold,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                //Height = radioButtonSize,
+                Width = radioButtonSize
+            };
+
+            // Add radio buttons to the panel
+            radioButtonPanel.Children.Add(allButton);
+            radioButtonPanel.Children.Add(commonButton);
+            radioButtonPanel.Children.Add(customButton);
+
+            // Add the radio button panel to the stack panel
+            stackPanel.Children.Add(radioButtonPanel);
+
+            // Add the search box
             Border searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
 
@@ -105,10 +241,33 @@ namespace Desktop_Frontend.Components
             // Add the StackPanel to the parent panel
             parentPanel.Children.Add(stackPanel);
 
+            // Update the ingredients list based on the selected radio button and search text
+            allButton.Checked += (s, e) =>
+            {
+                this.selectedCatagory = "All";
+                FilterIngredients(ingredients, "", ingredientGrid);
+            };
+
+            commonButton.Checked += (s, e) =>
+            {
+                this.selectedCatagory = "Common";
+                FilterIngredients(ingredients, "", ingredientGrid);
+            };
+
+            customButton.Checked += (s, e) =>
+            {
+                this.selectedCatagory = "Custom";
+                FilterIngredients(ingredients, "", ingredientGrid);
+            };
+
             // Update ingredients list based on search text
             ((TextBox)searchBox.Child).TextChanged += (s, e) =>
                 FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
         }
+
+
+
+
 
         /// <summary>
         /// Populates the grid with ingredients, ensuring 4 items per row.
@@ -143,7 +302,16 @@ namespace Desktop_Frontend.Components
                             i.GetIngType().Contains(filterText, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            PopulateIngredientGrid(filteredIngredients, ingredientGrid); // Reuse existing method
+            if (selectedCatagory == "Custom")
+            {
+                filteredIngredients = filteredIngredients.Where(i => i.IsCustom()).ToList();
+            }
+            else if (selectedCatagory == "Common")
+            {
+                filteredIngredients = filteredIngredients.Where(i => !i.IsCustom()).ToList();
+            }
+
+            PopulateIngredientGrid(filteredIngredients, ingredientGrid);
         }
 
 
@@ -180,7 +348,7 @@ namespace Desktop_Frontend.Components
                 Text = "Search ingredients...",
                 FontSize = boxFont,
                 BorderThickness = new Thickness(0),
-                Margin = new Thickness(10, 0, 0 , 0)
+                Margin = new Thickness(10, 0, 0, 0)
             };
 
             // Clear placeholder text when the box is focused
@@ -291,7 +459,7 @@ namespace Desktop_Frontend.Components
             // Wrap the ingredient row in a border
             Border border = CreateIngredientBorder(boxBorderCol, ingredientRow);
 
-            if(ingredient.IsCustom())
+            if (ingredient.IsCustom())
             {
                 border.ToolTip = "Custom Ingredient";
             }
@@ -305,7 +473,7 @@ namespace Desktop_Frontend.Components
         /// <returns>A DockPanel with the correct sizing and configuration.</returns>
         private DockPanel CreateIngredientRowPanel()
         {
-            return new DockPanel { Margin = new Thickness(5)};
+            return new DockPanel { Margin = new Thickness(5) };
         }
 
         /// <summary>
@@ -315,7 +483,7 @@ namespace Desktop_Frontend.Components
         private TextBlock CreateTextBlock(string text, SolidColorBrush foreground, int fontSize, FontWeight fontWeight = default)
         {
             // Reduce font size by 2 for every 10 characters (with fontSize/2 limit)
-            fontSize = int.Max(fontSize - 2 * (text.Length/10), fontSize/2);
+            fontSize = int.Max(fontSize - 2 * (text.Length / 10), fontSize / 2);
             return new TextBlock
             {
                 Text = text,
@@ -392,7 +560,7 @@ namespace Desktop_Frontend.Components
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
             SolidColorBrush boxColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
-            SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"]; 
+            SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
 
