@@ -360,5 +360,30 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(true);
         }
+
+        /// <summary>
+        /// Backend method to delete a custom ingredient
+        /// </summary>
+        /// <param name="user"> User who is removing ingredient </param>
+        /// <param name="ingredient"> The ingredient to be removed</param>
+        /// <returns></returns>
+        public Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient)
+        {
+            bool deleted = false;
+
+            for(int i = 0; i < ingredients.Count && !deleted; i++)
+            {
+                Ingredient curr = ingredients[i];
+                if (curr.GetName() == ingredient.GetName() && 
+                    curr.GetIngType() == ingredient.GetIngType() && 
+                    curr.IsCustom() == ingredient.IsCustom())
+                {
+                    ingredients.Remove(curr);
+                    deleted = true;
+                }
+            }
+
+            return Task.FromResult(deleted);
+        }
     }
 }
