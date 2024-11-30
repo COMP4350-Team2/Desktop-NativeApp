@@ -114,5 +114,13 @@ namespace Desktop_Frontend.Backend
         /// <param name="customIng"> The ingredient to be created </param>
         /// <returns> True on success, false on failure </returns>
         public Task<bool> CreateCustomIngredient(IUser user, Ingredient customIng);
+
+        /// <summary>
+        /// Backend method to delete a custom ingredient
+        /// </summary>
+        /// <param name="user"> User who is removing ingredient </param>
+        /// <param name="ingredient"> The ingredient to be removed</param>
+        /// <returns></returns>
+        public Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient);
     }
 }
