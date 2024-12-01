@@ -39,13 +39,202 @@ namespace Desktop_Frontend.Components
         /// Asynchronously displays all ingredients in the specified panel.
         /// </summary>
         /// <param name="contentArea">The panel to display content within.</param>
+        //public async Task DisplayIngredientsAsync(StackPanel contentArea)
+        //{
+        //    SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+        //    int headerFont = 34;
+
+        //    // Retrieve ingredients
+        //    //List<Ingredient> ingredients = await backend.GetAllIngredients(user);
+        //    ingredients = await backend.GetAllIngredients(user);
+
+        //    // Create the ingredient grid
+        //    UniformGrid ingredientGrid = new UniformGrid
+        //    {
+        //        Rows = (int)Math.Ceiling((double)ingredients.Count / 3), // Calculate rows dynamically
+        //        Columns = 3, // 3 items per row
+        //        Margin = new Thickness(20, 10, 10, 10)
+        //    };
+
+        //    if (parentPanel == null)
+        //    {
+        //        parentPanel = contentArea;
+        //    }
+
+        //    parentPanel.Children.Clear();
+
+        //    // Create and add header
+        //    TextBlock header = new TextBlock
+        //    {
+        //        Text = "All Ingredients",
+        //        FontSize = headerFont,
+        //        FontWeight = FontWeights.Bold,
+        //        Foreground = headerText,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        Margin = new Thickness(0, 20, 0, 20)
+        //    };
+        //    parentPanel.Children.Add(header);
+
+        //    // Create a StackPanel to hold the toggle button group and the rest of the UI
+        //    StackPanel stackPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
+
+        //    // Create a Grid with 3 columns: first fixed width for the button, second auto width for the toggle panel, third fixed width for spacing
+        //    Grid grid = new Grid
+        //    {
+        //        HorizontalAlignment = HorizontalAlignment.Stretch,
+        //        Margin = new Thickness(0, 10, 0, 10)
+        //    };
+
+        //    // Define column definitions
+        //    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(45 + (parentPanel.ActualWidth / 5)) }); // Fixed width for the Create button
+        //    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Auto width for the toggle panel
+        //    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(parentPanel.ActualWidth / 5) }); // Fixed width for spacing
+
+        //    // Create the Create Ingredient button
+        //    Button createIngButton = new Button
+        //    {
+        //        HorizontalAlignment = HorizontalAlignment.Left,
+        //        Margin = new Thickness(25, 5, 10, 10),
+        //        Style = (Style)App.Current.Resources["ExpandButtonStyle"],
+        //        Background = Brushes.Transparent,
+        //        BorderBrush = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"],
+        //        BorderThickness = new Thickness(2),
+        //        Width = 150,
+        //        Height = 60,
+        //        ToolTip = "Create Custom Ingredient"
+        //    };
+
+        //    createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(ingredientGrid); 
+
+
+
+        //    // Create a StackPanel to hold the icon and the "+" text inside the button
+        //    StackPanel buttonContent = new StackPanel
+        //    {
+        //        Orientation = Orientation.Horizontal,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        VerticalAlignment = VerticalAlignment.Center
+        //    };
+
+        //    // Add the icon
+        //    Image icon = new Image
+        //    {
+        //        Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+        //        Height = 30,
+        //        Width = 30,
+        //        VerticalAlignment = VerticalAlignment.Center
+        //    };
+        //    buttonContent.Children.Add(icon);
+
+        //    // Add the "+" sign after the icon
+        //    TextBlock plusSign = new TextBlock
+        //    {
+        //        Text = "+",
+        //        VerticalAlignment = VerticalAlignment.Center,
+        //        FontSize = 32,
+        //        FontWeight = FontWeights.Bold,
+        //        Foreground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"]
+        //    };
+        //    buttonContent.Children.Add(plusSign);
+
+        //    // Set the content of the button to the stack with icon and text
+        //    createIngButton.Content = buttonContent;
+
+        //    // Place the Create Ingredient button in the first column
+        //    Grid.SetColumn(createIngButton, 0);
+        //    grid.Children.Add(createIngButton);
+
+        //    // Create the toggle button group (this will go in the second column)
+        //    StackPanel toggleButtonGroup = new StackPanel
+        //    {
+        //        Orientation = Orientation.Horizontal,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        Margin = new Thickness(10, 0, 10, 0) // Add some margin for separation
+        //    };
+
+        //    // Define toggle buttons for each option
+        //    ToggleButton allButton = CreateToggleButton("All", isChecked: true);
+        //    ToggleButton commonButton = CreateToggleButton("Common");
+        //    ToggleButton customButton = CreateToggleButton("Custom");
+
+        //    // Group toggle buttons to allow only one active at a time
+        //    allButton.Checked += (s, e) =>
+        //    {
+        //        commonButton.IsChecked = false;
+        //        customButton.IsChecked = false;
+        //        this.selectedCatagory = "All";
+        //        FilterIngredients(ingredients, "", ingredientGrid);
+        //    };
+
+        //    commonButton.Checked += (s, e) =>
+        //    {
+        //        allButton.IsChecked = false;
+        //        customButton.IsChecked = false;
+        //        this.selectedCatagory = "Common";
+        //        FilterIngredients(ingredients, "", ingredientGrid);
+        //    };
+
+        //    customButton.Checked += (s, e) =>
+        //    {
+        //        allButton.IsChecked = false;
+        //        commonButton.IsChecked = false;
+        //        this.selectedCatagory = "Custom";
+        //        FilterIngredients(ingredients, "", ingredientGrid);
+        //    };
+
+        //    // Add buttons to the group
+        //    toggleButtonGroup.Children.Add(allButton);
+        //    toggleButtonGroup.Children.Add(commonButton);
+        //    toggleButtonGroup.Children.Add(customButton);
+
+        //    // Place the toggle button group in the second column (centered)
+        //    Grid.SetColumn(toggleButtonGroup, 1);
+        //    grid.Children.Add(toggleButtonGroup);
+
+        //    // Add the grid to the main StackPanel (stackPanel)
+        //    stackPanel.Children.Add(grid);
+
+        //    // Add the search box and the rest of the content below the toggle button group
+        //    Border searchBox = CreateSearchBox();
+        //    stackPanel.Children.Add(searchBox);
+
+        //    // Create a ScrollViewer to make the ingredient grid scrollable
+        //    scrollViewer = new ScrollViewer
+        //    {
+        //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        //        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        //        Margin = new Thickness(0, 10, 0, 0)
+        //    };
+
+        //    // Populate the grid with ingredients
+        //    PopulateIngredientGrid(ingredients, ingredientGrid);
+
+        //    // Set the ingredient grid as the content of the ScrollViewer
+        //    scrollViewer.Content = ingredientGrid;
+
+        //    // Calculate the available height for the scrollable area by subtracting the height of the header and search box
+        //    double availableHeight = parentPanel.ActualHeight - header.ActualHeight - searchBox.ActualHeight - parentPanel.ActualHeight / 7;
+
+        //    // Set the height of the ScrollViewer dynamically based on available space
+        //    scrollViewer.Height = availableHeight > 0 ? availableHeight : 300; // Default to 300 if available space is too small
+
+        //    // Add the ScrollViewer to the StackPanel
+        //    stackPanel.Children.Add(scrollViewer);
+
+        //    // Add the StackPanel to the parent panel
+        //    parentPanel.Children.Add(stackPanel);
+
+        //    // Update ingredients list based on search text
+        //    ((TextBox)searchBox.Child).TextChanged += (s, e) =>
+        //        FilterIngredients(ingredients, ((TextBox)searchBox.Child).Text.Trim(), ingredientGrid);
+        //}
+
         public async Task DisplayIngredientsAsync(StackPanel contentArea)
         {
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             int headerFont = 34;
 
             // Retrieve ingredients
-            //List<Ingredient> ingredients = await backend.GetAllIngredients(user);
             ingredients = await backend.GetAllIngredients(user);
 
             // Create the ingredient grid
@@ -86,9 +275,17 @@ namespace Desktop_Frontend.Components
             };
 
             // Define column definitions
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(45 + (parentPanel.ActualWidth / 5)) }); // Fixed width for the Create button
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Auto width for the toggle panel
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(35 + (parentPanel.ActualWidth / 5)) }); // Fixed width for the Create button
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // This column will resize with the screen size
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(parentPanel.ActualWidth / 5) }); // Fixed width for spacing
+
+            grid.LayoutUpdated += (s, e) =>
+            {
+                // Recalculate column widths when layout updates
+                grid.ColumnDefinitions[0].Width = new GridLength(45 + (parentPanel.ActualWidth / 5)); 
+                grid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);  
+                grid.ColumnDefinitions[2].Width = new GridLength(parentPanel.ActualWidth / 5); 
+            };
 
             // Create the Create Ingredient button
             Button createIngButton = new Button
@@ -104,9 +301,7 @@ namespace Desktop_Frontend.Components
                 ToolTip = "Create Custom Ingredient"
             };
 
-            createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(ingredientGrid); 
-       
-       
+            createIngButton.Click += async (s, e) => await CreateCustomIngredientPopop(ingredientGrid);
 
             // Create a StackPanel to hold the icon and the "+" text inside the button
             StackPanel buttonContent = new StackPanel
@@ -149,6 +344,7 @@ namespace Desktop_Frontend.Components
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(10, 0, 10, 0) // Add some margin for separation
             };
 
@@ -239,7 +435,8 @@ namespace Desktop_Frontend.Components
         {
             SolidColorBrush toggleForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
-            return new ToggleButton
+            // Create the toggle button first
+            ToggleButton toggleButton = new ToggleButton
             {
                 Content = text,
                 IsChecked = isChecked,
@@ -249,10 +446,20 @@ namespace Desktop_Frontend.Components
                 Padding = new Thickness(10, 5, 10, 5),
                 Style = (Style)App.Current.Resources["RoundedToggleButtonStyle"],
                 Foreground = toggleForeground,
-                Width = parentPanel.ActualWidth/6,
-                Height = parentPanel.ActualWidth / 32,
                 Cursor = Cursors.Hand
             };
+
+            // Initially set the width and height
+            toggleButton.Width = parentPanel.ActualWidth / 7;
+            toggleButton.Height = parentPanel.ActualWidth / 32;
+
+            // Bind to LayoutUpdated to handle resizing dynamically when parent size changes
+            parentPanel.LayoutUpdated += (s, e) =>
+            {
+                toggleButton.Width = parentPanel.ActualWidth / 7;
+            };
+
+            return toggleButton;
         }
 
         /// <summary>
