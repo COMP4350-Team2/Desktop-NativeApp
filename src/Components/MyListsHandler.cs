@@ -196,7 +196,7 @@ namespace Desktop_Frontend.Components
 
             // Dynamically calculate item width based on the screen size 
             double availableWidth = SystemParameters.PrimaryScreenWidth;
-            double itemWidth = availableWidth / 3 - 140; 
+            double itemWidth = availableWidth / 2 - 200; 
 
             // Check if the search box exists in the panel; if not, add it.
             if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is Border))
@@ -210,7 +210,7 @@ namespace Desktop_Frontend.Components
                     BorderBrush = searchBoxForeground,
                     BorderThickness = new Thickness(1),
                     Background = searchBoxBackground,
-                    Width = 3 * itemWidth + 80,
+                    Width = 2 * itemWidth + 50,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
 
@@ -1711,7 +1711,7 @@ namespace Desktop_Frontend.Components
             int dropDownOptHeight = 50;
 
             double availableWidth = SystemParameters.PrimaryScreenWidth;
-            double itemWidth = availableWidth / 3 - 140;
+            double itemWidth = availableWidth / 2 - 200;
 
             Grid headerGrid = new Grid
             {
@@ -1821,7 +1821,7 @@ namespace Desktop_Frontend.Components
                 BorderBrush = searchBarTxtCol,
                 BorderThickness = new Thickness(1),
                 Background = searchBarBackground,
-                Width = 3 * itemWidth + 80,
+                Width = 2 * itemWidth + 50,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
 
