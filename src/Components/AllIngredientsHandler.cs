@@ -829,6 +829,12 @@ namespace Desktop_Frontend.Components
 
                 if (!string.IsNullOrEmpty(ingName) && !string.IsNullOrEmpty(ingType))
                 {
+                    if (ingredients.FindIndex(i => i.GetName() ==  ingName) != -1)
+                    {
+                        MessageBox.Show("Ingredient already exists", "Already Exists", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        popup.Close();
+                        return;
+                    }
                     Ingredient newCustom = new Ingredient(ingName, ingType, true);
                     createButton.IsEnabled = false;
                     bool success = await backend.CreateCustomIngredient(user, newCustom);
