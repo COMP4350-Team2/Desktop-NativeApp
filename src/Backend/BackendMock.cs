@@ -59,12 +59,6 @@ namespace Desktop_Frontend.Backend
         /// </returns>
         public Task<List<Ingredient>> GetAllIngredients(IUser user)
         {
-            //List<Ingredient> copy = new List<Ingredient>();
-
-            //for (int i = 0; i < ingredients.Count; i++)
-            //{
-            //    copy.Add(ingredients[i].CopyIngredient());
-            //}
             return Task.FromResult(ingredients);
         }
 
@@ -90,12 +84,6 @@ namespace Desktop_Frontend.Backend
         /// <returns>A task that represents the asynchronous operation, containing a list of user lists.</returns>
         public async Task<List<UserList>> GetMyLists(IUser user)
         {
-           // List<UserList> copy = new List<UserList>();
-
-           //for (int i = 0; i < myLists.Count; i++)
-           //{
-           //     copy.Add(myLists[i].CopyList());
-           //}
            return await Task.FromResult(myLists);
         }
 
