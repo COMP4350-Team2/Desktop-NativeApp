@@ -317,6 +317,192 @@ namespace Desktop_Frontend.Components
         /// </summary>
         /// <param name="ingredient">The ingredient to display.</param>
         /// <returns>A Border control containing the ingredient row.</returns>
+        //private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight, StackPanel ingPanel)
+        //{
+        //    SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+        //    SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+        //    int ingTextFont = 34;
+
+        //    int ingButtonsDim = ingBoxHeight / 6;
+        //    Thickness ingButtonPadding = new Thickness(10, 10, 10, 2);
+
+        //    // Create a DockPanel to display ingredient details
+        //    DockPanel ingredientRow = new DockPanel
+        //    {
+        //        Margin = new Thickness(10),
+        //        Width = itemWidth,
+        //        HorizontalAlignment = HorizontalAlignment.Stretch
+        //    };
+
+        //    // Ingredient name text
+        //    int nameFont = Math.Max(ingTextFont - 4 * (ingredient.GetName().Length / 10), ingTextFont / 2);
+        //    TextBlock ingredientNameText = new TextBlock
+        //    {
+        //        Text = ingredient.GetName(),
+        //        Foreground = ingTextCol,
+        //        VerticalAlignment = VerticalAlignment.Center,
+        //        FontSize = nameFont,
+        //        FontWeight = FontWeights.Bold,
+        //        TextTrimming = TextTrimming.CharacterEllipsis,
+        //        TextWrapping = TextWrapping.Wrap,
+        //    };
+        //    DockPanel.SetDock(ingredientNameText, Dock.Top);
+        //    ingredientRow.Children.Add(ingredientNameText);
+
+        //    // Ingredient type text
+        //    int typeFont = Math.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
+        //    TextBlock ingredientTypeText = new TextBlock
+        //    {
+        //        Text = ingredient.GetIngType(),
+        //        Foreground = ingTextCol,
+        //        VerticalAlignment = VerticalAlignment.Center,
+        //        FontSize = typeFont - 4,
+        //        TextTrimming = TextTrimming.CharacterEllipsis,
+        //        TextWrapping = TextWrapping.Wrap,
+        //    };
+        //    DockPanel.SetDock(ingredientTypeText, Dock.Top);
+        //    ingredientRow.Children.Add(ingredientTypeText);
+
+        //    // Ingredient amount, unit text
+        //    string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
+        //    int amountFont = Math.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
+        //    TextBlock ingredientAmountText = new TextBlock
+        //    {
+        //        Text = amountText,
+        //        Foreground = ingTextCol,
+        //        VerticalAlignment = VerticalAlignment.Center,
+        //        FontSize = amountFont - 4,
+        //        TextTrimming = TextTrimming.CharacterEllipsis,
+        //        TextWrapping = TextWrapping.Wrap,
+        //    };
+        //    DockPanel.SetDock(ingredientAmountText, Dock.Top);
+        //    ingredientRow.Children.Add(ingredientAmountText);
+
+        //    // Panel to hold the icon and buttons
+        //    Grid actionGrid = new Grid
+        //    {
+        //        Margin = new Thickness(5, 0, 5, 0),
+        //        HorizontalAlignment = HorizontalAlignment.Stretch
+        //    };
+
+        //    actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Icon column
+        //    actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Spacer column
+        //    actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Buttons column
+
+        //    // Add the custom icon to the leftmost column if the ingredient is custom
+        //    if (ingredient.IsCustom())
+        //    {
+        //        Image customIcon = new Image
+        //        {
+        //            Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+        //            Width = ingButtonsDim,
+        //            Height = ingButtonsDim,
+        //            VerticalAlignment = VerticalAlignment.Center,
+        //            Margin = new Thickness(5, 0, 0, 0)
+        //        };
+        //        Grid.SetColumn(customIcon, 0); // Place in the first column
+        //        actionGrid.Children.Add(customIcon);
+        //    }
+
+        //    // Spacer in the middle column
+        //    Grid.SetColumnSpan(actionGrid, 2);
+
+        //    // Buttons on the right
+        //    StackPanel buttonPanel = new StackPanel
+        //    {
+        //        Orientation = Orientation.Horizontal,
+        //        HorizontalAlignment = HorizontalAlignment.Right
+        //    };
+
+        //    // Move button
+        //    Button moveButton = new Button
+        //    {
+        //        Content = new Image
+        //        {
+        //            Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/move_ing_icon_white.png")),
+        //            Height = ingButtonsDim,
+        //            Width = ingButtonsDim,
+        //            Stretch = Stretch.Uniform
+        //        },
+        //        Margin = ingButtonPadding,
+        //        Background = Brushes.Transparent,
+        //        BorderBrush = Brushes.Transparent,
+        //        Cursor = Cursors.Hand,
+        //        ToolTip = "Move"
+        //    };
+        //    moveButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
+        //    moveButton.Click += async (s, e) => await ShowMoveIngredientPopup(userList, ingredient, ingPanel);
+
+        //    // Delete button
+        //    Button deleteButton = new Button
+        //    {
+        //        Content = new Image
+        //        {
+        //            Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_icon_red.png")),
+        //            Height = ingButtonsDim,
+        //            Width = ingButtonsDim,
+        //            Stretch = Stretch.Uniform
+        //        },
+        //        Background = Brushes.Transparent,
+        //        BorderBrush = Brushes.Transparent,
+        //        Margin = ingButtonPadding,
+        //        Cursor = Cursors.Hand,
+        //        ToolTip = "Delete"
+        //    };
+        //    deleteButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
+        //    deleteButton.Click += async (s, e) => await ConfirmIngDeletion(ingredient, userList, ingPanel);
+
+        //    // Edit button
+        //    Button editButton = new Button
+        //    {
+        //        Content = new Image
+        //        {
+        //            Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/edit_ing_icon_white.png")),
+        //            Height = ingButtonsDim,
+        //            Width = ingButtonsDim,
+        //            Stretch = Stretch.Uniform
+        //        },
+        //        Background = Brushes.Transparent,
+        //        BorderBrush = Brushes.Transparent,
+        //        Margin = ingButtonPadding,
+        //        Cursor = Cursors.Hand,
+        //        ToolTip = "Edit"
+        //    };
+        //    editButton.Style = (Style)Application.Current.Resources["NoHighlightButton"];
+        //    editButton.Click += async (s, e) => await ShowEditIngredientPopup(ingredient, userList, ingPanel);
+
+        //    // Add buttons to the panel
+        //    buttonPanel.Children.Add(moveButton);
+        //    buttonPanel.Children.Add(editButton);
+        //    buttonPanel.Children.Add(deleteButton);
+
+        //    Grid.SetColumn(buttonPanel, 2); // Place in the last column
+        //    actionGrid.Children.Add(buttonPanel);
+
+        //    DockPanel.SetDock(actionGrid, Dock.Bottom);
+        //    ingredientRow.Children.Add(actionGrid);
+
+        //    // Create border styling for the ingredient row
+        //    Border border = new Border
+        //    {
+        //        BorderBrush = borderCol,
+        //        BorderThickness = new Thickness(1),
+        //        CornerRadius = new CornerRadius(5),
+        //        Margin = new Thickness(5),
+        //        Height = ingBoxHeight,
+        //        Child = ingredientRow,
+        //        Style = (Style)Application.Current.Resources["HoverableBorder"]
+        //    };
+
+        //    if (ingredient.IsCustom())
+        //    {
+        //        border.ToolTip = "Custom Ingredient";
+        //    }
+
+        //    return border;
+        //}
+
         private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight, StackPanel ingPanel)
         {
             SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
@@ -335,8 +521,35 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
-            // Ingredient name text
-            int nameFont = Math.Max(ingTextFont - 4 * (ingredient.GetName().Length / 10), ingTextFont / 2);
+            // Use a Grid for ingredient details
+            Grid ingredientDetailsGrid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+            };
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for name (and icon)
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for type
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for amount
+
+            // Ingredient name with optional custom icon
+            StackPanel namePanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            if (ingredient.IsCustom())
+            {
+                Image customIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                    Width = ingButtonsDim,
+                    Height = ingButtonsDim,
+                    Margin = new Thickness(0, 0, 5, 0) // Space between icon and text
+                };
+                namePanel.Children.Add(customIcon);
+            }
+
+            int nameFont = Math.Max(ingTextFont - 2 * (ingredient.GetName().Length / 10), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
                 Text = ingredient.GetName(),
@@ -347,8 +560,9 @@ namespace Desktop_Frontend.Components
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
-            DockPanel.SetDock(ingredientNameText, Dock.Top);
-            ingredientRow.Children.Add(ingredientNameText);
+            namePanel.Children.Add(ingredientNameText);
+            Grid.SetRow(namePanel, 0);
+            ingredientDetailsGrid.Children.Add(namePanel);
 
             // Ingredient type text
             int typeFont = Math.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
@@ -357,14 +571,14 @@ namespace Desktop_Frontend.Components
                 Text = ingredient.GetIngType(),
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = typeFont - 4,
+                FontSize = typeFont,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
-            DockPanel.SetDock(ingredientTypeText, Dock.Top);
-            ingredientRow.Children.Add(ingredientTypeText);
+            Grid.SetRow(ingredientTypeText, 1);
+            ingredientDetailsGrid.Children.Add(ingredientTypeText);
 
-            // Ingredient amount, unit text
+            // Ingredient amount text
             string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
             int amountFont = Math.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
@@ -372,41 +586,15 @@ namespace Desktop_Frontend.Components
                 Text = amountText,
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = amountFont - 4,
+                FontSize = amountFont,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
-            DockPanel.SetDock(ingredientAmountText, Dock.Top);
-            ingredientRow.Children.Add(ingredientAmountText);
+            Grid.SetRow(ingredientAmountText, 2);
+            ingredientDetailsGrid.Children.Add(ingredientAmountText);
 
-            // Panel to hold the icon and buttons
-            Grid actionGrid = new Grid
-            {
-                Margin = new Thickness(5, 0, 5, 0),
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-
-            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Icon column
-            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Spacer column
-            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Buttons column
-
-            // Add the custom icon to the leftmost column if the ingredient is custom
-            if (ingredient.IsCustom())
-            {
-                Image customIcon = new Image
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
-                    Width = ingButtonsDim,
-                    Height = ingButtonsDim,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5, 0, 0, 0)
-                };
-                Grid.SetColumn(customIcon, 0); // Place in the first column
-                actionGrid.Children.Add(customIcon);
-            }
-
-            // Spacer in the middle column
-            Grid.SetColumnSpan(actionGrid, 2);
+            DockPanel.SetDock(ingredientDetailsGrid, Dock.Top);
+            ingredientRow.Children.Add(ingredientDetailsGrid);
 
             // Buttons on the right
             StackPanel buttonPanel = new StackPanel
@@ -477,11 +665,8 @@ namespace Desktop_Frontend.Components
             buttonPanel.Children.Add(editButton);
             buttonPanel.Children.Add(deleteButton);
 
-            Grid.SetColumn(buttonPanel, 2); // Place in the last column
-            actionGrid.Children.Add(buttonPanel);
-
-            DockPanel.SetDock(actionGrid, Dock.Bottom);
-            ingredientRow.Children.Add(actionGrid);
+            DockPanel.SetDock(buttonPanel, Dock.Right);
+            ingredientRow.Children.Add(buttonPanel);
 
             // Create border styling for the ingredient row
             Border border = new Border
@@ -502,7 +687,6 @@ namespace Desktop_Frontend.Components
 
             return border;
         }
-
 
 
 
