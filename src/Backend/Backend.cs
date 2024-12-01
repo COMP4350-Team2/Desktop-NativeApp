@@ -830,10 +830,12 @@ namespace Desktop_Frontend.Backend
                 old_ingredient = ingredient.GetName(),
                 old_amount = ingredient.GetAmount(),
                 old_unit = ingredient.GetUnit(),
+                old_is_custom_ingredient = ingredient.IsCustom(),
                 new_list_name = newListName,
                 new_ingredient = ingredient.GetName(),
                 new_amount = ingredient.GetAmount(),
-                new_unit = ingredient.GetUnit()
+                new_unit = ingredient.GetUnit(),
+                new_is_custom_ingredient = ingredient.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
