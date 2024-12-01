@@ -371,6 +371,11 @@ namespace Desktop_Frontend.Backend
                 }
             }
 
+            for(int i = 0; i < myLists.Count; i++)
+            {
+                myLists[i].CascadeDelCustomIng(ingredient);
+            }
+
             return Task.FromResult(deleted);
         }
     }
