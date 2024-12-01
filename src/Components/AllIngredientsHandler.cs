@@ -261,7 +261,7 @@ namespace Desktop_Frontend.Components
 
             // Initially set the width and height
             toggleButton.Width = parentPanel.ActualWidth / 6;
-            toggleButton.Height = parentPanel.ActualWidth / 32;
+            toggleButton.Height = 60;
 
             // Bind to LayoutUpdated to handle resizing dynamically when parent size changes
             parentPanel.LayoutUpdated += (s, e) =>
