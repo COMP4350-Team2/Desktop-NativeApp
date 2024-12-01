@@ -336,11 +336,10 @@ namespace Desktop_Frontend.Components
             };
 
             // Ingredient name text
-            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
-            int nameFont = int.Max(ingTextFont - 4 * (ingredient.GetName().Length / 10), ingTextFont / 2);
+            int nameFont = Math.Max(ingTextFont - 4 * (ingredient.GetName().Length / 10), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
-                Text = $"{ingredient.GetName()}",
+                Text = ingredient.GetName(),
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = nameFont,
@@ -348,24 +347,26 @@ namespace Desktop_Frontend.Components
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
+            DockPanel.SetDock(ingredientNameText, Dock.Top);
+            ingredientRow.Children.Add(ingredientNameText);
 
-            // Ingredient type text 
-            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
-            int typeFont = int.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
+            // Ingredient type text
+            int typeFont = Math.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
             TextBlock ingredientTypeText = new TextBlock
             {
-                Text = $"{ingredient.GetIngType()}",
+                Text = ingredient.GetIngType(),
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = typeFont - 4,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
+            DockPanel.SetDock(ingredientTypeText, Dock.Top);
+            ingredientRow.Children.Add(ingredientTypeText);
 
-            // Ingredient amount, unit text 
-            // Reduce font size by 4 for every 10 characters (with fontSize/2 limit)
+            // Ingredient amount, unit text
             string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
-            int amountFont = int.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
+            int amountFont = Math.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
             {
                 Text = amountText,
@@ -375,15 +376,39 @@ namespace Desktop_Frontend.Components
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
-
-            DockPanel.SetDock(ingredientNameText, Dock.Top);
-            ingredientRow.Children.Add(ingredientNameText);
-            DockPanel.SetDock(ingredientTypeText, Dock.Top);
-            ingredientRow.Children.Add(ingredientTypeText);
             DockPanel.SetDock(ingredientAmountText, Dock.Top);
             ingredientRow.Children.Add(ingredientAmountText);
 
-            // Panel to hold delete, edit, and move buttons
+            // Panel to hold the icon and buttons
+            Grid actionGrid = new Grid
+            {
+                Margin = new Thickness(5, 0, 5, 0),
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Icon column
+            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Spacer column
+            actionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // Buttons column
+
+            // Add the custom icon to the leftmost column if the ingredient is custom
+            if (ingredient.IsCustom())
+            {
+                Image customIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                    Width = ingButtonsDim,
+                    Height = ingButtonsDim,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 0, 0, 0)
+                };
+                Grid.SetColumn(customIcon, 0); // Place in the first column
+                actionGrid.Children.Add(customIcon);
+            }
+
+            // Spacer in the middle column
+            Grid.SetColumnSpan(actionGrid, 2);
+
+            // Buttons on the right
             StackPanel buttonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -396,9 +421,9 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/move_ing_icon_white.png")),
-                    Height = ingButtonsDim, 
-                    Width = ingButtonsDim,  
-                    Stretch = Stretch.Uniform 
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
+                    Stretch = Stretch.Uniform
                 },
                 Margin = ingButtonPadding,
                 Background = Brushes.Transparent,
@@ -452,10 +477,11 @@ namespace Desktop_Frontend.Components
             buttonPanel.Children.Add(editButton);
             buttonPanel.Children.Add(deleteButton);
 
+            Grid.SetColumn(buttonPanel, 2); // Place in the last column
+            actionGrid.Children.Add(buttonPanel);
 
-            // Add the button panel to the DockPanel
-            DockPanel.SetDock(buttonPanel, Dock.Bottom);
-            ingredientRow.Children.Add(buttonPanel);
+            DockPanel.SetDock(actionGrid, Dock.Bottom);
+            ingredientRow.Children.Add(actionGrid);
 
             // Create border styling for the ingredient row
             Border border = new Border
@@ -464,13 +490,19 @@ namespace Desktop_Frontend.Components
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(5),
                 Margin = new Thickness(5),
-                Height = ingBoxHeight, 
+                Height = ingBoxHeight,
                 Child = ingredientRow,
                 Style = (Style)Application.Current.Resources["HoverableBorder"]
             };
 
+            if (ingredient.IsCustom())
+            {
+                border.ToolTip = "Custom Ingredient";
+            }
+
             return border;
         }
+
 
 
 
