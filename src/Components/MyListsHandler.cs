@@ -196,7 +196,7 @@ namespace Desktop_Frontend.Components
 
             // Dynamically calculate item width based on the screen size 
             double availableWidth = SystemParameters.PrimaryScreenWidth;
-            double itemWidth = availableWidth / 2 - 200; 
+            double itemWidth = availableWidth / 3 - 140; 
 
             // Check if the search box exists in the panel; if not, add it.
             if (ingredientPanel.Children.Count == 0 || !(ingredientPanel.Children[0] is Border))
@@ -210,7 +210,7 @@ namespace Desktop_Frontend.Components
                     BorderBrush = searchBoxForeground,
                     BorderThickness = new Thickness(1),
                     Background = searchBoxBackground,
-                    Width = 2 * itemWidth + 50,
+                    Width = 3 * itemWidth + 80,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
 
@@ -510,6 +510,484 @@ namespace Desktop_Frontend.Components
         /// Shows pop up window for adding an <see cref="Ingredient"/>
         /// </summary>
         /// <param name="userList">The <see cref="UserList"/> to be added to.</param>
+        //private async Task ShowAddIngredientPopup(UserList userList, StackPanel ingPanel)
+        //{
+        //    SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+
+        //    // Create Popup window
+        //    Window popup = new Window
+        //    {
+        //        Title = "Add Ingredient",
+        //        SizeToContent = SizeToContent.WidthAndHeight,
+        //        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+        //        ResizeMode = ResizeMode.NoResize,
+        //        Background = background
+        //    };
+
+        //    StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+        //    double boxWidth = 350;
+        //    double boxHeight = 30;
+        //    double fontSize = 18;
+
+        //    SolidColorBrush boxColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+        //    SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+        //    SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+        //    TextBox searchBox = new TextBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        Text = "Search ingredients...",
+        //        Foreground = Brushes.Gray,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        FontSize = fontSize
+        //    };
+
+        //    // Box to show ingredient names
+        //    ComboBox nameBox = new ComboBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
+
+        //    // Populate ComboBox with all ingredients initially
+        //    foreach (var ing in allIngredients)
+        //    {
+        //        nameBox.Items.Add(ing.GetName());
+        //    }
+        //    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
+
+        //    panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(searchBox);
+        //    panel.Children.Add(nameBox);
+
+        //    // Amount input with placeholder
+        //    TextBox amountBox = new TextBox
+        //    {
+        //        VerticalContentAlignment = VerticalAlignment.Center,
+        //        Text = "Enter amount",
+        //        Foreground = Brushes.Gray,
+        //        Background = boxColor,
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    // Clear on focus, restore on defocus if empty
+        //    amountBox.GotFocus += (s, e) =>
+        //    {
+        //        if (amountBox.Text == "Enter amount")
+        //        {
+        //            amountBox.Text = "";
+        //            amountBox.Foreground = boxTextColor;
+        //        }
+        //    };
+        //    amountBox.LostFocus += (s, e) =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(amountBox.Text))
+        //        {
+        //            amountBox.Text = "Enter amount";
+        //            amountBox.Foreground = Brushes.Gray;
+        //        }
+        //    };
+        //    panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(amountBox);
+
+        //    // Unit input
+        //    ComboBox unitBox = new ComboBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    List<string> units = await backend.GetAllMeasurements(user);
+        //    foreach (var unit in units)
+        //    {
+        //        unitBox.Items.Add(unit);
+        //    }
+        //    if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0;
+
+        //    panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(unitBox);
+
+        //    // Filter ingredients as user types in the search box
+        //    searchBox.GotFocus += (s, e) =>
+        //    {
+        //        if (searchBox.Text == "Search ingredients...")
+        //        {
+        //            searchBox.Text = "";
+        //            searchBox.Foreground = Brushes.Black;
+        //        }
+        //    };
+
+        //    searchBox.LostFocus += (s, e) =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(searchBox.Text))
+        //        {
+        //            searchBox.Text = "Search ingredients...";
+        //            searchBox.Foreground = Brushes.Gray;
+
+        //            // Repopulate the ComboBox with all ingredients when the search box is empty
+        //            nameBox.Items.Clear();
+        //            foreach (var ing in allIngredients)
+        //            {
+        //                nameBox.Items.Add(ing.GetName());
+        //            }
+        //            if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
+        //        }
+        //    };
+
+        //    searchBox.TextChanged += (s, e) =>
+        //    {
+        //        string searchText = searchBox.Text.ToLower().Trim();
+
+        //        if (!string.IsNullOrWhiteSpace(searchText))
+        //        {
+        //            nameBox.Items.Clear();
+
+        //            // If there is search text, filter the ingredients
+        //            foreach (var ing in allIngredients)
+        //            {
+        //                if (ing.GetName().ToLower().Contains(searchText))
+        //                {
+        //                    nameBox.Items.Add(ing.GetName());
+        //                }
+        //            }
+        //            if (nameBox.Items.Count > 0)
+        //            {
+        //                nameBox.SelectedIndex = 0;
+        //            }
+        //        }
+        //    };
+
+        //    // Add button 
+        //    Button addButton = new Button
+        //    {
+        //        Content = "Add",
+        //        Margin = new Thickness(10, 30, 10, 10),
+        //        Style = (Style)Application.Current.Resources["ExpandButtonStyle"] // Apply the pre-defined style
+        //    };
+
+        //    addButton.Click += async (s, e) =>
+        //    {
+        //        // Validate amount input
+        //        if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
+        //        {
+        //            MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        // Retrieve values
+        //        string name = nameBox.SelectedItem?.ToString();
+        //        string unit = unitBox.SelectedItem?.ToString();
+        //        if (name == null || unit == null)
+        //        {
+        //            MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+        //        Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+        //        newIngredient.SetAmount(amount);
+        //        newIngredient.SetUnit(unit);
+        //        //string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
+
+
+        //        // Create the ingredient with specified values
+        //        //Ingredient newIngredient = new Ingredient(name, type, amount, unit);
+
+        //        addButton.IsEnabled = false;
+
+        //        // Add ingredient to list via backend and check success
+        //        bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
+
+        //        addButton.IsEnabled = true;
+
+        //        // Show success
+        //        if (success)
+        //        {
+        //            MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        //            //userList.AddIngToList(newIngredient);
+        //            UpdateIngredientPanel(ingPanel, "", userList);
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //        popup.Close();
+
+        //    };
+
+        //    panel.Children.Add(addButton);
+
+        //    popup.Content = panel;
+        //    popup.ShowDialog();
+        //}
+
+        //private async Task ShowAddIngredientPopup(UserList userList, StackPanel ingPanel)
+        //{
+        //    SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+
+        //    // Create Popup window
+        //    Window popup = new Window
+        //    {
+        //        Title = "Add Ingredient",
+        //        SizeToContent = SizeToContent.WidthAndHeight,
+        //        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+        //        ResizeMode = ResizeMode.NoResize,
+        //        Background = background
+        //    };
+
+        //    StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+        //    double boxWidth = 350;
+        //    double boxHeight = 30;
+        //    double fontSize = 18;
+
+        //    SolidColorBrush boxColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+        //    SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+        //    SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+        //    // ComboBox for ingredients
+        //    ComboBox nameBox = new ComboBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
+
+        //    // Function to populate the ComboBox with a filtered list of ingredients
+        //    void PopulateComboBox(IEnumerable<Ingredient> ingredients)
+        //    {
+        //        nameBox.Items.Clear();
+        //        foreach (var ing in ingredients)
+        //        {
+        //            nameBox.Items.Add(ing.GetName());
+        //        }
+        //        if (nameBox.Items.Count > 0)
+        //            nameBox.SelectedIndex = 0;
+        //    }
+
+        //    // Initially populate the ComboBox with all ingredients
+        //    PopulateComboBox(allIngredients);
+
+        //    panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(nameBox);
+
+        //    // Search Box
+        //    TextBox searchBox = new TextBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        Text = "Search ingredients...",
+        //        Foreground = Brushes.Gray,
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        FontSize = fontSize
+        //    };
+
+        //    // Filter by Ingredient Type (All, Custom, Common)
+        //    StackPanel filterPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10) };
+        //    RadioButton allRadioButton = new RadioButton { Content = "All", IsChecked = true, Margin = new Thickness(5) };
+        //    RadioButton customRadioButton = new RadioButton { Content = "Custom", Margin = new Thickness(5) };
+        //    RadioButton commonRadioButton = new RadioButton { Content = "Common", Margin = new Thickness(5) };
+
+        //    filterPanel.Children.Add(allRadioButton);
+        //    filterPanel.Children.Add(customRadioButton);
+        //    filterPanel.Children.Add(commonRadioButton);
+
+        //    panel.Children.Add(new TextBlock { Text = "Filter by Type:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(filterPanel);
+        //    panel.Children.Add(searchBox);
+
+        //    // Amount input with placeholder
+        //    TextBox amountBox = new TextBox
+        //    {
+        //        VerticalContentAlignment = VerticalAlignment.Center,
+        //        Text = "Enter amount",
+        //        Foreground = Brushes.Gray,
+        //        Background = boxColor,
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    // Clear on focus, restore on defocus if empty
+        //    amountBox.GotFocus += (s, e) =>
+        //    {
+        //        if (amountBox.Text == "Enter amount")
+        //        {
+        //            amountBox.Text = "";
+        //            amountBox.Foreground = boxTextColor;
+        //        }
+        //    };
+        //    amountBox.LostFocus += (s, e) =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(amountBox.Text))
+        //        {
+        //            amountBox.Text = "Enter amount";
+        //            amountBox.Foreground = Brushes.Gray;
+        //        }
+        //    };
+        //    panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(amountBox);
+
+        //    // Unit input
+        //    ComboBox unitBox = new ComboBox
+        //    {
+        //        Margin = new Thickness(10),
+        //        Height = boxHeight,
+        //        Width = boxWidth,
+        //        FontSize = fontSize,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    List<string> units = await backend.GetAllMeasurements(user);
+        //    foreach (var unit in units)
+        //    {
+        //        unitBox.Items.Add(unit);
+        //    }
+        //    if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0;
+
+        //    panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+        //    panel.Children.Add(unitBox);
+
+        //    // Function to filter ingredients based on the radio button selection and search text
+        //    IEnumerable<Ingredient> FilterIngredients(string searchText, bool includeCustom, bool includeCommon)
+        //    {
+        //        var filteredIngredients = allIngredients.AsEnumerable();
+
+        //        if (includeCustom)
+        //        {
+        //            filteredIngredients = filteredIngredients.Where(ing => ing.IsCustom());
+        //        }
+
+        //        if (includeCommon)
+        //        {
+        //            filteredIngredients = filteredIngredients.Where(ing => !ing.IsCustom());
+        //        }
+
+        //        if (!string.IsNullOrWhiteSpace(searchText))
+        //        {
+        //            filteredIngredients = filteredIngredients.Where(ing => ing.GetName().ToLower().Contains(searchText.ToLower()));
+        //        }
+
+        //        return filteredIngredients;
+        //    }
+
+        //    // Search and Filter functionality
+        //    searchBox.GotFocus += (s, e) =>
+        //    {
+        //        if (searchBox.Text == "Search ingredients...")
+        //        {
+        //            searchBox.Text = "";
+        //            searchBox.Foreground = Brushes.Black;
+        //        }
+        //    };
+
+        //    searchBox.LostFocus += (s, e) =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(searchBox.Text))
+        //        {
+        //            searchBox.Text = "Search ingredients...";
+        //            searchBox.Foreground = Brushes.Gray;
+        //        }
+        //    };
+
+        //    // Updates ComboBox based on the selected filter and search text
+        //    void UpdateComboBox()
+        //    {
+        //        var searchText = searchBox.Text != "Search ingredients..." ? searchBox.Text : "";
+        //        var includeCustom = customRadioButton.IsChecked == true;
+        //        var includeCommon = commonRadioButton.IsChecked == true;
+        //        var filteredIngredients = FilterIngredients(searchText, includeCustom, includeCommon);
+
+        //        PopulateComboBox(filteredIngredients);
+        //    }
+
+        //    // Add the event handlers to the radio buttons
+        //    allRadioButton.Checked += (s, e) => UpdateComboBox();
+        //    customRadioButton.Checked += (s, e) => UpdateComboBox();
+        //    commonRadioButton.Checked += (s, e) => UpdateComboBox();
+
+        //    // Add the TextChanged event for the search box
+        //    searchBox.TextChanged += (s, e) => UpdateComboBox();
+
+        //    // Initial population of ComboBox
+        //    UpdateComboBox();
+
+        //    // Add button
+        //    Button addButton = new Button
+        //    {
+        //        Content = "Add",
+        //        Margin = new Thickness(10, 30, 10, 10),
+        //        Style = (Style)Application.Current.Resources["ExpandButtonStyle"] // Apply the pre-defined style
+        //    };
+
+        //    addButton.Click += async (s, e) =>
+        //    {
+        //        // Validate amount input
+        //        if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
+        //        {
+        //            MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        // Retrieve values
+        //        string name = nameBox.SelectedItem?.ToString();
+        //        string unit = unitBox.SelectedItem?.ToString();
+        //        if (name == null || unit == null)
+        //        {
+        //            MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+        //        Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+        //        newIngredient.SetAmount(amount);
+        //        newIngredient.SetUnit(unit);
+
+        //        addButton.IsEnabled = false;
+
+        //        // Add ingredient to list via backend and check success
+        //        bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
+
+        //        addButton.IsEnabled = true;
+
+        //        // Show success
+        //        if (success)
+        //        {
+        //            MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        //            UpdateIngredientPanel(ingPanel, "", userList);
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //        popup.Close();
+        //    };
+
+        //    panel.Children.Add(addButton);
+
+        //    popup.Content = panel;
+        //    popup.ShowDialog();
+        //}
+
+
         private async Task ShowAddIngredientPopup(UserList userList, StackPanel ingPanel)
         {
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
@@ -534,6 +1012,50 @@ namespace Desktop_Frontend.Components
             SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
+            // Add radio buttons at the very top
+            StackPanel radioPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+            RadioButton allRadioButton = new RadioButton
+            {
+                Content = "All",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Foreground = headerText,
+                Margin = new Thickness(10)
+            };
+
+            RadioButton commonRadioButton = new RadioButton
+            {
+                Content = "Common",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10),
+                Foreground = headerText
+            };
+
+            RadioButton customRadioButton = new RadioButton
+            {
+                Content = "Custom",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10),
+                Foreground = headerText
+            };
+
+            // Default to 'All' radio button selected
+            allRadioButton.IsChecked = true;
+
+            radioPanel.Children.Add(allRadioButton);
+            radioPanel.Children.Add(commonRadioButton);
+            radioPanel.Children.Add(customRadioButton);
+
+            panel.Children.Add(radioPanel);
+
             TextBox searchBox = new TextBox
             {
                 Margin = new Thickness(10),
@@ -545,7 +1067,6 @@ namespace Desktop_Frontend.Components
                 FontSize = fontSize
             };
 
-            // Box to show ingredient names
             ComboBox nameBox = new ComboBox
             {
                 Margin = new Thickness(10),
@@ -558,17 +1079,68 @@ namespace Desktop_Frontend.Components
             List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
 
             // Populate ComboBox with all ingredients initially
-            foreach (var ing in allIngredients)
+            void UpdateComboBoxItems(IEnumerable<Ingredient> filteredIngredients)
             {
-                nameBox.Items.Add(ing.GetName());
+                nameBox.Items.Clear();
+                foreach (var ing in filteredIngredients)
+                {
+                    nameBox.Items.Add(ing.GetName());
+                }
+
+                if (nameBox.Items.Count > 0)
+                {
+                    nameBox.SelectedIndex = 0;
+                }
             }
-            if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
+
+            // Filter ingredients based on radio button selection and search text
+            void FilterIngredients()
+            {
+                string searchText = searchBox.Text.ToLower().Trim();
+                IEnumerable<Ingredient> filteredIngredients = allIngredients;
+
+                // Filter based on radio button selection
+                if (commonRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => !ing.IsCustom());
+                }
+                else if (customRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.IsCustom());
+                }
+
+                // Further filter based on search text
+                if (!string.IsNullOrWhiteSpace(searchText) && searchBox.IsFocused)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.GetName().ToLower().Contains(searchText));
+                }
+
+                UpdateComboBoxItems(filteredIngredients);
+            }
+
+            // Set initial ComboBox items and apply filters when needed
+            UpdateComboBoxItems(allIngredients);
+
+            searchBox.TextChanged += (s, e) => FilterIngredients();
+            searchBox.GotFocus += (s, e) =>
+            {
+                searchBox.Text = "";
+                searchBox.Foreground = Brushes.Black;
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                searchBox.Text = "Search Ingredients...";
+                searchBox.Foreground = headerText;
+            };
+            allRadioButton.Checked += (s, e) => FilterIngredients();
+            commonRadioButton.Checked += (s, e) => FilterIngredients();
+            customRadioButton.Checked += (s, e) => FilterIngredients();
 
             panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(searchBox);
             panel.Children.Add(nameBox);
 
-            // Amount input with placeholder
             TextBox amountBox = new TextBox
             {
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -582,7 +1154,6 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
-            // Clear on focus, restore on defocus if empty
             amountBox.GotFocus += (s, e) =>
             {
                 if (amountBox.Text == "Enter amount")
@@ -602,7 +1173,6 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(amountBox);
 
-            // Unit input
             ComboBox unitBox = new ComboBox
             {
                 Margin = new Thickness(10),
@@ -622,74 +1192,21 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(unitBox);
 
-            // Filter ingredients as user types in the search box
-            searchBox.GotFocus += (s, e) =>
-            {
-                if (searchBox.Text == "Search ingredients...")
-                {
-                    searchBox.Text = "";
-                    searchBox.Foreground = Brushes.Black; 
-                }
-            };
-
-            searchBox.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchBox.Text))
-                {
-                    searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = Brushes.Gray;
-
-                    // Repopulate the ComboBox with all ingredients when the search box is empty
-                    nameBox.Items.Clear();
-                    foreach (var ing in allIngredients)
-                    {
-                        nameBox.Items.Add(ing.GetName());
-                    }
-                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
-                }
-            };
-
-            searchBox.TextChanged += (s, e) =>
-            {
-                string searchText = searchBox.Text.ToLower().Trim();
-
-                if (!string.IsNullOrWhiteSpace(searchText))
-                {
-                    nameBox.Items.Clear();
-
-                    // If there is search text, filter the ingredients
-                    foreach (var ing in allIngredients)
-                    {
-                        if (ing.GetName().ToLower().Contains(searchText))
-                        {
-                            nameBox.Items.Add(ing.GetName()); 
-                        }
-                    }
-                    if (nameBox.Items.Count > 0)
-                    {
-                        nameBox.SelectedIndex = 0;
-                    }
-                }
-            };
-
-            // Add button 
             Button addButton = new Button
             {
                 Content = "Add",
                 Margin = new Thickness(10, 30, 10, 10),
-                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] // Apply the pre-defined style
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
             };
 
             addButton.Click += async (s, e) =>
             {
-                // Validate amount input
                 if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
                 {
                     MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                // Retrieve values
                 string name = nameBox.SelectedItem?.ToString();
                 string unit = unitBox.SelectedItem?.ToString();
                 if (name == null || unit == null)
@@ -697,27 +1214,21 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+
                 newIngredient.SetAmount(amount);
                 newIngredient.SetUnit(unit);
-                //string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
-                
-
-                // Create the ingredient with specified values
-                //Ingredient newIngredient = new Ingredient(name, type, amount, unit);
 
                 addButton.IsEnabled = false;
 
-                // Add ingredient to list via backend and check success
                 bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
 
                 addButton.IsEnabled = true;
-                
-                // Show success
+
                 if (success)
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //userList.AddIngToList(newIngredient);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -725,11 +1236,9 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 popup.Close();
-
             };
 
             panel.Children.Add(addButton);
-
             popup.Content = panel;
             popup.ShowDialog();
         }
@@ -1202,7 +1711,7 @@ namespace Desktop_Frontend.Components
             int dropDownOptHeight = 50;
 
             double availableWidth = SystemParameters.PrimaryScreenWidth;
-            double itemWidth = availableWidth / 2 - 200;
+            double itemWidth = availableWidth / 3 - 140;
 
             Grid headerGrid = new Grid
             {
@@ -1312,7 +1821,7 @@ namespace Desktop_Frontend.Components
                 BorderBrush = searchBarTxtCol,
                 BorderThickness = new Thickness(1),
                 Background = searchBarBackground,
-                Width = 2 * itemWidth + 50,
+                Width = 3 * itemWidth + 80,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
 
