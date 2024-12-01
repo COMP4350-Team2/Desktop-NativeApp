@@ -536,10 +536,8 @@ namespace Desktop_Frontend.Backend
 
             // Create request
             string url = config.BackendUrl + config.Rem_Ing_Endpoint;
-            url = url
-                .Replace("{list_name}", listName)
-                .Replace("{ingredient}", ingredient.GetName())
-                .Replace("{unit}", ingredient.GetUnit());
+            url = url + $"?ingredient={ingredient.GetName()}&is_custom_ingredient={ingredient.IsCustom()}" +
+                  $"&list_name={listName}&unit={ingredient.GetUnit()}";
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
