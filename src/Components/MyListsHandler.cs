@@ -1044,7 +1044,8 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("List created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        UserList newList = new UserList(newListName, new List<Ingredient>());
+                        List<UserList> allLists = await backend.GetMyLists(user);
+                        UserList newList = allLists.FirstOrDefault(i => i.GetListName() == newListName);
                         AddListExpander(newList);
                     }
                     else
