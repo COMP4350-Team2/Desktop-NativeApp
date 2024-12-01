@@ -275,14 +275,14 @@ namespace Desktop_Frontend.Components
             };
 
             // Define column definitions
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(35 + (parentPanel.ActualWidth / 5)) }); // Fixed width for the Create button
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(parentPanel.ActualWidth / 5) }); // Fixed width for the Create button
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // This column will resize with the screen size
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(parentPanel.ActualWidth / 5) }); // Fixed width for spacing
 
             grid.LayoutUpdated += (s, e) =>
             {
                 // Recalculate column widths when layout updates
-                grid.ColumnDefinitions[0].Width = new GridLength(45 + (parentPanel.ActualWidth / 5)); 
+                grid.ColumnDefinitions[0].Width = new GridLength(parentPanel.ActualWidth / 5); 
                 grid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);  
                 grid.ColumnDefinitions[2].Width = new GridLength(parentPanel.ActualWidth / 5); 
             };
@@ -450,13 +450,13 @@ namespace Desktop_Frontend.Components
             };
 
             // Initially set the width and height
-            toggleButton.Width = parentPanel.ActualWidth / 7;
+            toggleButton.Width = parentPanel.ActualWidth / 6;
             toggleButton.Height = parentPanel.ActualWidth / 32;
 
             // Bind to LayoutUpdated to handle resizing dynamically when parent size changes
             parentPanel.LayoutUpdated += (s, e) =>
             {
-                toggleButton.Width = parentPanel.ActualWidth / 7;
+                toggleButton.Width = parentPanel.ActualWidth / 6;
             };
 
             return toggleButton;
