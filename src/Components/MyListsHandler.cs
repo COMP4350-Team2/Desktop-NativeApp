@@ -439,7 +439,7 @@ namespace Desktop_Frontend.Components
             {
                 Content = new Image
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_ing_icon_white.png")),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_icon_red.png")),
                     Height = ingButtonsDim,
                     Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
