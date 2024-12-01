@@ -830,7 +830,6 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.RemIngFromList(ingredient);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -959,8 +958,6 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //userList.RemIngFromList(oldIngredient);
-                    //userList.AddIngToList(updatedIngredient);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -1173,13 +1170,8 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show("Ingredient moved successfully!");
 
-                        //Rem from curr list and add to new list
-                        //currList.RemIngFromList(ingredient);
-                        //toList.AddIngToList(ingredient);
-
                         //Update both
                         UpdateIngredientPanel(ingPanel, "", currList);
-                        //UpdateIngredientPanel(FindIngPanel(newListName), "", toList);
 
                         // Fully rebuild the target `Expander`
                         Expander targetExpander = ingExpanders.FirstOrDefault(e => e.Tag.ToString() == newListName);
@@ -1547,7 +1539,6 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         listHeader.Text = newListName;
-                        //userList.SetListName(newListName);
 
                         for (int i = 0; i < ingExpanders.Count; i++)
                         {
