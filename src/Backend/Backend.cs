@@ -212,7 +212,7 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-
+                    
                     ValidateGetMyListsResponse(response);
 
                     FillMyLists(response, myLists);
@@ -271,9 +271,9 @@ namespace Desktop_Frontend.Backend
                     string type = ingredientItem.GetProperty("ingredient_type").GetString();
                     float amount = ingredientItem.GetProperty("amount").GetSingle();
                     string unit = ingredientItem.GetProperty("unit").GetString();
+                    bool isCustom = ingredientItem.GetProperty("is_custom_ingredient").GetBoolean();
 
-
-                    currList.AddIngToList(new Ingredient(name, type, amount, unit));
+                    currList.AddIngToList(new Ingredient(name, type, amount, unit, isCustom));
                 }
 
                 // Add the list to myLists
