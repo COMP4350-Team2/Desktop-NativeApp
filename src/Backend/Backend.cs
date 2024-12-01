@@ -614,10 +614,12 @@ namespace Desktop_Frontend.Backend
                 old_ingredient = oldIng.GetName(),
                 old_amount = oldIng.GetAmount(),
                 old_unit = oldIng.GetUnit(),
+                old_is_custom_ingredient = oldIng.IsCustom(),
                 new_list_name = listName,
                 new_ingredient = newIng.GetName(),
                 new_amount = newIng.GetAmount(),
-                new_unit = newIng.GetUnit()
+                new_unit = newIng.GetUnit(),
+                new_is_custom_ingredient = newIng.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
