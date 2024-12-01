@@ -1009,6 +1009,11 @@ namespace Desktop_Frontend.Backend
                     }
                 }
                 allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
+                for (int i = 0; i < myLists.Count; i++)
+                {
+                    myLists[i].CascadeDelCustomIng(ingredient);
+                }
             }
             catch (Exception)
             {
