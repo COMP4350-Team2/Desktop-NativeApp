@@ -1,4 +1,4 @@
-# This is the README for the Desktop-WebApp
+# This is the README for the Desktop-NativeApp
 
 ## Technologies To Be Used
 - **Language:** C#
