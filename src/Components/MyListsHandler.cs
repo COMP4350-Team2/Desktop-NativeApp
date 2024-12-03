@@ -546,7 +546,7 @@ namespace Desktop_Frontend.Components
                 FontSize = fontSize,
                 FontWeight = FontWeights.Bold,
                 Foreground = headerText,
-                Margin = new Thickness(10)
+                Margin = new Thickness(20, 10, 20, 10)
             };
 
             RadioButton commonRadioButton = new RadioButton
@@ -554,7 +554,7 @@ namespace Desktop_Frontend.Components
                 Content = "Common",
                 FontSize = fontSize,
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(10),
+                Margin = new Thickness(20, 10, 20, 10),
                 Foreground = headerText
             };
 
@@ -563,7 +563,7 @@ namespace Desktop_Frontend.Components
                 Content = "Custom",
                 FontSize = fontSize,
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(10),
+                Margin = new Thickness(20, 10, 20, 10),
                 Foreground = headerText
             };
 
@@ -650,8 +650,11 @@ namespace Desktop_Frontend.Components
 
             searchBox.LostFocus += (s, e) =>
             {
-                searchBox.Text = "Search Ingredients...";
-                searchBox.Foreground = headerText;
+                if (string.IsNullOrEmpty(searchBox.Text))
+                {
+                    searchBox.Text = "Search Ingredients...";
+                    searchBox.Foreground = headerText;
+                }
             };
             allRadioButton.Checked += (s, e) => FilterIngredients();
             commonRadioButton.Checked += (s, e) => FilterIngredients();
