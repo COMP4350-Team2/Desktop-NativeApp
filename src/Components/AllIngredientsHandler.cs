@@ -149,6 +149,8 @@ namespace Desktop_Frontend.Components
             Grid.SetColumn(createIngButton, 0);
             grid.Children.Add(createIngButton);
 
+            Border searchBox = CreateSearchBox();
+
             // Create the toggle button group (this will go in the second column)
             StackPanel toggleButtonGroup = new StackPanel
             {
@@ -169,6 +171,10 @@ namespace Desktop_Frontend.Components
                 commonButton.IsChecked = false;
                 customButton.IsChecked = false;
                 this.selectedCatagory = "All";
+                if (searchBox.Child is TextBox textBox)
+                {
+                    textBox.Text = string.Empty; // Clear the TextBox value
+                }
                 FilterIngredients(ingredients, "", ingredientGrid);
             };
 
@@ -177,6 +183,10 @@ namespace Desktop_Frontend.Components
                 allButton.IsChecked = false;
                 customButton.IsChecked = false;
                 this.selectedCatagory = "Common";
+                if (searchBox.Child is TextBox textBox)
+                {
+                    textBox.Text = string.Empty; // Clear the TextBox value
+                }
                 FilterIngredients(ingredients, "", ingredientGrid);
             };
 
@@ -185,6 +195,10 @@ namespace Desktop_Frontend.Components
                 allButton.IsChecked = false;
                 commonButton.IsChecked = false;
                 this.selectedCatagory = "Custom";
+                if (searchBox.Child is TextBox textBox)
+                {
+                    textBox.Text = string.Empty; // Clear the TextBox value
+                }
                 FilterIngredients(ingredients, "", ingredientGrid);
             };
 
@@ -201,7 +215,7 @@ namespace Desktop_Frontend.Components
             stackPanel.Children.Add(grid);
 
             // Add the search box and the rest of the content below the toggle button group
-            Border searchBox = CreateSearchBox();
+            //Border searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
 
             // Create a ScrollViewer to make the ingredient grid scrollable
