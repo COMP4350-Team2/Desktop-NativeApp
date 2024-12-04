@@ -753,6 +753,7 @@ namespace Desktop_Frontend.Components
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     UpdateIngredientPanel(ingPanel, "", userList);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
                 {
@@ -831,6 +832,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -959,6 +961,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -1174,6 +1177,7 @@ namespace Desktop_Frontend.Components
 
                         //Update both
                         UpdateIngredientPanel(ingPanel, "", currList);
+                        UpdateIngredientPanel(ingPanel, "", currList);
 
                         // Fully rebuild the target `Expander`
                         Expander targetExpander = ingExpanders.FirstOrDefault(e => e.Tag.ToString() == newListName);
@@ -1184,6 +1188,7 @@ namespace Desktop_Frontend.Components
 
                             // Create a new StackPanel and populate it with ingredients
                             StackPanel ingredientPanel = new StackPanel();
+                            UpdateIngredientPanel(ingredientPanel, "", toList);
                             UpdateIngredientPanel(ingredientPanel, "", toList);
 
                             // Assign the new panel as the `Expander`'s content
