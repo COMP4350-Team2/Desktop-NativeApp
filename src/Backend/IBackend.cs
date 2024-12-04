@@ -129,5 +129,13 @@ namespace Desktop_Frontend.Backend
         /// <param name="user"> User making the request </param>
         /// <returns> List of Recipe objects </returns>
         public Task<List<Recipe>> GetAllRecipes(IUser user);
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateRecipe(IUser user, string recipeName);
     }
 }

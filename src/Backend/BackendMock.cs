@@ -419,5 +419,33 @@ namespace Desktop_Frontend.Backend
             recipes.Add(r1);
             recipes.Add(r2);
         }
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateRecipe(IUser user, string recipeName)
+        {
+            bool created = false;
+            Recipe newRecipe = new Recipe(recipeName);
+
+            bool found = false;
+            for(int i = 0; i  < recipes?.Count && !found; i++)
+            {
+                if (recipes[i].GetRecipeName() == recipeName)
+                {
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                recipes?.Add(newRecipe);
+                created = true;
+            }            
+            return Task.FromResult(created);
+        }
     }
 }

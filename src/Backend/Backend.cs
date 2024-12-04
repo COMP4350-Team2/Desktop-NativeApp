@@ -52,6 +52,8 @@ namespace Desktop_Frontend.Backend
             allUnits = null;
 
             myLists = null;
+
+            recipes = null;
         }
 
         /// <summary>
@@ -1151,6 +1153,47 @@ namespace Desktop_Frontend.Backend
                 // Add the Recipe to the recipes list
                 recipes.Add(currRecipe);
             }
+        }
+
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public async Task<bool> CreateRecipe(IUser user, string recipeName)
+        {
+            bool created = false;
+
+            //Create request
+            string url = config.BackendUrl + config.Create_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url); ;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                
+                if(recipes == null)
+                {
+                    recipes = new List<Recipe>();
+                }
+
+                // Add to cached list
+                recipes.Add(new Recipe(recipeName));
+
+                created = true;
+            }
+            catch (Exception)
+            {
+                created = false;
+            }
+
+            return created;
         }
     }
 }
