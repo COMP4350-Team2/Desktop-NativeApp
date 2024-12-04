@@ -9,6 +9,7 @@
         private string ingType;
         private float amount;
         private string unit;
+        private bool isCustom;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Ingredient"/> class
@@ -22,12 +23,14 @@
         /// </summary>
         /// <param name="name">The name of the ingredient.</param>
         /// <param name="ingType">The type of the ingredient.</param>
-        public Ingredient(string name, string ingType)
+        /// <param name="isCustom">Flag indicating whether ingredient is custom</param>
+        public Ingredient(string name, string ingType, bool isCustom = false)
         {
             SetName(name);
             SetIngType(ingType);
             SetAmount(1);
             SetUnit("No Unit");
+            SetIsCustom(isCustom);
         }
 
         /// <summary>
@@ -37,7 +40,7 @@
         /// <param name="ingType">The type of the ingredient.</param>
         /// <param name="amount">The amount of the ingredient.</param>
         /// <param name="unit">The unit of measurement for the ingredient amount.</param>
-        public Ingredient(string name, string ingType, float amount, string unit) : this(name, ingType)
+        public Ingredient(string name, string ingType, float amount, string unit, bool isCustom = false) : this(name, ingType, isCustom)
         {
 
             SetAmount(amount);
@@ -142,7 +145,7 @@
         /// <returns>The true if their name, type and unit are the same.</returns>
         public bool IsEqual(Ingredient other)
         {
-            return (name == other.GetName() && ingType == other.GetIngType() && unit == other.GetUnit());
+            return (name == other.GetName() && ingType == other.GetIngType() && unit == other.GetUnit() && isCustom == other.IsCustom());
         }
 
         /// <summary>
@@ -151,8 +154,24 @@
         /// <returns>Deep copy of this ingredient.</returns>
         public Ingredient CopyIngredient()
         {
-            Ingredient copy = new Ingredient(this.GetName(), this.GetIngType(), this.GetAmount(), this.GetUnit());
+            Ingredient copy = new Ingredient(this.GetName(), this.GetIngType(), this.GetAmount(), this.GetUnit(), this.IsCustom());
             return copy;
         }
+
+
+        /// <summary>
+        /// Setter for isCustom
+        /// </summary>
+        /// <param name="isCustom">Flag to put in</param>
+        public void SetIsCustom(bool isCustom)
+        {
+            this.isCustom = isCustom;
+        }
+
+        /// <summary>
+        /// Getter for isCustom flag
+        /// </summary>
+        /// <returns>True if the ingredient is custom, false other wise</returns>
+        public bool IsCustom() { return isCustom; }
     }
 }

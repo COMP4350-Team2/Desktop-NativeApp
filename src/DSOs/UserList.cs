@@ -161,5 +161,29 @@
 
             return edited;
         }
+
+        /// <summary>
+        /// Deletes a custom ing from a list
+        /// </summary>
+        /// <param name="customIng"> The custom ing to delete</param>
+        public void CascadeDelCustomIng(Ingredient customIng)
+        {
+            List<Ingredient> toRem = new List<Ingredient>();
+            for (int i = 0; i < Ingredients.Count; i++)
+            {
+                Ingredient curr = Ingredients[i];
+                if(curr.GetName() == customIng.GetName() 
+                   && curr.GetIngType() == customIng.GetIngType()
+                   && curr.IsCustom() == customIng.IsCustom())
+                {
+                    toRem.Add(curr);
+                }
+            }
+
+            for(int i = 0; i < toRem.Count; i++)
+            {
+                Ingredients.Remove(toRem[i]);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-# This is the README for the Desktop-WebApp
+# This is the README for the Desktop-NativeApp
 
 ## Technologies To Be Used
 - **Language:** C#
@@ -46,6 +46,8 @@ Type `dotnet --version` in terminal to check version on your system.
     CREATE_LIST=
     RENAME_LIST=
     MOVE_INGREDIENT=
+    CREATE_CUSTOM_ING=
+    DELETE_CUSTOM_ING=
     ```   
 
 - Not having these files will run a Mock version of the system.

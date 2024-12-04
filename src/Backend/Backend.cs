@@ -156,20 +156,35 @@ namespace Desktop_Frontend.Backend
             // Parse the JSON response
             var jsonBody = JsonDocument.Parse(body);
 
-            // Enumerate through each ingredient in the root array
-            foreach (JsonElement item in jsonBody.RootElement.EnumerateArray())
-            {
-                // Extract the name and type from the JSON object
-                string? name = item.GetProperty("name").GetString();
-                string? ingType = item.GetProperty("type").GetString();
+            // Access the root object directly
+            JsonElement root = jsonBody.RootElement;
 
-                // Add new ingredient
-                allIng.Add(new Ingredient(name, ingType));
+            // Process common ingredients
+            if (root.TryGetProperty("common_ingredients", out JsonElement commonIngredients))
+            {
+                foreach (JsonElement item in commonIngredients.EnumerateArray())
+                {
+                    string? name = item.GetProperty("name").GetString();
+                    string? type = item.GetProperty("type").GetString();
+                    allIng.Add(new Ingredient(name, type));
+                }
             }
 
-            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+            // Process custom ingredients
+            if (root.TryGetProperty("custom_ingredients", out JsonElement customIngredients))
+            {
+                foreach (JsonElement item in customIngredients.EnumerateArray())
+                {
+                    string? name = item.GetProperty("name").GetString();
+                    string? type = item.GetProperty("type").GetString();
+                    allIng.Add(new Ingredient(name, type, true));
+                }
+            }
 
+            // Sort ingredients alphabetically by name
+            allIng.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
         }
+
 
         /// <summary>
         /// Retrieves the user's lists of ingredients.
@@ -197,7 +212,7 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-
+                    
                     ValidateGetMyListsResponse(response);
 
                     FillMyLists(response, myLists);
@@ -209,15 +224,7 @@ namespace Desktop_Frontend.Backend
                 }
             }
 
-            // Return a deep copy of myLists
-            List<UserList> myListsCopy = new List<UserList>();
-
-            for (int i = 0; i < myLists.Count; i++)
-            {
-                myListsCopy.Add(myLists[i].CopyList());
-            }
-
-            return await Task.FromResult(myListsCopy);
+            return await Task.FromResult(myLists);
         }
 
         /// <summary>
@@ -264,9 +271,9 @@ namespace Desktop_Frontend.Backend
                     string type = ingredientItem.GetProperty("ingredient_type").GetString();
                     float amount = ingredientItem.GetProperty("amount").GetSingle();
                     string unit = ingredientItem.GetProperty("unit").GetString();
+                    bool isCustom = ingredientItem.GetProperty("is_custom_ingredient").GetBoolean();
 
-
-                    currList.AddIngToList(new Ingredient(name, type, amount, unit));
+                    currList.AddIngToList(new Ingredient(name, type, amount, unit, isCustom));
                 }
 
                 // Add the list to myLists
@@ -298,7 +305,8 @@ namespace Desktop_Frontend.Backend
                 list_name = listName,
                 ingredient = ingredient.GetName(),
                 amount = ingredient.GetAmount(),
-                unit = ingredient.GetUnit()
+                unit = ingredient.GetUnit(),
+                is_custom_ingredient = ingredient.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
@@ -528,10 +536,8 @@ namespace Desktop_Frontend.Backend
 
             // Create request
             string url = config.BackendUrl + config.Rem_Ing_Endpoint;
-            url = url
-                .Replace("{list_name}", listName)
-                .Replace("{ingredient}", ingredient.GetName())
-                .Replace("{unit}", ingredient.GetUnit());
+            url = url + $"?ingredient={ingredient.GetName()}&is_custom_ingredient={ingredient.IsCustom()}" +
+                  $"&list_name={listName}&unit={ingredient.GetUnit()}";
             string accessToken = user.GetAccessToken();
             var request = new HttpRequestMessage(HttpMethod.Delete, url);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -608,10 +614,12 @@ namespace Desktop_Frontend.Backend
                 old_ingredient = oldIng.GetName(),
                 old_amount = oldIng.GetAmount(),
                 old_unit = oldIng.GetUnit(),
+                old_is_custom_ingredient = oldIng.IsCustom(),
                 new_list_name = listName,
                 new_ingredient = newIng.GetName(),
                 new_amount = newIng.GetAmount(),
-                new_unit = newIng.GetUnit()
+                new_unit = newIng.GetUnit(),
+                new_is_custom_ingredient = newIng.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
@@ -822,10 +830,12 @@ namespace Desktop_Frontend.Backend
                 old_ingredient = ingredient.GetName(),
                 old_amount = ingredient.GetAmount(),
                 old_unit = ingredient.GetUnit(),
+                old_is_custom_ingredient = ingredient.IsCustom(),
                 new_list_name = newListName,
                 new_ingredient = ingredient.GetName(),
                 new_amount = ingredient.GetAmount(),
-                new_unit = ingredient.GetUnit()
+                new_unit = ingredient.GetUnit(),
+                new_is_custom_ingredient = ingredient.IsCustom()
             };
 
             string jsonBody = JsonSerializer.Serialize(body);
@@ -920,6 +930,97 @@ namespace Desktop_Frontend.Backend
                     renamed = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Method to create a custom ingredient
+        /// </summary>
+        /// <param name="user"> User creating the ingredient</param>
+        /// <param name="customIng"> The ingredient to be created </param>
+        /// <returns> True on success, false on failure </returns>
+        public async Task<bool> CreateCustomIngredient(IUser user, Ingredient customIng)
+        {
+            bool created = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Create_Custom_Ing_Endpoint;
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                ingredient = customIng.GetName(),
+                type = customIng.GetIngType()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                allIngredients.Add(customIng);
+                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+                created = true;
+            }
+            catch (Exception)
+            {
+                created = false;
+            }
+
+            return created;
+        }
+
+        /// <summary>
+        /// Backend method to delete a custom ingredient
+        /// </summary>
+        /// <param name="user"> User who is removing ingredient </param>
+        /// <param name="ingredient"> The ingredient to be removed</param>
+        /// <returns></returns>
+        public async Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient)
+        {
+            bool deleted = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Custom_Ing_Endpoint;
+            url = url.Replace("{ingredient}", ingredient.GetName());
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                for (int i = 0; i < allIngredients.Count; i++)
+                {
+                    Ingredient curr = allIngredients[i];
+                    if (curr.GetName() == ingredient.GetName() &&
+                        curr.GetIngType() == ingredient.GetIngType() &&
+                        curr.IsCustom() == ingredient.IsCustom())
+                    {
+                        allIngredients.Remove(curr);
+                        deleted = true;
+                    }
+                }
+                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
+                for (int i = 0; i < myLists?.Count; i++)
+                {
+                    myLists[i].CascadeDelCustomIng(ingredient);
+                }
+            }
+            catch (Exception)
+            {
+                deleted = false;
+            }
+
+            return deleted;
         }
     }
 

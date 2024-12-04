@@ -22,6 +22,43 @@
         <SolidColorBrush x:Key="SecondaryBrushB" Color="{StaticResource SecondaryColB}" />
         <SolidColorBrush x:Key="ExpanderBrushA" Color="{StaticResource ExpanderColA}" />
 
+        <!-- Define toggle button style -->
+        <Style x:Key="RoundedToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="20"
+                            x:Name="PART_Border">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Trigger for IsChecked -->
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource PrimaryBrushB}" />
+                            </Trigger>
+                            <!-- Trigger for IsMouseOver -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource PrimaryBrushB}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <!-- Default Visual Settings -->
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+
         <Style x:Key="CustomMenuItemStyle" TargetType="MenuItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Template">

@@ -71,6 +71,9 @@ namespace Desktop_Frontend
 
             // Enable buttons again
             SetButtonsEnabled(true);
+
+            // Disable to avoid redundant renders
+            MyListsButton.IsEnabled = false;
         }
 
         /// <summary>
@@ -90,6 +93,9 @@ namespace Desktop_Frontend
 
             // Enable buttons again
             SetButtonsEnabled(true);
+
+            // Disable the button to avoid repeated render
+            AllIngredientsButton.IsEnabled = false;
             
         }
 

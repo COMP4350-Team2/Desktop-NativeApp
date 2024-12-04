@@ -8,11 +8,6 @@
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <None Remove="Assets\Icons\del_ing_icon_white.png" />
-	  <None Remove="Assets\Icons\edit_ing_icon_white.png" />
-	  <None Remove="Assets\Icons\move_ing_icon_white.png" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Auth0.OidcClient.WPF" Version="*" />
@@ -20,7 +15,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Assets\Icons\del_ing_icon_white.png" />
+	  <Resource Include="Assets\Icons\custom_ing_icon_white.png" />
+	  <Resource Include="Assets\Icons\del_icon_red.png" />
 	  <Resource Include="Assets\Icons\edit_ing_icon_white.png" />
 	  <Resource Include="Assets\Icons\ingredients_icon_white.png" />
 	  <Resource Include="Assets\Icons\lists_icon_white.png" />

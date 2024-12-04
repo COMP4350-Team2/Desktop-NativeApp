@@ -1,5 +1,4 @@
-﻿using System.DirectoryServices.ActiveDirectory;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -321,13 +320,12 @@ namespace Desktop_Frontend.Components
         private Border CreateIngredientRow(Ingredient ingredient, UserList userList, double itemWidth, int ingBoxHeight, StackPanel ingPanel)
         {
             SolidColorBrush ingTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
-            SolidColorBrush buttonCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
             SolidColorBrush borderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
             int ingTextFont = 30;
-            int buttonFont = 30;
 
-            double availableWidth = SystemParameters.PrimaryScreenWidth - 200;
+            int ingButtonsDim = ingBoxHeight / 6;
+            Thickness ingButtonPadding = new Thickness(10, 10, 10, 2);
 
             // Create a DockPanel to display ingredient details
             DockPanel ingredientRow = new DockPanel
@@ -337,12 +335,38 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
-            // Ingredient name text
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
-            int nameFont = int.Max(ingTextFont - 2 * (ingredient.GetName().Length / 15), ingTextFont / 2);
+            // Use a Grid for ingredient details
+            Grid ingredientDetailsGrid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+            };
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for name (and icon)
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for type
+            ingredientDetailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for amount
+
+            // Ingredient name with optional custom icon
+            StackPanel namePanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            if (ingredient.IsCustom())
+            {
+                Image customIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                    Width = ingButtonsDim,
+                    Height = ingButtonsDim,
+                    Margin = new Thickness(0, 0, 5, 0) // Space between icon and text
+                };
+                namePanel.Children.Add(customIcon);
+            }
+
+            int nameFont = Math.Max(ingTextFont - 3 * (ingredient.GetName().Length / 10), ingTextFont / 2);
             TextBlock ingredientNameText = new TextBlock
             {
-                Text = $"{ingredient.GetName()}",
+                Text = ingredient.GetName(),
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = nameFont,
@@ -350,42 +374,43 @@ namespace Desktop_Frontend.Components
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
+            namePanel.Children.Add(ingredientNameText);
+            Grid.SetRow(namePanel, 0);
+            ingredientDetailsGrid.Children.Add(namePanel);
 
-            // Ingredient type text 
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
-            int typeFont = int.Max(ingTextFont - 2 * (ingredient.GetIngType().Length / 15), ingTextFont / 2);
+            // Ingredient type text
+            int typeFont = Math.Max(ingTextFont - 4 * (ingredient.GetIngType().Length / 10), ingTextFont / 2);
             TextBlock ingredientTypeText = new TextBlock
             {
-                Text = $"{ingredient.GetIngType()}",
+                Text = ingredient.GetIngType(),
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = typeFont - 4,
+                FontSize = typeFont,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
+            Grid.SetRow(ingredientTypeText, 1);
+            ingredientDetailsGrid.Children.Add(ingredientTypeText);
 
-            // Ingredient amount, unit text 
-            // Reduce font size by 2 for every 15 characters (with fontSize/2 limit)
+            // Ingredient amount text
             string amountText = $"{ingredient.GetAmount()} {ingredient.GetUnit()}";
-            int amountFont = int.Max(ingTextFont - 2 * (amountText.Length / 15), ingTextFont / 2);
+            int amountFont = Math.Max(ingTextFont - 4 * (amountText.Length / 10), ingTextFont / 2);
             TextBlock ingredientAmountText = new TextBlock
             {
                 Text = amountText,
                 Foreground = ingTextCol,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = amountFont - 4,
+                FontSize = amountFont,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
             };
+            Grid.SetRow(ingredientAmountText, 2);
+            ingredientDetailsGrid.Children.Add(ingredientAmountText);
 
-            DockPanel.SetDock(ingredientNameText, Dock.Top);
-            ingredientRow.Children.Add(ingredientNameText);
-            DockPanel.SetDock(ingredientTypeText, Dock.Top);
-            ingredientRow.Children.Add(ingredientTypeText);
-            DockPanel.SetDock(ingredientAmountText, Dock.Top);
-            ingredientRow.Children.Add(ingredientAmountText);
+            DockPanel.SetDock(ingredientDetailsGrid, Dock.Top);
+            ingredientRow.Children.Add(ingredientDetailsGrid);
 
-            // Panel to hold delete, edit, and move buttons
+            // Buttons on the right
             StackPanel buttonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -398,13 +423,11 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/move_ing_icon_white.png")),
-                    Height = 24, 
-                    Width = 24,  
-                    Stretch = Stretch.Uniform 
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
+                    Stretch = Stretch.Uniform
                 },
-                FontSize = buttonFont + 6,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
                 Cursor = Cursors.Hand,
@@ -418,17 +441,14 @@ namespace Desktop_Frontend.Components
             {
                 Content = new Image
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_ing_icon_white.png")),
-                    Height = 34,
-                    Width = 34,
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_icon_red.png")),
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
-                FontSize = buttonFont,
-                FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                Foreground = buttonCol,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Delete"
             };
@@ -441,16 +461,13 @@ namespace Desktop_Frontend.Components
                 Content = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/edit_ing_icon_white.png")),
-                    Height = 34,
-                    Width = 34,
+                    Height = ingButtonsDim,
+                    Width = ingButtonsDim,
                     Stretch = Stretch.Uniform
                 },
-                FontSize = buttonFont,
-                FontWeight = FontWeights.Bold,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                Foreground = buttonCol,
-                Margin = new Thickness(20, 10, 5, 5),
+                Margin = ingButtonPadding,
                 Cursor = Cursors.Hand,
                 ToolTip = "Edit"
             };
@@ -462,9 +479,7 @@ namespace Desktop_Frontend.Components
             buttonPanel.Children.Add(editButton);
             buttonPanel.Children.Add(deleteButton);
 
-
-            // Add the button panel to the DockPanel
-            DockPanel.SetDock(buttonPanel, Dock.Bottom);
+            DockPanel.SetDock(buttonPanel, Dock.Right);
             ingredientRow.Children.Add(buttonPanel);
 
             // Create border styling for the ingredient row
@@ -474,10 +489,15 @@ namespace Desktop_Frontend.Components
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(5),
                 Margin = new Thickness(5),
-                Height = ingBoxHeight, 
+                Height = ingBoxHeight,
                 Child = ingredientRow,
                 Style = (Style)Application.Current.Resources["HoverableBorder"]
             };
+
+            if (ingredient.IsCustom())
+            {
+                border.ToolTip = "Custom Ingredient";
+            }
 
             return border;
         }
@@ -512,6 +532,50 @@ namespace Desktop_Frontend.Components
             SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
             SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
 
+            // Add radio buttons at the very top
+            StackPanel radioPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+            RadioButton allRadioButton = new RadioButton
+            {
+                Content = "All",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Foreground = headerText,
+                Margin = new Thickness(20, 10, 20, 10)
+            };
+
+            RadioButton commonRadioButton = new RadioButton
+            {
+                Content = "Common",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(20, 10, 20, 10),
+                Foreground = headerText
+            };
+
+            RadioButton customRadioButton = new RadioButton
+            {
+                Content = "Custom",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(20, 10, 20, 10),
+                Foreground = headerText
+            };
+
+            // Default to 'All' radio button selected
+            allRadioButton.IsChecked = true;
+
+            radioPanel.Children.Add(allRadioButton);
+            radioPanel.Children.Add(commonRadioButton);
+            radioPanel.Children.Add(customRadioButton);
+
+            panel.Children.Add(radioPanel);
+
             TextBox searchBox = new TextBox
             {
                 Margin = new Thickness(10),
@@ -523,7 +587,6 @@ namespace Desktop_Frontend.Components
                 FontSize = fontSize
             };
 
-            // Box to show ingredient names
             ComboBox nameBox = new ComboBox
             {
                 Margin = new Thickness(10),
@@ -536,17 +599,71 @@ namespace Desktop_Frontend.Components
             List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
 
             // Populate ComboBox with all ingredients initially
-            foreach (var ing in allIngredients)
+            void UpdateComboBoxItems(IEnumerable<Ingredient> filteredIngredients)
             {
-                nameBox.Items.Add(ing.GetName());
+                nameBox.Items.Clear();
+                foreach (var ing in filteredIngredients)
+                {
+                    nameBox.Items.Add(ing.GetName());
+                }
+
+                if (nameBox.Items.Count > 0)
+                {
+                    nameBox.SelectedIndex = 0;
+                }
             }
-            if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
+
+            // Filter ingredients based on radio button selection and search text
+            void FilterIngredients()
+            {
+                string searchText = searchBox.Text.ToLower().Trim();
+                IEnumerable<Ingredient> filteredIngredients = allIngredients;
+
+                // Filter based on radio button selection
+                if (commonRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => !ing.IsCustom());
+                }
+                else if (customRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.IsCustom());
+                }
+
+                // Further filter based on search text
+                if (!string.IsNullOrWhiteSpace(searchText) && searchBox.IsFocused)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.GetName().ToLower().Contains(searchText));
+                }
+
+                UpdateComboBoxItems(filteredIngredients);
+            }
+
+            // Set initial ComboBox items and apply filters when needed
+            UpdateComboBoxItems(allIngredients);
+
+            searchBox.TextChanged += (s, e) => FilterIngredients();
+            searchBox.GotFocus += (s, e) =>
+            {
+                searchBox.Text = "";
+                searchBox.Foreground = Brushes.Black;
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrEmpty(searchBox.Text))
+                {
+                    searchBox.Text = "Search Ingredients...";
+                    searchBox.Foreground = headerText;
+                }
+            };
+            allRadioButton.Checked += (s, e) => FilterIngredients();
+            commonRadioButton.Checked += (s, e) => FilterIngredients();
+            customRadioButton.Checked += (s, e) => FilterIngredients();
 
             panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(searchBox);
             panel.Children.Add(nameBox);
 
-            // Amount input with placeholder
             TextBox amountBox = new TextBox
             {
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -560,7 +677,6 @@ namespace Desktop_Frontend.Components
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
-            // Clear on focus, restore on defocus if empty
             amountBox.GotFocus += (s, e) =>
             {
                 if (amountBox.Text == "Enter amount")
@@ -580,7 +696,6 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(amountBox);
 
-            // Unit input
             ComboBox unitBox = new ComboBox
             {
                 Margin = new Thickness(10),
@@ -600,74 +715,21 @@ namespace Desktop_Frontend.Components
             panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
             panel.Children.Add(unitBox);
 
-            // Filter ingredients as user types in the search box
-            searchBox.GotFocus += (s, e) =>
-            {
-                if (searchBox.Text == "Search ingredients...")
-                {
-                    searchBox.Text = "";
-                    searchBox.Foreground = Brushes.Black; 
-                }
-            };
-
-            searchBox.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchBox.Text))
-                {
-                    searchBox.Text = "Search ingredients...";
-                    searchBox.Foreground = Brushes.Gray;
-
-                    // Repopulate the ComboBox with all ingredients when the search box is empty
-                    nameBox.Items.Clear();
-                    foreach (var ing in allIngredients)
-                    {
-                        nameBox.Items.Add(ing.GetName());
-                    }
-                    if (nameBox.Items.Count > 0) nameBox.SelectedIndex = 0;
-                }
-            };
-
-            searchBox.TextChanged += (s, e) =>
-            {
-                string searchText = searchBox.Text.ToLower().Trim();
-
-                if (!string.IsNullOrWhiteSpace(searchText))
-                {
-                    nameBox.Items.Clear();
-
-                    // If there is search text, filter the ingredients
-                    foreach (var ing in allIngredients)
-                    {
-                        if (ing.GetName().ToLower().Contains(searchText))
-                        {
-                            nameBox.Items.Add(ing.GetName()); 
-                        }
-                    }
-                    if (nameBox.Items.Count > 0)
-                    {
-                        nameBox.SelectedIndex = 0;
-                    }
-                }
-            };
-
-            // Add button 
             Button addButton = new Button
             {
                 Content = "Add",
                 Margin = new Thickness(10, 30, 10, 10),
-                Style = (Style)Application.Current.Resources["ExpandButtonStyle"] // Apply the pre-defined style
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
             };
 
             addButton.Click += async (s, e) =>
             {
-                // Validate amount input
                 if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
                 {
                     MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                // Retrieve values
                 string name = nameBox.SelectedItem?.ToString();
                 string unit = unitBox.SelectedItem?.ToString();
                 if (name == null || unit == null)
@@ -675,23 +737,22 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                string type = allIngredients.First(ing => ing.GetName() == name).GetIngType();
 
-                // Create the ingredient with specified values
-                Ingredient newIngredient = new Ingredient(name, type, amount, unit);
+                Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+
+                newIngredient.SetAmount(amount);
+                newIngredient.SetUnit(unit);
 
                 addButton.IsEnabled = false;
 
-                // Add ingredient to list via backend and check success
                 bool success = await backend.AddIngredientToList(user, newIngredient, userList.GetListName());
 
                 addButton.IsEnabled = true;
-                
-                // Show success
+
                 if (success)
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.AddIngToList(newIngredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -699,11 +760,9 @@ namespace Desktop_Frontend.Components
                     MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 popup.Close();
-
             };
 
             panel.Children.Add(addButton);
-
             popup.Content = panel;
             popup.ShowDialog();
         }
@@ -773,7 +832,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.RemIngFromList(ingredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -891,7 +950,10 @@ namespace Desktop_Frontend.Components
 
                 confirmButton.IsEnabled = false;
 
-                Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
+                //Ingredient updatedIngredient = new Ingredient(oldIngredient.GetName(), oldIngredient.GetIngType(), newAmount, newUnit);
+                Ingredient updatedIngredient = oldIngredient.CopyIngredient();
+                updatedIngredient.SetUnit(newUnit);
+                updatedIngredient.SetAmount(newAmount);
                 bool success = await backend.SetIngredient(user, oldIngredient, updatedIngredient, userList.GetListName());
 
                 confirmButton.IsEnabled = true;
@@ -899,8 +961,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient edited successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    userList.RemIngFromList(oldIngredient);
-                    userList.AddIngToList(updatedIngredient);
+                    UpdateIngredientPanel(ingPanel, "", userList);
                     UpdateIngredientPanel(ingPanel, "", userList);
                 }
                 else
@@ -987,7 +1048,8 @@ namespace Desktop_Frontend.Components
                     if (success)
                     {
                         MessageBox.Show("List created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        UserList newList = new UserList(newListName, new List<Ingredient>());
+                        List<UserList> allLists = await backend.GetMyLists(user);
+                        UserList newList = allLists.FirstOrDefault(i => i.GetListName() == newListName);
                         AddListExpander(newList);
                     }
                     else
@@ -1113,13 +1175,9 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show("Ingredient moved successfully!");
 
-                        //Rem from curr list and add to new list
-                        currList.RemIngFromList(ingredient);
-                        toList.AddIngToList(ingredient);
-
                         //Update both
                         UpdateIngredientPanel(ingPanel, "", currList);
-                        //UpdateIngredientPanel(FindIngPanel(newListName), "", toList);
+                        UpdateIngredientPanel(ingPanel, "", currList);
 
                         // Fully rebuild the target `Expander`
                         Expander targetExpander = ingExpanders.FirstOrDefault(e => e.Tag.ToString() == newListName);
@@ -1130,6 +1188,7 @@ namespace Desktop_Frontend.Components
 
                             // Create a new StackPanel and populate it with ingredients
                             StackPanel ingredientPanel = new StackPanel();
+                            UpdateIngredientPanel(ingredientPanel, "", toList);
                             UpdateIngredientPanel(ingredientPanel, "", toList);
 
                             // Assign the new panel as the `Expander`'s content
@@ -1249,6 +1308,7 @@ namespace Desktop_Frontend.Components
             addIngredientOption.Foreground = dropDownForeground;
             addIngredientOption.FontSize = optionsFont;
             addIngredientOption.Height = dropDownOptHeight;
+            addIngredientOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(addIngredientOption);
 
             MenuItem renameListOption = new MenuItem { Header = "Rename List" };
@@ -1256,6 +1316,7 @@ namespace Desktop_Frontend.Components
             renameListOption.Foreground = dropDownForeground;
             renameListOption.FontSize = optionsFont;
             renameListOption.Height = dropDownOptHeight;
+            renameListOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(renameListOption);
 
             MenuItem deleteListOption = new MenuItem { Header = "Delete List"};
@@ -1266,6 +1327,7 @@ namespace Desktop_Frontend.Components
             deleteListOption.FontWeight = FontWeights.Bold;
             deleteListOption.Style = (Style)App.Current.Resources["CustomMenuItemStyle"];
             deleteListOption.Height = dropDownOptHeight;
+            deleteListOption.Cursor = Cursors.Hand;
             dropdownMenu.Items.Add(deleteListOption);
 
             // Show the dropdown menu when the options button is clicked
@@ -1484,7 +1546,6 @@ namespace Desktop_Frontend.Components
                     {
                         MessageBox.Show($"List renamed successfully to {newListName}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         listHeader.Text = newListName;
-                        userList.SetListName(newListName);
 
                         for (int i = 0; i < ingExpanders.Count; i++)
                         {
