@@ -122,5 +122,12 @@ namespace Desktop_Frontend.Backend
         /// <param name="ingredient"> The ingredient to be removed</param>
         /// <returns></returns>
         public Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient);
+
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public Task<List<Recipe>> GetAllRecipes(IUser user);
     }
 }

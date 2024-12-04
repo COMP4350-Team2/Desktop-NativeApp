@@ -28,6 +28,10 @@ namespace Desktop_Frontend.Backend
 
         private DateTime lastMyListsCall;
 
+        private List<Recipe> recipes;
+
+        private DateTime lastRecipeCall;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Backend"/> class with default configuration.
         /// </summary>
@@ -212,7 +216,7 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-                    
+
                     ValidateGetMyListsResponse(response);
 
                     FillMyLists(response, myLists);
@@ -430,12 +434,12 @@ namespace Desktop_Frontend.Backend
         {
             bool newCall = false;
 
-            if(allIngredients == null || allIngredients?.Count == 0)
+            if (allIngredients == null || allIngredients?.Count == 0)
             {
                 newCall = true;
             }
 
-            if(lastAllIngCall != null)
+            if (lastAllIngCall != null)
             {
                 TimeSpan diff = DateTime.Now - lastAllIngCall;
                 TimeSpan threshold = TimeSpan.FromMinutes(5);
@@ -757,7 +761,7 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateCreateList(response);     
+                ValidateCreateList(response);
                 created = CreateCachedList(listName);
             }
             catch (Exception)
@@ -1022,6 +1026,131 @@ namespace Desktop_Frontend.Backend
 
             return deleted;
         }
-    }
 
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public async Task<List<Recipe>> GetAllRecipes(IUser user)
+        {
+            // Only make the call if needed (otherwise use cached local variable)
+            if (AllRecipesNewCall())
+            {
+                lastRecipeCall = DateTime.Now;
+                recipes?.Clear();
+                recipes = new List<Recipe>();
+
+                //Create request
+                string url = config.BackendUrl + config.Get_Recipes_Endpoint;
+                string accessToken = user.GetAccessToken();
+                var request = new HttpRequestMessage(HttpMethod.Get, url); ;
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                try
+                {
+                    HttpResponseMessage response = await HttpClient.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    FillAllRecipes(response);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to fetch all recipes");
+                }
+            }
+            return recipes;
+        }
+
+
+        /// <summary>
+        /// Helper method to determine if a new all recipe calls
+        /// needs to be made
+        /// </summary>
+        /// <returns> True if new call needed, false it not </returns>
+        private bool AllRecipesNewCall()
+        {
+            bool newCall = false;
+
+            if (recipes == null || recipes?.Count == 0)
+            {
+                newCall = true;
+            }
+
+            if (lastRecipeCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastRecipeCall;
+                TimeSpan threshold = TimeSpan.FromMinutes(5);
+
+                if (diff > threshold)
+                {
+                    newCall = true;
+                }
+            }
+
+            return newCall;
+        }
+
+        /// <summary>
+        /// Helper method to fill the recipes with the response
+        /// </summary>
+        /// <param name="response">HTTP response from endpoint </param>
+        private async void FillAllRecipes(HttpResponseMessage response)
+        {
+            // Read the response content as a string
+            string body = await response.Content.ReadAsStringAsync();
+
+            // Parse the JSON response
+            var jsonBody = JsonDocument.Parse(body);
+
+            // Access the root object directly
+            JsonElement root = jsonBody.RootElement;
+
+            // Clear the existing recipes list
+            recipes.Clear();
+
+            // Iterate through the recipes in the JSON
+            foreach (JsonElement recipeItem in root.EnumerateArray())
+            {
+                // Extract user
+                string? user = recipeItem.GetProperty("user").GetString();
+
+                // Extract recipe name
+                string? recipeName = recipeItem.GetProperty("recipe_name").GetString();
+
+                // Extract ingredients
+                UserList userList = new UserList("Recipe Ingredients", new List<Ingredient>());
+                if (recipeItem.TryGetProperty("ingredients", out JsonElement ingredients))
+                {
+                    foreach (JsonElement ingredientItem in ingredients.EnumerateArray())
+                    {
+                        string? name = ingredientItem.GetProperty("ingredient_name").GetString();
+                        string? type = ingredientItem.GetProperty("ingredient_type").GetString();
+                        float amount = (float)ingredientItem.GetProperty("amount").GetDouble();
+                        string? unit = ingredientItem.GetProperty("unit").GetString();
+                        bool isCustom = ingredientItem.GetProperty("is_custom_ingredient").GetBoolean();
+
+                        // Create the ingredient object and add it to the user list
+                        var ingredient = new Ingredient(name, type, amount, unit, isCustom);
+                        userList.AddIngToList(ingredient);
+                    }
+                }
+
+                // Extract steps
+                List<string> steps = new List<string>();
+                if (recipeItem.TryGetProperty("steps", out JsonElement stepsArray))
+                {
+                    foreach (JsonElement step in stepsArray.EnumerateArray())
+                    {
+                        steps.Add(step.GetString() ?? string.Empty);
+                    }
+                }
+
+                // Create the Recipe object
+                Recipe currRecipe = new Recipe(recipeName, userList, steps);
+
+                // Add the Recipe to the recipes list
+                recipes.Add(currRecipe);
+            }
+        }
+    }
 }

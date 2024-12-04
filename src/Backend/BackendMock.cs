@@ -8,8 +8,9 @@ namespace Desktop_Frontend.Backend
     public class BackendMock : IBackend
     {
         private IUser user;
-        private List<Ingredient> ingredients;
+        private List<Ingredient> ?ingredients;
         private List<UserList> ?myLists;
+        private List<Recipe> ?recipes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BackendMock"/> class and populates the list 
@@ -47,6 +48,8 @@ namespace Desktop_Frontend.Backend
             this.user = user;
 
             InitMyLists();
+
+            InitRecipes();
         }
 
         /// <summary>
@@ -377,6 +380,44 @@ namespace Desktop_Frontend.Backend
             }
 
             return Task.FromResult(deleted);
+        }
+
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public Task<List<Recipe>> GetAllRecipes(IUser user)
+        {
+            return Task.FromResult(recipes);
+        }
+
+        /// <summary>
+        /// Method to initialize recipes
+        /// </summary>
+        private void InitRecipes()
+        {
+            recipes = new List<Recipe>();
+
+            Recipe r1 = new Recipe("Mock Recipe 1");
+            UserList r1Ings = myLists.Find(i => i.GetListName() == "Grocery").CopyList();
+            List<String> r1Steps = new List<String>();
+            r1Steps.Add("r1 step 1 - Some words some words some words some words");
+            r1Steps.Add("r1 step 2 - Some words some words some words some words");
+            r1Steps.Add("r1 step 3 - Some words some words some words some words");
+            r1Steps.Add("r1 step 4 - Some words some words some words some words");
+
+
+            Recipe r2 = new Recipe("Mock Recipe 2");
+            UserList r2Ings = myLists.Find(i => i.GetListName() == "Pantry").CopyList();
+            List<String> r2Steps = new List<String>();
+            r2Steps.Add("r2 step 1 - Some words some words some words some words");
+            r2Steps.Add("r2 step 2 - Some words some words some words some words");
+            r2Steps.Add("r2 step 3 - Some words some words some words some words");
+            r2Steps.Add("r2 step 4 - Some words some words some words some words");
+
+            recipes.Add(r1);
+            recipes.Add(r2);
         }
     }
 }
