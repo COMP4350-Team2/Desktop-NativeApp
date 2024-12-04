@@ -1,7 +1,9 @@
 ﻿using Desktop_Frontend.DSOs;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
 
@@ -299,6 +301,11 @@ namespace Desktop_Frontend.Backend
         {
             // bool to indicate success
             bool added = false;
+
+            if (myLists == null) 
+            {
+                myLists = await GetMyLists(user);
+            }
 
             // Create request
             string url = config.BackendUrl + config.Add_Ing_Endpoint;
@@ -1100,9 +1107,9 @@ namespace Desktop_Frontend.Backend
         {
             // Read the response content as a string
             string body = await response.Content.ReadAsStringAsync();
-
+            
             // Parse the JSON response
-            var jsonBody = JsonDocument.Parse(body);
+            var jsonBody = JsonDocument.Parse(body);      
 
             // Access the root object directly
             JsonElement root = jsonBody.RootElement;
@@ -1247,6 +1254,80 @@ namespace Desktop_Frontend.Backend
             }
 
             return deleted;
+        }
+
+        /// <summary>
+        /// Method to add an ingredient to a recipe
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <param name="ingredient"> Ingredient to add </param>
+        /// <param name="recipeName"> Name of recipe to be added to </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            // bool to indicate success
+            bool added = false;
+
+            if (recipes == null)
+            {
+                await GetAllRecipes(user);           
+            }
+
+            // Create request
+            string url = config.BackendUrl + config.Add_Ing_Recipe_Endppoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                ingredient = ingredient.GetName(),
+                amount = ingredient.GetAmount(),
+                unit = ingredient.GetUnit(),
+                is_custom_ingredient = ingredient.IsCustom()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                AddIngToCachedRecipe(ingredient, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to add ingredient to cached recipe
+        /// </summary>
+        /// <param name="ingredient"> Ingredient to be added </param>
+        /// <param name="recipeName"> Name of recipe to add to </param>
+        public void AddIngToCachedRecipe(Ingredient ingredient, string recipeName)
+        {
+            bool added = false;
+
+            for (int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().AddIngToList(ingredient);
+                    added = true;
+                }
+            }
         }
     }
 }

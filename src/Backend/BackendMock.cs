@@ -479,5 +479,30 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(deleted);
         }
+
+        /// <summary>
+        /// Method to add an ingredient to a recipe
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <param name="ingredient"> Ingredient to add </param>
+        /// <param name="recipeName"> Name of recipe to be added to </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool added = false;
+
+            for(int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if(curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().AddIngToList(ingredient);
+                    added = true;
+                }
+            }
+
+            return Task.FromResult(added);
+        }
     }
 }
