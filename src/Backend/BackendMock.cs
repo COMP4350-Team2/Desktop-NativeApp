@@ -447,5 +447,37 @@ namespace Desktop_Frontend.Backend
             }            
             return Task.FromResult(created);
         }
+
+
+        /// <summary>
+        /// Method to delete a recipe
+        /// </summary>
+        /// <param name="user"> User deleting recipe </param>
+        /// <param name="recipeName"> Name of recipe to be deleted </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> DeleteRecipe(IUser user, string recipeName)
+        {
+            bool deleted = false;
+
+            bool found = false;
+            Recipe toDel = null;
+            for (int i = 0; i < recipes?.Count && !found; i++)
+            {
+                if (recipes[i].GetRecipeName() == recipeName)
+                {
+                    toDel = recipes[i];
+                    found = true;
+                }
+            }
+
+            if (found)
+            {
+                recipes?.Remove(toDel);
+                deleted = true;
+            }
+
+
+            return Task.FromResult(deleted);
+        }
     }
 }

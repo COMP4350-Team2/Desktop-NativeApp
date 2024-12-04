@@ -1195,5 +1195,58 @@ namespace Desktop_Frontend.Backend
 
             return created;
         }
+
+        /// <summary>
+        /// Method to delete a recipe
+        /// </summary>
+        /// <param name="user"> User deleting recipe </param>
+        /// <param name="recipeName"> Name of recipe to be deleted </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> DeleteRecipe(IUser user, string recipeName)
+        {
+            bool deleted = false;
+
+            //Create request
+            string url = config.BackendUrl + config.Delete_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url); ;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                // Remove from cached list of recipes
+                if (recipes != null)
+                {
+                    bool found = false;
+                    Recipe toDel = null;
+                    for (int i = 0; i < recipes?.Count && !found; i++)
+                    {
+                        if (recipes[i].GetRecipeName() == recipeName)
+                        {
+                            toDel = recipes[i];
+                            found = true;
+                        }
+                    }
+
+                    if (found && toDel != null)
+                    {
+                        recipes?.Remove(toDel);
+                    }
+                }
+
+                deleted = true;
+            }
+            catch (Exception)
+            {
+                deleted = false;
+            }
+
+            return deleted;
+        }
     }
 }
