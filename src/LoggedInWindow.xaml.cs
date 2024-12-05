@@ -15,6 +15,7 @@ namespace Desktop_Frontend
         private readonly IBackend backend; // The backend service instance
         private readonly AllIngredientsHandler allIngredientsHandler; // Handler for all ingredients
         private readonly MyListsHandler myListsHandler; // Handler for my lists
+        private readonly AllRecipesHandler allRecipesHandler; // Handler for all recipes page
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggedInWindow"/> class.
@@ -28,6 +29,7 @@ namespace Desktop_Frontend
             this.backend = backend; // Store the backend instance
             allIngredientsHandler = new AllIngredientsHandler(backend, user); // Instantiate the ingredients handler
             myListsHandler = new MyListsHandler(backend, user); // Instantiate the lists handler
+            allRecipesHandler = new AllRecipesHandler(backend, user, ContentArea);
 
             InitializeContentSpace(); // Call the method to initialize content
             UsernameTextBox.Text = user.UserName(); // Set the username
@@ -120,6 +122,27 @@ namespace Desktop_Frontend
             AllIngredientsButton.IsEnabled = isEnabled;
             MyListsButton.IsEnabled = isEnabled;
             LogoutButton.IsEnabled = isEnabled;
+            AllRecipesButton.IsEnabled = isEnabled;
+        }
+
+
+        /// <summary>
+        /// Event handler for all ingredients button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void AllRecipesButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetButtonsEnabled(false);
+
+            // Remove the scrollbar
+            ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
+            allRecipesHandler.DisplayAllRecipes();
+
+            SetButtonsEnabled(true) ;
+
+            AllRecipesButton.IsEnabled = false;
         }
 
     }
