@@ -172,5 +172,14 @@ namespace Desktop_Frontend.Backend
         /// <param name="recipeName"> The name of the recipe </param>
         /// <returns>True on success, false on failure </returns>
         public Task<bool> AddStepToRecipe(IUser user, string step, string recipeName);
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName);
     }
 }

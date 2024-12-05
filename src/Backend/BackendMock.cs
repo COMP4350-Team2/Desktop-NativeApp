@@ -554,5 +554,30 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(added);
         }
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+                if(curr.GetRecipeName() == recipeName && 
+                    stepNum > 0 && stepNum <= curr.GetRecipeSteps().Count)
+                {
+                    curr.GetRecipeSteps().RemoveAt(stepNum - 1);
+                    deleted = true;
+                }
+            }
+
+            return Task.FromResult(deleted);
+        }
     }
 }

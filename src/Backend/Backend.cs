@@ -1449,5 +1449,63 @@ namespace Desktop_Frontend.Backend
             }
 
         }
+
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public async Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName)
+        {
+            bool added = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Step_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName) + $"?recipe_name={recipeName}&step_number={stepNum}";
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                DelStepFromCachedRecipe(stepNum, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to delete a step from cached recipe
+        /// </summary>
+        /// <param name="stepNum"> Index of step to delete (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        private void DelStepFromCachedRecipe(int stepNum, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+                if (curr.GetRecipeName() == recipeName &&
+                    stepNum > 0 && stepNum <= curr.GetRecipeSteps().Count)
+                {
+                    curr.GetRecipeSteps().RemoveAt(stepNum - 1);
+                    deleted = true;
+                }
+            }
+        }
     }
 }
