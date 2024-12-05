@@ -529,5 +529,30 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(deleted);
         }
+
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddStepToRecipe(IUser user, string step, string recipeName)
+        {
+            bool added = false;
+
+            for(int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if(curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeSteps().Add(step);
+                    added = true;
+                }
+            }
+
+            return Task.FromResult(added);
+        }
     }
 }

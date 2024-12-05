@@ -154,7 +154,6 @@ namespace Desktop_Frontend.Backend
         /// <param name="recipeName"> Name of recipe to be added to </param>
         /// <returns>True on success, false on failure </returns>
         public Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName);
-
         
         /// <summary>
         /// Method to delete an ingredient from a recipe
@@ -164,5 +163,14 @@ namespace Desktop_Frontend.Backend
         /// <param name="recipeName"> Name of recipe </param>
         /// <returns></returns>
         public Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName);
+
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddStepToRecipe(IUser user, string step, string recipeName);
     }
 }

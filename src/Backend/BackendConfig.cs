@@ -28,6 +28,7 @@ namespace Desktop_Frontend.Backend
         public string? Delete_Recipe_Endpoint;
         public string? Add_Ing_Recipe_Endppoint;
         public string? Delete_Ing_Recipe_Endpoint;
+        public string? Add_Step_Recipe_Endppoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -83,6 +84,7 @@ namespace Desktop_Frontend.Backend
                 Delete_Recipe_Endpoint = Env.GetString("DELETE_RECIPE");
                 Add_Ing_Recipe_Endppoint = Env.GetString("ADD_ING_RECIPE");
                 Delete_Ing_Recipe_Endpoint = Env.GetString("DELETE_ING_RECIPE");
+                Add_Step_Recipe_Endppoint = Env.GetString("ADD_STEP_RECIPE");
             }
 
         }

@@ -1118,9 +1118,6 @@ namespace Desktop_Frontend.Backend
             // Iterate through the recipes in the JSON
             foreach (JsonElement recipeItem in root.EnumerateArray())
             {
-                // Extract user
-                string? user = recipeItem.GetProperty("user").GetString();
-
                 // Extract recipe name
                 string? recipeName = recipeItem.GetProperty("recipe_name").GetString();
 
@@ -1386,6 +1383,71 @@ namespace Desktop_Frontend.Backend
             }
         }
 
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> AddStepToRecipe(IUser user, string step, string recipeName)
+        {
+            bool added = false;
 
+            // Create request
+            string url = config.BackendUrl + config.Add_Step_Recipe_Endppoint ;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                step = step
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                AddStepToCachedRecipe(step, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to add step to cached recipe
+        /// </summary>
+        /// <param name="step"> Step to be added </param>
+        /// <param name="recipeName"> Name of recipe</param>
+        private void AddStepToCachedRecipe(string step, string recipeName)
+        {
+            bool added = false;
+
+            for (int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeSteps().Add(step);
+                    added = true;
+                }
+            }
+
+        }
     }
 }
