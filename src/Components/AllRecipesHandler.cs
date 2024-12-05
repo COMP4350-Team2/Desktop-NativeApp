@@ -439,7 +439,7 @@ namespace Desktop_Frontend.Components
             createButton.Click += async (s, e) =>
             {
 
-                string newRecipeName = recipeNameBox.Text;
+                string newRecipeName = recipeNameBox.Text.Trim();
 
                 if (!string.IsNullOrEmpty(newRecipeName))
                 {
@@ -461,7 +461,7 @@ namespace Desktop_Frontend.Components
                 }
                 else
                 {
-                    MessageBox.Show("Please enter a list name", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Please enter a recipe name", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             };
 
