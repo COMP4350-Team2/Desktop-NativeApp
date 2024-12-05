@@ -192,7 +192,8 @@ namespace Desktop_Frontend.Components
             {
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Margin = new Thickness(0, 10, 0, 0)
+                Margin = new Thickness(0, 10, 0, 0),
+                MaxHeight = parentPanel.ActualHeight - 300            
             };
 
             scrollViewer.ScrollToVerticalOffset(0);
@@ -209,12 +210,7 @@ namespace Desktop_Frontend.Components
                 }
             }
 
-
-            // Add recipe grid to scroller
-            if(scrollViewer.Content == null)
-            {
-                scrollViewer.Content = recipeGrid;
-            }
+            scrollViewer.Content = recipeGrid;
 
             parentPanel.Children.Add(scrollViewer);
 
@@ -242,7 +238,8 @@ namespace Desktop_Frontend.Components
                 Padding = new Thickness(10),
                 Style = (Style)Application.Current.Resources["HoverableBorder"],
                 ToolTip = "Open Recipe",
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                MaxHeight = parentPanel.ActualHeight/4
             };
 
 
@@ -330,7 +327,8 @@ namespace Desktop_Frontend.Components
                 Foreground = textForeground,
                 FontSize = 20,
                 FontWeight = FontWeights.Bold,
-                HorizontalAlignment = HorizontalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
+                MaxWidth = parentPanel.ActualWidth - 200
             });
 
             // Confirmation button 
