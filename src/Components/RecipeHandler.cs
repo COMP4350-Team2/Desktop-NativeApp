@@ -73,6 +73,7 @@ namespace Desktop_Frontend.Components
                 Margin = new Thickness(0, 20, 0, 20),
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 TextWrapping = TextWrapping.Wrap,
+                MaxWidth = parentPanel.ActualWidth - 100
             };
 
             return header;
