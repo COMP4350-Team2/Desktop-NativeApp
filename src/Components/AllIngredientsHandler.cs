@@ -215,7 +215,6 @@ namespace Desktop_Frontend.Components
             stackPanel.Children.Add(grid);
 
             // Add the search box and the rest of the content below the toggle button group
-            //Border searchBox = CreateSearchBox();
             stackPanel.Children.Add(searchBox);
 
             // Create a ScrollViewer to make the ingredient grid scrollable
