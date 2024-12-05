@@ -1,9 +1,7 @@
 ﻿using Desktop_Frontend.DSOs;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
 
@@ -1314,7 +1312,7 @@ namespace Desktop_Frontend.Backend
         /// </summary>
         /// <param name="ingredient"> Ingredient to be added </param>
         /// <param name="recipeName"> Name of recipe to add to </param>
-        public void AddIngToCachedRecipe(Ingredient ingredient, string recipeName)
+        private void AddIngToCachedRecipe(Ingredient ingredient, string recipeName)
         {
             bool added = false;
 
@@ -1329,5 +1327,65 @@ namespace Desktop_Frontend.Backend
                 }
             }
         }
+
+
+        /// <summary>
+        /// Method to delete an ingredient from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting the ingredient </param>
+        /// <param name="ingredient"> Ingredient being deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns></returns>
+        public async Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool removed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Ing_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName) + $"?ingredient={ingredient.GetName()}&is_custom_ingredient={ingredient.IsCustom()}" +
+                  $"&unit={ingredient.GetUnit()}&recipe_name={recipeName}";
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                DelIngInCacheRecipe(ingredient, recipeName);
+                removed = true;
+            }
+            catch (Exception)
+            {
+                removed = false;
+            }
+
+            return removed;
+
+        }
+
+        /// <summary>
+        /// Helper method to delete ingredient in cached list
+        /// </summary>
+        /// <param name="ingredient"> Ingredient to be deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        private void DelIngInCacheRecipe(Ingredient ingredient, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().RemIngFromList(ingredient);
+                    deleted = true;
+                }
+            }
+        }
+
+
     }
 }

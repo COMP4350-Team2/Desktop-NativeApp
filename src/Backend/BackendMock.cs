@@ -504,5 +504,30 @@ namespace Desktop_Frontend.Backend
 
             return Task.FromResult(added);
         }
+
+        /// <summary>
+        /// Method to delete an ingredient from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting the ingredient </param>
+        /// <param name="ingredient"> Ingredient being deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns></returns>
+        public Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().RemIngFromList(ingredient);
+                    deleted = true;
+                }
+            }
+
+            return Task.FromResult(deleted);
+        }
     }
 }
