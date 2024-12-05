@@ -22,6 +22,7 @@
 	  <Resource Include="Assets\Icons\lists_icon_white.png" />
 	  <Resource Include="Assets\Icons\logout_icon_white.png" />
 	  <Resource Include="Assets\Icons\move_ing_icon_white.png" />
+	  <Resource Include="Assets\Icons\recipe_icon_white.png" />
 	  <Resource Include="Assets\Logos\Cupboard_Logo_darkmode_1.png" />
 	</ItemGroup>
 
