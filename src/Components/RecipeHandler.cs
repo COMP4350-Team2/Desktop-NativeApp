@@ -143,9 +143,17 @@ namespace Desktop_Frontend.Components
                 Style = (Style)Application.Current.Resources["NoHighlightButton"]
             };
 
-            //ON CLICK HERE
+            // Different on clicks for the 2 expanders
+            if(name == "Ingredients")
+            {
+                addButton.Click += async (s, e) => await ShowAddIngredientPopup();
+            }
+            else
+            {
+                addButton.Click += async (s, e) => await ShowAddStepPopup();
+            }
 
-            // Set the options button in the second column
+            // Set the add button in the second column
             DockPanel.SetDock(addButton, Dock.Right);
             Grid.SetColumn(addButton, 1);
             headerGrid.Children.Add(addButton);
@@ -163,6 +171,363 @@ namespace Desktop_Frontend.Components
             };
 
             return expander;
+        }
+
+
+        /// <summary>
+        /// Shows pop up window for adding an <see cref="Ingredient"/>
+        /// </summary>
+        private async Task ShowAddIngredientPopup()
+        {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Add Ingredient",
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            double boxWidth = 350;
+            double boxHeight = 30;
+            double fontSize = 18;
+
+            SolidColorBrush boxColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush boxTextColor = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+            SolidColorBrush headerText = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Add radio buttons at the very top
+            StackPanel radioPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
+            RadioButton allRadioButton = new RadioButton
+            {
+                Content = "All",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Foreground = headerText,
+                Margin = new Thickness(20, 10, 20, 10)
+            };
+
+            RadioButton commonRadioButton = new RadioButton
+            {
+                Content = "Common",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(20, 10, 20, 10),
+                Foreground = headerText
+            };
+
+            RadioButton customRadioButton = new RadioButton
+            {
+                Content = "Custom",
+                FontSize = fontSize,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(20, 10, 20, 10),
+                Foreground = headerText
+            };
+
+            // Default to 'All' radio button selected
+            allRadioButton.IsChecked = true;
+
+            radioPanel.Children.Add(allRadioButton);
+            radioPanel.Children.Add(commonRadioButton);
+            radioPanel.Children.Add(customRadioButton);
+
+            panel.Children.Add(radioPanel);
+
+            TextBox searchBox = new TextBox
+            {
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                Text = "Search ingredients...",
+                Foreground = Brushes.Gray,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = fontSize
+            };
+
+            ComboBox nameBox = new ComboBox
+            {
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            List<Ingredient> allIngredients = await backend.GetAllIngredients(user);
+
+            // Populate ComboBox with all ingredients initially
+            void UpdateComboBoxItems(IEnumerable<Ingredient> filteredIngredients)
+            {
+                nameBox.Items.Clear();
+                foreach (var ing in filteredIngredients)
+                {
+                    nameBox.Items.Add(ing.GetName());
+                }
+
+                if (nameBox.Items.Count > 0)
+                {
+                    nameBox.SelectedIndex = 0;
+                }
+            }
+
+            // Filter ingredients based on radio button selection and search text
+            void FilterIngredients()
+            {
+                string searchText = searchBox.Text.ToLower().Trim();
+                IEnumerable<Ingredient> filteredIngredients = allIngredients;
+
+                // Filter based on radio button selection
+                if (commonRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => !ing.IsCustom());
+                }
+                else if (customRadioButton.IsChecked == true)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.IsCustom());
+                }
+
+                // Further filter based on search text
+                if (!string.IsNullOrWhiteSpace(searchText) && searchBox.IsFocused)
+                {
+                    filteredIngredients = filteredIngredients.Where(ing => ing.GetName().ToLower().Contains(searchText));
+                }
+
+                UpdateComboBoxItems(filteredIngredients);
+            }
+
+            // Set initial ComboBox items and apply filters when needed
+            UpdateComboBoxItems(allIngredients);
+
+            searchBox.TextChanged += (s, e) => FilterIngredients();
+            searchBox.GotFocus += (s, e) =>
+            {
+                searchBox.Text = "";
+                searchBox.Foreground = Brushes.Black;
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrEmpty(searchBox.Text))
+                {
+                    searchBox.Text = "Search Ingredients...";
+                    searchBox.Foreground = headerText;
+                }
+            };
+            allRadioButton.Checked += (s, e) => FilterIngredients();
+            commonRadioButton.Checked += (s, e) => FilterIngredients();
+            customRadioButton.Checked += (s, e) => FilterIngredients();
+
+            panel.Children.Add(new TextBlock { Text = "Ingredient Name:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+            panel.Children.Add(searchBox);
+            panel.Children.Add(nameBox);
+
+            TextBox amountBox = new TextBox
+            {
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Text = "Enter amount",
+                Foreground = Brushes.Gray,
+                Background = boxColor,
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            amountBox.GotFocus += (s, e) =>
+            {
+                if (amountBox.Text == "Enter amount")
+                {
+                    amountBox.Text = "";
+                    amountBox.Foreground = boxTextColor;
+                }
+            };
+            amountBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(amountBox.Text))
+                {
+                    amountBox.Text = "Enter amount";
+                    amountBox.Foreground = Brushes.Gray;
+                }
+            };
+            panel.Children.Add(new TextBlock { Text = "Amount:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+            panel.Children.Add(amountBox);
+
+            ComboBox unitBox = new ComboBox
+            {
+                Margin = new Thickness(10),
+                Height = boxHeight,
+                Width = boxWidth,
+                FontSize = fontSize,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            List<string> units = await backend.GetAllMeasurements(user);
+            foreach (var unit in units)
+            {
+                unitBox.Items.Add(unit);
+            }
+            if (unitBox.Items.Count > 0) unitBox.SelectedIndex = 0;
+
+            panel.Children.Add(new TextBlock { Text = "Unit:", Foreground = headerText, FontSize = 18, FontWeight = FontWeights.Bold });
+            panel.Children.Add(unitBox);
+
+            Button addButton = new Button
+            {
+                Content = "Add",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
+            };
+
+            addButton.Click += async (s, e) =>
+            {
+                if (!float.TryParse(amountBox.Text, out float amount) || amount <= 0)
+                {
+                    MessageBox.Show("Please enter a valid amount greater than 0.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                string name = nameBox.SelectedItem?.ToString();
+                string unit = unitBox.SelectedItem?.ToString();
+                if (name == null || unit == null)
+                {
+                    MessageBox.Show("Please select a valid ingredient and unit.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                Ingredient newIngredient = allIngredients.First(ing => ing.GetName() == name).CopyIngredient();
+
+                newIngredient.SetAmount(amount);
+                newIngredient.SetUnit(unit);
+
+                addButton.IsEnabled = false;
+
+                bool success = await backend.AddIngToRecipe(user, newIngredient, recipe.GetRecipeName());
+
+                addButton.IsEnabled = true;
+
+                if (success)
+                {
+                    MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Update the panels here
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                popup.Close();
+            };
+
+            panel.Children.Add(addButton);
+            popup.Content = panel;
+            popup.ShowDialog();
+        }
+
+
+        /// <summary>
+        /// Popup for adding a step
+        /// </summary>
+        private async Task ShowAddStepPopup()
+        {
+
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textboxBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush textboxForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushA"];
+
+
+            int headingFont = 20;
+            int stepFont = 20;
+
+            SolidColorBrush buttonBackground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush buttonForeground = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush headerForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create Popup window
+            Window popup = new Window
+            {
+                Title = "Add Step",
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+
+            TextBlock createStepHeader = new TextBlock
+            {
+                Text = "New Step:",
+                FontSize = headingFont,
+                Foreground = headerForeground,
+                Background = background,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+
+            TextBox stepTextBox = new TextBox
+            {
+                Width = 500,
+                Height = 200,
+                FontSize = stepFont,
+                Margin = new Thickness(10),
+                Background = textboxBackground,
+                Foreground = textboxForeground,
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+            // Create the Add button
+            Button addButton = new Button
+            {
+                Content = "Add",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"]
+            };
+
+
+            addButton.Click += async (s, e) =>
+            {
+
+               string newStep = stepTextBox.Text.Trim();
+
+               if (!string.IsNullOrEmpty(newStep))
+               {
+                   addButton.IsEnabled = false;
+                   bool success = await backend.AddStepToRecipe(user, newStep, recipe.GetRecipeName());
+
+                   // Show result message
+                   if (success)
+                   {
+                        MessageBox.Show("Recipe created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Update UI
+                   }
+                   else
+                   {
+                        MessageBox.Show("Failed to create recipe. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                   }
+                   addButton.IsEnabled = true;
+                   popup.Close();
+               }
+               else
+               {
+                   MessageBox.Show("Please enter a step", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+               }
+            };
+
+            panel.Children.Add(createStepHeader);
+            panel.Children.Add(stepTextBox);
+            panel.Children.Add(addButton);
+            popup.Content = panel;
+            popup.ShowDialog();
         }
     }
 }
