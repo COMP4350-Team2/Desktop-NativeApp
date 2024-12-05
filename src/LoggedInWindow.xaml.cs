@@ -138,7 +138,7 @@ namespace Desktop_Frontend
             // Remove the scrollbar
             ParentScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
 
-            allRecipesHandler.DisplayAllRecipes();
+            await allRecipesHandler.DisplayAllRecipes();
 
             SetButtonsEnabled(true) ;
 
