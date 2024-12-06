@@ -399,22 +399,21 @@ namespace Desktop_Frontend.Backend
         {
             recipes = new List<Recipe>();
 
-            Recipe r1 = new Recipe("Mock Recipe 1");
             UserList r1Ings = myLists.Find(i => i.GetListName() == "Grocery").CopyList();
             List<String> r1Steps = new List<String>();
             r1Steps.Add("r1 step 1 - Some words some words some words some words");
             r1Steps.Add("r1 step 2 - Some words some words some words some words");
             r1Steps.Add("r1 step 3 - Some words some words some words some words");
             r1Steps.Add("r1 step 4 - Some words some words some words some words");
+            Recipe r1 = new Recipe("Mock Recipe 1", r1Ings, r1Steps);
 
-
-            Recipe r2 = new Recipe("Mock Recipe 2");
             UserList r2Ings = myLists.Find(i => i.GetListName() == "Pantry").CopyList();
             List<String> r2Steps = new List<String>();
             r2Steps.Add("r2 step 1 - Some words some words some words some words");
             r2Steps.Add("r2 step 2 - Some words some words some words some words");
             r2Steps.Add("r2 step 3 - Some words some words some words some words");
             r2Steps.Add("r2 step 4 - Some words some words some words some words");
+            Recipe r2 = new Recipe("Mock Recipe 2", r2Ings, r2Steps);
 
             recipes.Add(r1);
             recipes.Add(r2);
