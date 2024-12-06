@@ -44,6 +44,15 @@
                                Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" 
                                Text="Lists" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
+
+                <!-- All Recipes Button -->
+                <StackPanel Name="AllRecipesButton" Style="{StaticResource HoverableButton}" Orientation="Horizontal" Margin="10" Cursor="Hand" HorizontalAlignment="Stretch" MouseLeftButtonUp="AllRecipesButton_Click">
+                    <Image Source="pack://application:,,,/Assets/Icons/recipe_icon_white.png" 
+                           Height="30" Width="30" VerticalAlignment="Center" />
+                    <TextBlock Name="AllRecipesText" Margin="10,0,0,0" VerticalAlignment="Center" 
+                               Foreground="{StaticResource SecondaryBrushB}" FontSize="20" FontWeight="Bold" 
+                               Text="Recipes" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
             </StackPanel>
 
             <!-- Bottom Section with Logo and Logout Button -->

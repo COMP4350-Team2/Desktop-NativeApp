@@ -122,5 +122,64 @@ namespace Desktop_Frontend.Backend
         /// <param name="ingredient"> The ingredient to be removed</param>
         /// <returns></returns>
         public Task<bool> DeleteCustomIngredient(IUser user, Ingredient ingredient);
+
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public Task<List<Recipe>> GetAllRecipes(IUser user);
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateRecipe(IUser user, string recipeName);
+
+        /// <summary>
+        /// Method to delete a recipe
+        /// </summary>
+        /// <param name="user"> User deleting recipe </param>
+        /// <param name="recipeName"> Name of recipe to be deleted </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> DeleteRecipe(IUser user, string recipeName);
+
+        /// <summary>
+        /// Method to add an ingredient to a recipe
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <param name="ingredient"> Ingredient to add </param>
+        /// <param name="recipeName"> Name of recipe to be added to </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName);
+        
+        /// <summary>
+        /// Method to delete an ingredient from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting the ingredient </param>
+        /// <param name="ingredient"> Ingredient being deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns></returns>
+        public Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName);
+
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddStepToRecipe(IUser user, string step, string recipeName);
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName);
     }
 }

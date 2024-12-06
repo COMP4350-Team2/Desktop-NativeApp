@@ -28,6 +28,10 @@ namespace Desktop_Frontend.Backend
 
         private DateTime lastMyListsCall;
 
+        private List<Recipe> recipes;
+
+        private DateTime lastRecipeCall;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Backend"/> class with default configuration.
         /// </summary>
@@ -48,6 +52,8 @@ namespace Desktop_Frontend.Backend
             allUnits = null;
 
             myLists = null;
+
+            recipes = null;
         }
 
         /// <summary>
@@ -212,7 +218,7 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-                    
+
                     ValidateGetMyListsResponse(response);
 
                     FillMyLists(response, myLists);
@@ -293,6 +299,11 @@ namespace Desktop_Frontend.Backend
         {
             // bool to indicate success
             bool added = false;
+
+            if (myLists == null) 
+            {
+                myLists = await GetMyLists(user);
+            }
 
             // Create request
             string url = config.BackendUrl + config.Add_Ing_Endpoint;
@@ -430,12 +441,12 @@ namespace Desktop_Frontend.Backend
         {
             bool newCall = false;
 
-            if(allIngredients == null || allIngredients?.Count == 0)
+            if (allIngredients == null || allIngredients?.Count == 0)
             {
                 newCall = true;
             }
 
-            if(lastAllIngCall != null)
+            if (lastAllIngCall != null)
             {
                 TimeSpan diff = DateTime.Now - lastAllIngCall;
                 TimeSpan threshold = TimeSpan.FromMinutes(5);
@@ -757,7 +768,7 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateCreateList(response);     
+                ValidateCreateList(response);
                 created = CreateCachedList(listName);
             }
             catch (Exception)
@@ -1022,6 +1033,479 @@ namespace Desktop_Frontend.Backend
 
             return deleted;
         }
-    }
 
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public async Task<List<Recipe>> GetAllRecipes(IUser user)
+        {
+            // Only make the call if needed (otherwise use cached local variable)
+            if (AllRecipesNewCall())
+            {
+                lastRecipeCall = DateTime.Now;
+                recipes?.Clear();
+                recipes = new List<Recipe>();
+
+                //Create request
+                string url = config.BackendUrl + config.Get_Recipes_Endpoint;
+                string accessToken = user.GetAccessToken();
+                var request = new HttpRequestMessage(HttpMethod.Get, url); ;
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                try
+                {
+                    HttpResponseMessage response = await HttpClient.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    FillAllRecipes(response);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to fetch all recipes");
+                }
+            }
+            return recipes;
+        }
+
+
+        /// <summary>
+        /// Helper method to determine if a new all recipe calls
+        /// needs to be made
+        /// </summary>
+        /// <returns> True if new call needed, false it not </returns>
+        private bool AllRecipesNewCall()
+        {
+            bool newCall = false;
+
+            if (recipes == null || recipes?.Count == 0)
+            {
+                newCall = true;
+            }
+
+            if (lastRecipeCall != null)
+            {
+                TimeSpan diff = DateTime.Now - lastRecipeCall;
+                TimeSpan threshold = TimeSpan.FromMinutes(5);
+
+                if (diff > threshold)
+                {
+                    newCall = true;
+                }
+            }
+
+            return newCall;
+        }
+
+        /// <summary>
+        /// Helper method to fill the recipes with the response
+        /// </summary>
+        /// <param name="response">HTTP response from endpoint </param>
+        private async void FillAllRecipes(HttpResponseMessage response)
+        {
+            // Read the response content as a string
+            string body = await response.Content.ReadAsStringAsync();
+            
+            // Parse the JSON response
+            var jsonBody = JsonDocument.Parse(body);      
+
+            // Access the root object directly
+            JsonElement root = jsonBody.RootElement;
+
+            // Clear the existing recipes list
+            recipes.Clear();
+
+            // Iterate through the recipes in the JSON
+            foreach (JsonElement recipeItem in root.EnumerateArray())
+            {
+                // Extract recipe name
+                string? recipeName = recipeItem.GetProperty("recipe_name").GetString();
+
+                // Extract ingredients
+                UserList userList = new UserList("Recipe Ingredients", new List<Ingredient>());
+                if (recipeItem.TryGetProperty("ingredients", out JsonElement ingredients))
+                {
+                    foreach (JsonElement ingredientItem in ingredients.EnumerateArray())
+                    {
+                        string? name = ingredientItem.GetProperty("ingredient_name").GetString();
+                        string? type = ingredientItem.GetProperty("ingredient_type").GetString();
+                        float amount = (float)ingredientItem.GetProperty("amount").GetDouble();
+                        string? unit = ingredientItem.GetProperty("unit").GetString();
+                        bool isCustom = ingredientItem.GetProperty("is_custom_ingredient").GetBoolean();
+
+                        // Create the ingredient object and add it to the user list
+                        var ingredient = new Ingredient(name, type, amount, unit, isCustom);
+                        userList.AddIngToList(ingredient);
+                    }
+                }
+
+                // Extract steps
+                List<string> steps = new List<string>();
+                if (recipeItem.TryGetProperty("steps", out JsonElement stepsArray))
+                {
+                    foreach (JsonElement step in stepsArray.EnumerateArray())
+                    {
+                        steps.Add(step.GetString() ?? string.Empty);
+                    }
+                }
+
+                // Create the Recipe object
+                Recipe currRecipe = new Recipe(recipeName, userList, steps);
+
+                // Add the Recipe to the recipes list
+                recipes.Add(currRecipe);
+            }
+        }
+
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public async Task<bool> CreateRecipe(IUser user, string recipeName)
+        {
+            bool created = false;
+
+            //Create request
+            string url = config.BackendUrl + config.Create_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url); ;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                
+                if(recipes == null)
+                {
+                    recipes = new List<Recipe>();
+                }
+
+                // Add to cached list
+                recipes.Add(new Recipe(recipeName));
+
+                created = true;
+            }
+            catch (Exception)
+            {
+                created = false;
+            }
+
+            return created;
+        }
+
+        /// <summary>
+        /// Method to delete a recipe
+        /// </summary>
+        /// <param name="user"> User deleting recipe </param>
+        /// <param name="recipeName"> Name of recipe to be deleted </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> DeleteRecipe(IUser user, string recipeName)
+        {
+            bool deleted = false;
+
+            //Create request
+            string url = config.BackendUrl + config.Delete_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url); ;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                // Remove from cached list of recipes
+                if (recipes != null)
+                {
+                    bool found = false;
+                    Recipe toDel = null;
+                    for (int i = 0; i < recipes?.Count && !found; i++)
+                    {
+                        if (recipes[i].GetRecipeName() == recipeName)
+                        {
+                            toDel = recipes[i];
+                            found = true;
+                        }
+                    }
+
+                    if (found && toDel != null)
+                    {
+                        recipes?.Remove(toDel);
+                    }
+                }
+
+                deleted = true;
+            }
+            catch (Exception)
+            {
+                deleted = false;
+            }
+
+            return deleted;
+        }
+
+        /// <summary>
+        /// Method to add an ingredient to a recipe
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <param name="ingredient"> Ingredient to add </param>
+        /// <param name="recipeName"> Name of recipe to be added to </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            // bool to indicate success
+            bool added = false;
+
+            if (recipes == null)
+            {
+                await GetAllRecipes(user);           
+            }
+
+            // Create request
+            string url = config.BackendUrl + config.Add_Ing_Recipe_Endppoint;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                ingredient = ingredient.GetName(),
+                amount = ingredient.GetAmount(),
+                unit = ingredient.GetUnit(),
+                is_custom_ingredient = ingredient.IsCustom()
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                AddIngToCachedRecipe(ingredient, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to add ingredient to cached recipe
+        /// </summary>
+        /// <param name="ingredient"> Ingredient to be added </param>
+        /// <param name="recipeName"> Name of recipe to add to </param>
+        private void AddIngToCachedRecipe(Ingredient ingredient, string recipeName)
+        {
+            bool added = false;
+
+            for (int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().AddIngToList(ingredient);
+                    added = true;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Method to delete an ingredient from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting the ingredient </param>
+        /// <param name="ingredient"> Ingredient being deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns></returns>
+        public async Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool removed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Ing_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName) + $"?ingredient={ingredient.GetName()}&is_custom_ingredient={ingredient.IsCustom()}" +
+                  $"&unit={ingredient.GetUnit()}&recipe_name={recipeName}";
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                DelIngInCacheRecipe(ingredient, recipeName);
+                removed = true;
+            }
+            catch (Exception)
+            {
+                removed = false;
+            }
+
+            return removed;
+
+        }
+
+        /// <summary>
+        /// Helper method to delete ingredient in cached list
+        /// </summary>
+        /// <param name="ingredient"> Ingredient to be deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        private void DelIngInCacheRecipe(Ingredient ingredient, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().RemIngFromList(ingredient);
+                    deleted = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public async Task<bool> AddStepToRecipe(IUser user, string step, string recipeName)
+        {
+            bool added = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Add_Step_Recipe_Endppoint ;
+            url = url.Replace("{recipe_name}", recipeName);
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var body = new
+            {
+                step = step
+            };
+
+            string jsonBody = JsonSerializer.Serialize(body);
+
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                AddStepToCachedRecipe(step, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to add step to cached recipe
+        /// </summary>
+        /// <param name="step"> Step to be added </param>
+        /// <param name="recipeName"> Name of recipe</param>
+        private void AddStepToCachedRecipe(string step, string recipeName)
+        {
+            bool added = false;
+
+            for (int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeSteps().Add(step);
+                    added = true;
+                }
+            }
+
+        }
+
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public async Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName)
+        {
+            bool added = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Delete_Step_Recipe_Endpoint;
+            url = url.Replace("{recipe_name}", recipeName) + $"?recipe_name={recipeName}&step_number={stepNum}";
+            string accessToken = user.GetAccessToken();
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                DelStepFromCachedRecipe(stepNum, recipeName);
+                added = true;
+            }
+            catch (Exception)
+            {
+                added = false;
+            }
+
+            return added;
+        }
+
+
+        /// <summary>
+        /// Helper method to delete a step from cached recipe
+        /// </summary>
+        /// <param name="stepNum"> Index of step to delete (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        private void DelStepFromCachedRecipe(int stepNum, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+                if (curr.GetRecipeName() == recipeName &&
+                    stepNum > 0 && stepNum <= curr.GetRecipeSteps().Count)
+                {
+                    curr.GetRecipeSteps().RemoveAt(stepNum - 1);
+                    deleted = true;
+                }
+            }
+        }
+    }
 }

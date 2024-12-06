@@ -8,8 +8,9 @@ namespace Desktop_Frontend.Backend
     public class BackendMock : IBackend
     {
         private IUser user;
-        private List<Ingredient> ingredients;
+        private List<Ingredient> ?ingredients;
         private List<UserList> ?myLists;
+        private List<Recipe> ?recipes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BackendMock"/> class and populates the list 
@@ -47,6 +48,8 @@ namespace Desktop_Frontend.Backend
             this.user = user;
 
             InitMyLists();
+
+            InitRecipes();
         }
 
         /// <summary>
@@ -374,6 +377,206 @@ namespace Desktop_Frontend.Backend
             for(int i = 0; i < myLists.Count; i++)
             {
                 myLists[i].CascadeDelCustomIng(ingredient);
+            }
+
+            return Task.FromResult(deleted);
+        }
+
+        /// <summary>
+        /// Method to get all recipes of a user
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <returns> List of Recipe objects </returns>
+        public Task<List<Recipe>> GetAllRecipes(IUser user)
+        {
+            return Task.FromResult(recipes);
+        }
+
+        /// <summary>
+        /// Method to initialize recipes
+        /// </summary>
+        private void InitRecipes()
+        {
+            recipes = new List<Recipe>();
+
+            UserList r1Ings = myLists.Find(i => i.GetListName() == "Grocery").CopyList();
+            List<String> r1Steps = new List<String>();
+            r1Steps.Add("r1 step 1 - Some words some words some words some words");
+            r1Steps.Add("r1 step 2 - Some words some words some words some words");
+            r1Steps.Add("r1 step 3 - Some words some words some words some words");
+            r1Steps.Add("r1 step 4 - Some words some words some words some words");
+            r1Steps.Add("LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG"+
+                        "LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG"+
+                        "LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG");
+            Recipe r1 = new Recipe("Mock Recipe 1", r1Ings, r1Steps);
+
+            UserList r2Ings = myLists.Find(i => i.GetListName() == "Pantry").CopyList();
+            List<String> r2Steps = new List<String>();
+            r2Steps.Add("r2 step 1 - Some words some words some words some words");
+            r2Steps.Add("r2 step 2 - Some words some words some words some words");
+            r2Steps.Add("r2 step 3 - Some words some words some words some words");
+            r2Steps.Add("r2 step 4 - Some words some words some words some words");
+            Recipe r2 = new Recipe("Mock Recipe 2", r2Ings, r2Steps);
+
+            recipes.Add(r1);
+            recipes.Add(r2);
+        }
+
+        /// <summary>
+        /// Method to create a new recipe
+        /// </summary>
+        /// <param name="user"> User creating the recipe </param>
+        /// <param name="recipeName"> Name of the new recipe </param>
+        /// <returns> True on success, false on failure </returns>
+        public Task<bool> CreateRecipe(IUser user, string recipeName)
+        {
+            bool created = false;
+            Recipe newRecipe = new Recipe(recipeName);
+
+            bool found = false;
+            for(int i = 0; i  < recipes?.Count && !found; i++)
+            {
+                if (recipes[i].GetRecipeName() == recipeName)
+                {
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                recipes?.Add(newRecipe);
+                created = true;
+            }            
+            return Task.FromResult(created);
+        }
+
+
+        /// <summary>
+        /// Method to delete a recipe
+        /// </summary>
+        /// <param name="user"> User deleting recipe </param>
+        /// <param name="recipeName"> Name of recipe to be deleted </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> DeleteRecipe(IUser user, string recipeName)
+        {
+            bool deleted = false;
+
+            bool found = false;
+            Recipe toDel = null;
+            for (int i = 0; i < recipes?.Count && !found; i++)
+            {
+                if (recipes[i].GetRecipeName() == recipeName)
+                {
+                    toDel = recipes[i];
+                    found = true;
+                }
+            }
+
+            if (found)
+            {
+                recipes?.Remove(toDel);
+                deleted = true;
+            }
+
+
+            return Task.FromResult(deleted);
+        }
+
+        /// <summary>
+        /// Method to add an ingredient to a recipe
+        /// </summary>
+        /// <param name="user"> User making the request </param>
+        /// <param name="ingredient"> Ingredient to add </param>
+        /// <param name="recipeName"> Name of recipe to be added to </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddIngToRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool added = false;
+
+            for(int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if(curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().AddIngToList(ingredient);
+                    added = true;
+                }
+            }
+
+            return Task.FromResult(added);
+        }
+
+        /// <summary>
+        /// Method to delete an ingredient from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting the ingredient </param>
+        /// <param name="ingredient"> Ingredient being deleted </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns></returns>
+        public Task<bool> DeleteIngInRecipe(IUser user, Ingredient ingredient, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if (curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeIngList().RemIngFromList(ingredient);
+                    deleted = true;
+                }
+            }
+
+            return Task.FromResult(deleted);
+        }
+
+        /// <summary>
+        /// Method to add step to a recipe
+        /// </summary>
+        /// <param name="user"> User adding step </param>
+        /// <param name="step"> The step to add </param>
+        /// <param name="recipeName"> The name of the recipe </param>
+        /// <returns>True on success, false on failure </returns>
+        public Task<bool> AddStepToRecipe(IUser user, string step, string recipeName)
+        {
+            bool added = false;
+
+            for(int i = 0; i < recipes?.Count && !added; i++)
+            {
+                Recipe curr = recipes[i];
+
+                if(curr.GetRecipeName() == recipeName)
+                {
+                    curr.GetRecipeSteps().Add(step);
+                    added = true;
+                }
+            }
+
+            return Task.FromResult(added);
+        }
+
+        /// <summary>
+        /// Method to delete a step from a recipe
+        /// </summary>
+        /// <param name="user"> User deleting step </param>
+        /// <param name="stepNum"> Index of step (1 to N) </param>
+        /// <param name="recipeName"> Name of recipe </param>
+        /// <returns>True on success, false on failure</returns>
+        public Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName)
+        {
+            bool deleted = false;
+
+            for (int i = 0; i < recipes?.Count && !deleted; i++)
+            {
+                Recipe curr = recipes[i];
+                if(curr.GetRecipeName() == recipeName && 
+                    stepNum > 0 && stepNum <= curr.GetRecipeSteps().Count)
+                {
+                    curr.GetRecipeSteps().RemoveAt(stepNum - 1);
+                    deleted = true;
+                }
             }
 
             return Task.FromResult(deleted);
