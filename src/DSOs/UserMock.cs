@@ -56,17 +56,27 @@
         public string GetAccessToken() { return "";}
 
         /// <summary>
-        /// Retrieves the lists of a user
+        /// Setter for setting user's access token
         /// </summary>
-        /// <returns>
-        /// A list of <see cref="UserList"/>
-        /// </returns>
-        public List<UserList> GetUserLists() { return myLists; }
+        /// <param name="accessToken"> new token</param>
+        public void SetAccessToken(string accessToken) { }
 
         /// <summary>
-        /// Sets the user's lists.
+        /// Method to get refresh token of user
         /// </summary>
-        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
-        public void SetUserLists(List<UserList> userLists) { this.myLists = userLists; }
+        /// <returns> string of refresh token </returns>
+        public string GetRefreshToken() { return ""; }
+
+        /// <summary>
+        /// Setter for setting user's refresh token
+        /// </summary>
+        /// <param name="refreshToken"> new token</param>
+        public void SetRefreshToken(string refreshToken) { }
+
+        /// <summary>
+        /// Getter for a user's client id
+        /// </summary>
+        /// <returns>string of client id</returns>
+        public string GetClientId() { return ""; }
     }
 }

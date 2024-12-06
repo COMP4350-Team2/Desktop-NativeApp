@@ -1,5 +1,6 @@
 ﻿using Auth0.OidcClient;
 using Desktop_Frontend.Auth0;
+using System.Windows;
 
 namespace Desktop_Frontend.DSOs
 {
@@ -14,7 +15,7 @@ namespace Desktop_Frontend.DSOs
         private bool loggedIn;
         private string username;
         private string accessToken;
-        private List<UserList> myLists;
+        private string refreshToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class
@@ -37,6 +38,7 @@ namespace Desktop_Frontend.DSOs
             {
                 Domain = config.Domain,
                 ClientId = config.ClientId,
+                Scope = "openid profile email offline_access"
             };
 
             auth0Client = new Auth0Client(clientOptions);
@@ -57,8 +59,11 @@ namespace Desktop_Frontend.DSOs
                 });
 
                 accessToken = loginResult.AccessToken;
+                refreshToken = loginResult.RefreshToken;
 
-                if (!loginResult.IsError && !string.IsNullOrEmpty(accessToken))
+                if (!loginResult.IsError && 
+                    !string.IsNullOrEmpty(accessToken) && 
+                    !string.IsNullOrEmpty(refreshToken))
                 {
                     loggedIn = true;
                 }
@@ -66,6 +71,7 @@ namespace Desktop_Frontend.DSOs
             catch (Exception)
             {
                 accessToken = "";
+                refreshToken = "";
                 loggedIn = false;
             }
         }
@@ -80,6 +86,8 @@ namespace Desktop_Frontend.DSOs
             {
                 await auth0Client.LogoutAsync();
                 loggedIn = false;
+                accessToken = "";
+                refreshToken = "";
             }
             catch (Exception)
             {
@@ -124,19 +132,28 @@ namespace Desktop_Frontend.DSOs
         /// </returns>
         public string GetAccessToken() { return accessToken; }
 
+        /// <summary>
+        /// Setter for setting user's access token
+        /// </summary>
+        /// <param name="accessToken"> new token</param>
+        public void SetAccessToken(string accessToken) { this.accessToken = accessToken; }
 
         /// <summary>
-        /// Retrieves the lists of a user
+        /// Method to get refresh token of user
         /// </summary>
-        /// <returns>
-        /// A list of <see cref="UserList"/>
-        /// </returns>
-        public List<UserList> GetUserLists() { return myLists; }
+        /// <returns> string of refresh token </returns>
+        public string GetRefreshToken() { return refreshToken; }
 
         /// <summary>
-        /// Sets the user's lists.
+        /// Setter for setting user's refresh token
         /// </summary>
-        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
-        public void SetUserLists(List<UserList> userLists) { myLists = userLists; }
+        /// <param name="refreshToken"> new token</param>
+        public void SetRefreshToken(string refreshToken) { this.refreshToken = refreshToken; }
+
+        /// <summary>
+        /// Getter for a user's client id
+        /// </summary>
+        /// <returns>string of client id</returns>
+        public string GetClientId() { return config.ClientId; }
     }
 }
