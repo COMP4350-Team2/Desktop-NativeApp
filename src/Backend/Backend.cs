@@ -81,8 +81,26 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-                    ValidateAllIngResponse(response);
-                    FillAllIngList(response, allIngredients);
+
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        FillAllIngList(response, allIngredients);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        bool refreshed = await RefreshToken(user);
+
+                        if (!refreshed)
+                        {
+                            throw new Exception();
+                        }
+
+                        allIngredients = await GetAllIngredients(user);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
                 }
                 catch (Exception)
                 {
@@ -134,19 +152,6 @@ namespace Desktop_Frontend.Backend
         private async Task<bool> ValidateUserCreation(HttpResponseMessage response)
         {
             return response.StatusCode == HttpStatusCode.Created;
-        }
-
-        /// <summary>
-        /// Validates the response from the backend API when fetching all ingredients. Throws
-        /// exception on failure.
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateAllIngResponse(HttpResponseMessage response)
-        {
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception();
-            }
         }
 
         /// <summary>
@@ -219,9 +224,25 @@ namespace Desktop_Frontend.Backend
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
 
-                    ValidateGetMyListsResponse(response);
+                    if(response.StatusCode == HttpStatusCode.OK)
+                    {
+                        FillMyLists(response, myLists);
+                    }
+                    else if(response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        bool refreshed = await RefreshToken(user);
 
-                    FillMyLists(response, myLists);
+                        if(!refreshed)
+                        {
+                            throw new Exception();
+                        }
+
+                        myLists = await GetMyLists(user);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
 
                 }
                 catch (Exception)
@@ -231,18 +252,6 @@ namespace Desktop_Frontend.Backend
             }
 
             return await Task.FromResult(myLists);
-        }
-
-        /// <summary>
-        /// Validates the response from the backend API when fetching user's lists. 
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateGetMyListsResponse(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
         }
 
         /// <summary>
@@ -328,9 +337,28 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateAddIngToList(response);
-                added = true;
-                AddToMyLists(listName, ingredient);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    added = true;
+                    AddToMyLists(listName, ingredient);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if(!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    added = await AddIngredientToList(user, ingredient, listName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
             }
             catch (Exception)
             {
@@ -340,17 +368,6 @@ namespace Desktop_Frontend.Backend
             return await Task.FromResult(added);
         }
 
-        /// <summary>
-        /// Validates the response from the backend API when adding an ingredient to a list
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateAddIngToList(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Returns a list of strings containing the measurement units
@@ -378,8 +395,26 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-                    ValidateGetAllMeasurements(response);
-                    FillMeasurementList(response, allUnits);
+
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        FillMeasurementList(response, allUnits);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        bool refreshed = await RefreshToken(user);
+
+                        if (!refreshed)
+                        {
+                            throw new Exception();
+                        }
+
+                        allUnits = await GetAllMeasurements(user);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }               
 
                 }
                 catch (Exception)
@@ -391,18 +426,6 @@ namespace Desktop_Frontend.Backend
             return await Task.FromResult(allUnits);
         }
 
-
-        /// <summary>
-        /// Validates the response from the backend API when getting all measurements
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateGetAllMeasurements(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Fills in a list of strings of units based on the response
@@ -557,9 +580,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateRemoveIngredient(response);
-                removed = true;
-                RemFromMyLists(listName, ingredient);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    removed = true;
+                    RemFromMyLists(listName, ingredient);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    removed = await RemIngredientFromList(user, ingredient, listName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -569,17 +610,6 @@ namespace Desktop_Frontend.Backend
             return removed;
         }
 
-        /// <summary>
-        /// Validates the response from the backend API when removing ingredient
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateRemoveIngredient(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Removes an ingredient from myList cached variable
@@ -641,9 +671,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateSetIngredient(response);
-                edited = true;
-                SetIngMyList(oldIng, newIng, listName);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    edited = true;
+                    SetIngMyList(oldIng, newIng, listName);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    edited = await SetIngredient(user, oldIng, newIng, listName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -654,17 +702,6 @@ namespace Desktop_Frontend.Backend
             return edited;
         }
 
-        /// <summary>
-        /// Validates the response from the backend API when editing ingredient
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateSetIngredient(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Edits amount and/or unit of an ingredient from myList cached variable
@@ -706,8 +743,26 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateDeleteList(response);
-                deleted = DeleteCachedList(listName);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    deleted = DeleteCachedList(listName);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    deleted = await DeleteList(user, listName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -717,17 +772,6 @@ namespace Desktop_Frontend.Backend
             return deleted;
         }
 
-        /// <summary>
-        /// Validates the response from the backend API when deleting a list
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateDeleteList(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Deletes a list from myList cached variable
@@ -768,8 +812,26 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                ValidateCreateList(response);
-                created = CreateCachedList(listName);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    created = CreateCachedList(listName);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    created = await CreateList(user, listName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -779,17 +841,6 @@ namespace Desktop_Frontend.Backend
             return created;
         }
 
-        /// <summary>
-        /// Validates the response from the backend API when creating a list
-        /// </summary>
-        /// <param name="response">The HTTP response to validate.</param>
-        private static void ValidateCreateList(HttpResponseMessage response)
-        {
-            if (response.StatusCode != HttpStatusCode.Created)
-            {
-                throw new Exception();
-            }
-        }
 
         /// <summary>
         /// Creates a list in myList cached variable
@@ -857,9 +908,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                moved = true;
-                MoveCachedIngredient(ingredient, currListName, newListName);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    moved = true;
+                    MoveCachedIngredient(ingredient, currListName, newListName);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    moved = await MoveIngredient(user, currListName, newListName, ingredient);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -912,9 +981,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                RenameCacheList(currListName, newListName);
-                renamed = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    RenameCacheList(currListName, newListName);
+                    renamed = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    renamed = await RenameList(user, currListName, newListName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -973,10 +1060,28 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                allIngredients.Add(customIng);
-                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
-                created = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    allIngredients.Add(customIng);
+                    allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+                    created = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    created = await CreateCustomIngredient(user, customIng);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1007,23 +1112,41 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                for (int i = 0; i < allIngredients.Count; i++)
+
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    Ingredient curr = allIngredients[i];
-                    if (curr.GetName() == ingredient.GetName() &&
-                        curr.GetIngType() == ingredient.GetIngType() &&
-                        curr.IsCustom() == ingredient.IsCustom())
+                    for (int i = 0; i < allIngredients.Count; i++)
                     {
-                        allIngredients.Remove(curr);
-                        deleted = true;
+                        Ingredient curr = allIngredients[i];
+                        if (curr.GetName() == ingredient.GetName() &&
+                            curr.GetIngType() == ingredient.GetIngType() &&
+                            curr.IsCustom() == ingredient.IsCustom())
+                        {
+                            allIngredients.Remove(curr);
+                            deleted = true;
+                        }
+                    }
+                    allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
+
+                    for (int i = 0; i < myLists?.Count; i++)
+                    {
+                        myLists[i].CascadeDelCustomIng(ingredient);
                     }
                 }
-                allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
-
-                for (int i = 0; i < myLists?.Count; i++)
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    myLists[i].CascadeDelCustomIng(ingredient);
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    deleted = await DeleteCustomIngredient(user, ingredient);
+                }
+                else
+                {
+                    throw new Exception();
                 }
             }
             catch (Exception)
@@ -1057,8 +1180,26 @@ namespace Desktop_Frontend.Backend
                 try
                 {
                     HttpResponseMessage response = await HttpClient.SendAsync(request);
-                    response.EnsureSuccessStatusCode();
-                    FillAllRecipes(response);
+   
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        FillAllRecipes(response);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        bool refreshed = await RefreshToken(user);
+
+                        if (!refreshed)
+                        {
+                            throw new Exception();
+                        }
+
+                        recipes = await GetAllRecipes(user) ;
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
                 }
                 catch (Exception)
                 {
@@ -1178,17 +1319,34 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                
-                if(recipes == null)
+
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    recipes = new List<Recipe>();
+                    if (recipes == null)
+                    {
+                        recipes = new List<Recipe>();
+                    }
+
+                    // Add to cached list
+                    recipes.Add(new Recipe(recipeName));
+
+                    created = true;
                 }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
 
-                // Add to cached list
-                recipes.Add(new Recipe(recipeName));
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
 
-                created = true;
+                    created = await CreateRecipe(user, recipeName)  ;
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1219,29 +1377,46 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
 
-                // Remove from cached list of recipes
-                if (recipes != null)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    bool found = false;
-                    Recipe toDel = null;
-                    for (int i = 0; i < recipes?.Count && !found; i++)
+                    // Remove from cached list of recipes
+                    if (recipes != null)
                     {
-                        if (recipes[i].GetRecipeName() == recipeName)
+                        bool found = false;
+                        Recipe toDel = null;
+                        for (int i = 0; i < recipes?.Count && !found; i++)
                         {
-                            toDel = recipes[i];
-                            found = true;
+                            if (recipes[i].GetRecipeName() == recipeName)
+                            {
+                                toDel = recipes[i];
+                                found = true;
+                            }
+                        }
+
+                        if (found && toDel != null)
+                        {
+                            recipes?.Remove(toDel);
                         }
                     }
 
-                    if (found && toDel != null)
-                    {
-                        recipes?.Remove(toDel);
-                    }
+                    deleted = true;
                 }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
 
-                deleted = true;
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    deleted = await DeleteRecipe(user, recipeName)  ;
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1291,9 +1466,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                AddIngToCachedRecipe(ingredient, recipeName);
-                added = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    AddIngToCachedRecipe(ingredient, recipeName);
+                    added = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    added = await AddIngToRecipe(user, ingredient, recipeName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1349,9 +1542,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                DelIngInCacheRecipe(ingredient, recipeName);
-                removed = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    DelIngInCacheRecipe(ingredient, recipeName);
+                    removed = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    removed = await DeleteIngInRecipe(user, ingredient, recipeName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1414,9 +1625,27 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                AddStepToCachedRecipe(step, recipeName);
-                added = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    AddStepToCachedRecipe(step, recipeName);
+                    added = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    added = await AddStepToRecipe(user, step, recipeName);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -1460,7 +1689,7 @@ namespace Desktop_Frontend.Backend
         /// <returns>True on success, false on failure</returns>
         public async Task<bool> DeleteStepFromRecipe(IUser user, int stepNum, string recipeName)
         {
-            bool added = false;
+            bool deleted = false;
 
             // Create request
             string url = config.BackendUrl + config.Delete_Step_Recipe_Endpoint;
@@ -1474,16 +1703,34 @@ namespace Desktop_Frontend.Backend
             try
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                DelStepFromCachedRecipe(stepNum, recipeName);
-                added = true;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    DelStepFromCachedRecipe(stepNum, recipeName);
+                    deleted = true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    bool refreshed = await RefreshToken(user);
+
+                    if (!refreshed)
+                    {
+                        throw new Exception();
+                    }
+
+                    deleted = await DeleteStepFromRecipe(user, stepNum, recipeName) ;
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
-                added = false;
+                deleted = false;
             }
 
-            return added;
+            return deleted;
         }
 
 
