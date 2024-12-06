@@ -405,6 +405,9 @@ namespace Desktop_Frontend.Backend
             r1Steps.Add("r1 step 2 - Some words some words some words some words");
             r1Steps.Add("r1 step 3 - Some words some words some words some words");
             r1Steps.Add("r1 step 4 - Some words some words some words some words");
+            r1Steps.Add("LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG"+
+                        "LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG"+
+                        "LONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONGLONG");
             Recipe r1 = new Recipe("Mock Recipe 1", r1Ings, r1Steps);
 
             UserList r2Ings = myLists.Find(i => i.GetListName() == "Pantry").CopyList();
