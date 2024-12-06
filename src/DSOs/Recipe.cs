@@ -69,5 +69,12 @@
         /// <param name="steps"> The steps of the recipe </param>
         public void SetRecipeSteps(List<string> steps) { Steps = steps; }
 
+        /// <summary>
+        /// Getter for getting the index of a step (1-N)
+        /// </summary>
+        /// <param name="step"> Step to find index of </param>
+        /// <returns> 0 if not found, (1-N) if found </returns>
+        public int GetStepIndex(string step) { return Steps.IndexOf(step) + 1; }
+
     }
 }
