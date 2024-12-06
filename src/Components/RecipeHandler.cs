@@ -56,8 +56,6 @@ namespace Desktop_Frontend.Components
             ingExpander = CreateExpander("Ingredients", ingScroller);
             parentPanel?.Children.Add(ingExpander);
 
-            ingExpander.Expanded += (s, e) => PopulateIngGrid();
-
             // Create expander for steps
             stepsExpander = CreateExpander("Steps", new UIElement());
             parentPanel?.Children.Add(stepsExpander);
@@ -519,7 +517,7 @@ namespace Desktop_Frontend.Components
                    if (success)
                    {
                         MessageBox.Show("Recipe created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        // Update UI
+                        PopulateIngGrid();
                    }
                    else
                    {
