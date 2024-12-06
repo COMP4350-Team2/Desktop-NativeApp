@@ -90,7 +90,7 @@ Type `dotnet --version` in terminal to check version on your system.
 
 ## Acceptance Tests
 The acceptance tests for the user stories covered can be found in the following document <br>
-[Acceptance Tests]()
+[Acceptance Tests](https://github.com/COMP4350-Team2/Desktop-NativeApp/blob/72ed87e7874b3b251d197723128221524b911904/ACCEPTANCE_TESTS.md)
 
 ## Contributors
 <a href="https://github.com/COMP4350-Team2/Desktop-NativeApp/graphs/contributors">
