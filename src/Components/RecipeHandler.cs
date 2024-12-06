@@ -101,7 +101,7 @@ namespace Desktop_Frontend.Components
         {
             Brush expanderBackground = (Brush)Application.Current.Resources["ExpanderBrushA"];
             Brush headerTextCol = (Brush)Application.Current.Resources["SecondaryBrushB"];
-            int headerFont = 30;
+            int headerFont = 35;
             int buttonFont = 70;
 
             // Create grid for expander heading
@@ -585,6 +585,11 @@ namespace Desktop_Frontend.Components
             return scrollViewer;
         }
 
+        /// <summary>
+        /// Helper method to create an ingredient box
+        /// </summary>
+        /// <param name="ingredient"> Ingredient to be created </param>
+        /// <returns>Styled border with the ing info, custom logo and del buttons</returns>
         private Border CreateIngBox(Ingredient ingredient)
         {
             // Define resource-based colors and font sizes
@@ -600,7 +605,8 @@ namespace Desktop_Frontend.Components
                 Margin = new Thickness(5),
                 Padding = new Thickness(10),
                 Style = (Style)Application.Current.Resources["HoverableBorder"],
-                MaxHeight = parentPanel.ActualHeight / 4
+                MaxHeight = parentPanel.ActualHeight / 4,
+                ToolTip = ingredient.GetName()
             };
 
             // Use a vertical StackPanel to stack all elements
