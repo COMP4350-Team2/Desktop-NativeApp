@@ -4,8 +4,10 @@ using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Desktop_Frontend.Components
 {
@@ -21,6 +23,7 @@ namespace Desktop_Frontend.Components
         private StackPanel? parentPanel;
         private Expander? ingExpander;
         private Expander? stepsExpander;
+        private UniformGrid? ingGrid;
 
         /// <summary>
         /// Constructor
@@ -43,9 +46,17 @@ namespace Desktop_Frontend.Components
             TextBlock header = CreateHeader();
             parentPanel?.Children.Add(header);
 
+            // Populate ing panel initally 
+             PopulateIngGrid();
+
+            // Create ingredient scroller
+            ScrollViewer ingScroller = CreateIngredientScroller();
+
             // Create expander for ingredients
-            ingExpander = CreateExpander("Ingredients", new UIElement());
+            ingExpander = CreateExpander("Ingredients", ingScroller);
             parentPanel?.Children.Add(ingExpander);
+
+            ingExpander.Expanded += (s, e) => PopulateIngGrid();
 
             // Create expander for steps
             stepsExpander = CreateExpander("Steps", new UIElement());
@@ -421,7 +432,7 @@ namespace Desktop_Frontend.Components
                 if (success)
                 {
                     MessageBox.Show("Ingredient added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // Update the panels here
+                    PopulateIngGrid();
                 }
                 else
                 {
@@ -529,5 +540,180 @@ namespace Desktop_Frontend.Components
             popup.Content = panel;
             popup.ShowDialog();
         }
+
+
+        /// <summary>
+        /// Helper method to refresh ingredient panel
+        /// </summary>
+        private void PopulateIngGrid()
+        {
+            ingGrid?.Children.Clear();
+            foreach (Ingredient ing in recipe.GetRecipeIngList().GetIngredients())
+            {
+                Border ingBox = CreateIngBox(ing);
+                ingGrid?.Children.Add(ingBox);
+            }
+        }
+
+
+        /// <summary>
+        /// Helper method to inialize ingredient scroller (to be put in expander)
+        /// </summary>
+        /// <returns> A styled and populated scrollviewer </returns>
+        private ScrollViewer CreateIngredientScroller()
+        {
+            // Create a ScrollViewer to make the ing grid scrollable
+            ScrollViewer scrollViewer = new ScrollViewer
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Margin = new Thickness(0, 10, 0, 0),
+                MaxHeight = parentPanel.ActualHeight/2 - 10
+            };
+
+            ingGrid = new UniformGrid
+            {
+                Rows = (int)Math.Ceiling((double) (recipe.GetRecipeIngList().GetIngredients().Count) / 2),
+                Columns = 2, // 2 items per row
+                Margin = new Thickness(20, 10, 10, 10)
+            };
+
+            PopulateIngGrid();
+
+            scrollViewer.Content = ingGrid;
+
+            return scrollViewer;
+        }
+
+        private Border CreateIngBox(Ingredient ingredient)
+        {
+            // Define resource-based colors and font sizes
+            SolidColorBrush boxTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush boxBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            int ingFont = 35;
+
+            Border ingBorder = new Border
+            {
+                BorderBrush = boxBorderCol,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(5),
+                Margin = new Thickness(5),
+                Padding = new Thickness(10),
+                Style = (Style)Application.Current.Resources["HoverableBorder"],
+                MaxHeight = parentPanel.ActualHeight / 4
+            };
+
+            // Use a vertical StackPanel to stack all elements
+            StackPanel contentPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(5)
+            };
+
+            // Add Ingredient Name
+            TextBlock ingName = new TextBlock
+            {
+                Text = ingredient.GetName(),
+                FontWeight = FontWeights.Bold,
+                FontSize = ingFont,
+                Foreground = boxTextCol,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                MaxWidth = 0.4 * parentPanel.ActualWidth,
+                MaxHeight = 0.05 * parentPanel.ActualHeight,
+                Margin = new Thickness(5)
+            };
+            contentPanel.Children.Add(ingName);
+
+            // Add Ingredient Type
+            TextBlock ingType = new TextBlock
+            {
+                Text = ingredient.GetIngType(),
+                FontWeight = FontWeights.Bold,
+                FontSize = ingFont - 5,
+                Foreground = boxTextCol,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                MaxWidth = 0.4 * parentPanel.ActualWidth,
+                MaxHeight = 0.05 * parentPanel.ActualHeight,
+                Margin = new Thickness(5) 
+            };
+            contentPanel.Children.Add(ingType);
+
+            // Add Ingredient Amount
+            TextBlock ingAmount = new TextBlock
+            {
+                Text = $"{ingredient.GetAmount()} {ingredient.GetUnit()}",
+                FontWeight = FontWeights.Bold,
+                FontSize = ingFont - 5,
+                Foreground = boxTextCol,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                MaxWidth = 0.4 * parentPanel.ActualWidth,
+                MaxHeight = 0.05 * parentPanel.ActualHeight,
+                Margin = new Thickness(5) 
+            };
+            contentPanel.Children.Add(ingAmount);
+
+            // Bottom panel for icons and buttons
+            DockPanel bottomPanel = new DockPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Add Custom Icon (if applicable)
+            if (ingredient.IsCustom())
+            {
+                Image customIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/custom_ing_icon_white.png")),
+                    Width = 50,
+                    Height = 50,
+                    Margin = new Thickness(5),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                DockPanel.SetDock(customIcon, Dock.Left);
+                bottomPanel.Children.Add(customIcon);
+            }
+
+            // Add Delete Button (aligned to the right)
+            Button deleteButton = new Button
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_icon_red.png")),
+                    Height = 50,
+                    Width = 50,
+                    Stretch = Stretch.Uniform
+                },
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Margin = new Thickness(10),
+                Cursor = Cursors.Hand,
+                ToolTip = "Delete",
+                Style = (Style)Application.Current.Resources["NoHighlightButton"],
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            DockPanel.SetDock(deleteButton, Dock.Right);
+            bottomPanel.Children.Add(deleteButton);
+
+
+            // Add bottom panel to content panel
+            contentPanel.Children.Add(bottomPanel);
+
+            // Set the content of the Border
+            ingBorder.Child = contentPanel;
+
+            return ingBorder;
+        }
+
     }
 }
