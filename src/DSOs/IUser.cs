@@ -42,19 +42,29 @@
         /// </returns>
         public string GetAccessToken();
 
+        /// <summary>
+        /// Setter for setting user's access token
+        /// </summary>
+        /// <param name="accessToken"> new token</param>
+        public void SetAccessToken(string accessToken);
 
         /// <summary>
-        /// Retrieves the lists of a user
+        /// Method to get refresh token of user
         /// </summary>
-        /// <returns>
-        /// A list of <see cref="UserList"/>
-        /// </returns>
-        public List<UserList> GetUserLists();
+        /// <returns> string of refresh token </returns>
+        public string GetRefreshToken();
+
 
         /// <summary>
-        /// Sets the user's lists.
+        /// Setter for setting user's refresh token
         /// </summary>
-        /// <param name="userLists">The lists of <see cref="UserList"/>.</param>
-        public void SetUserLists(List<UserList> userLists);
+        /// <param name="refreshToken"> new token</param>
+        public void SetRefreshToken(string refreshToken);
+
+        /// <summary>
+        /// Getter for a user's client id
+        /// </summary>
+        /// <returns>string of client id</returns>
+        public string GetClientId();
     }
 }
