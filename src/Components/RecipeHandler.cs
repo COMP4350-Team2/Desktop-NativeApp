@@ -1,6 +1,4 @@
-﻿
-
-using Desktop_Frontend.Backend;
+﻿using Desktop_Frontend.Backend;
 using Desktop_Frontend.DSOs;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +22,7 @@ namespace Desktop_Frontend.Components
         private Expander? ingExpander;
         private Expander? stepsExpander;
         private UniformGrid? ingGrid;
+        private UniformGrid? stepsGrid;
 
         /// <summary>
         /// Constructor
@@ -46,19 +45,9 @@ namespace Desktop_Frontend.Components
             TextBlock header = CreateHeader();
             parentPanel?.Children.Add(header);
 
-            // Populate ing panel initally 
-             PopulateIngGrid();
-
-            // Create ingredient scroller
-            ScrollViewer ingScroller = CreateIngredientScroller();
-
-            // Create expander for ingredients
-            ingExpander = CreateExpander("Ingredients", ingScroller);
-            parentPanel?.Children.Add(ingExpander);
-
-            // Create expander for steps
-            stepsExpander = CreateExpander("Steps", new UIElement());
-            parentPanel?.Children.Add(stepsExpander);
+            // Populate ing and steps grids initally 
+            PopulateIngGrid();
+            PopulateStepsGrid();
         }
 
 
@@ -489,6 +478,7 @@ namespace Desktop_Frontend.Components
                 Width = 500,
                 Height = 200,
                 FontSize = stepFont,
+                TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(10),
                 Background = textboxBackground,
                 Foreground = textboxForeground,
@@ -517,7 +507,7 @@ namespace Desktop_Frontend.Components
                    if (success)
                    {
                         MessageBox.Show("Recipe created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        PopulateIngGrid();
+                        PopulateStepsGrid();
                    }
                    else
                    {
@@ -545,12 +535,35 @@ namespace Desktop_Frontend.Components
         /// </summary>
         private void PopulateIngGrid()
         {
+            bool wasExpanded = ingExpander?.IsExpanded ?? false;
+
+            parentPanel?.Children.Remove(ingExpander);
+
             ingGrid?.Children.Clear();
+            ingGrid = new UniformGrid
+            {
+                Rows = (int)Math.Ceiling((double)(recipe.GetRecipeIngList().GetIngredients().Count) / 2),
+                Columns = 2, // 2 items per row
+                Margin = new Thickness(20, 10, 10, 10)
+            };
             foreach (Ingredient ing in recipe.GetRecipeIngList().GetIngredients())
             {
                 Border ingBox = CreateIngBox(ing);
                 ingGrid?.Children.Add(ingBox);
             }
+
+            // Create ingredient scroller
+            ScrollViewer ingScroller = CreateIngredientScroller();
+            ingScroller.Content = ingGrid;
+
+
+            // Create expander for ingredients
+            ingExpander = CreateExpander("Ingredients", ingScroller);
+            ingExpander.Content = ingScroller;
+            ingExpander.IsExpanded = wasExpanded;
+
+            parentPanel?.Children.Insert(1, ingExpander);
+
         }
 
 
@@ -568,17 +581,6 @@ namespace Desktop_Frontend.Components
                 Margin = new Thickness(0, 10, 0, 0),
                 MaxHeight = parentPanel.ActualHeight/2 - 10
             };
-
-            ingGrid = new UniformGrid
-            {
-                Rows = (int)Math.Ceiling((double) (recipe.GetRecipeIngList().GetIngredients().Count) / 2),
-                Columns = 2, // 2 items per row
-                Margin = new Thickness(20, 10, 10, 10)
-            };
-
-            PopulateIngGrid();
-
-            scrollViewer.Content = ingGrid;
 
             return scrollViewer;
         }
@@ -785,6 +787,217 @@ namespace Desktop_Frontend.Components
                 {
                     MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     PopulateIngGrid();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                confirmButton.IsEnabled = true;
+
+                confirmationPopup.Close();
+            };
+
+            confirmationPopup.Content = panel;
+            confirmationPopup.ShowDialog();
+        }
+
+
+        /// <summary>
+        /// Helper method to create steps scroller
+        /// </summary>
+        /// <returns> Styled scrollviewer</returns>
+        private ScrollViewer CreateStepsScroller()
+        {
+            // Create a ScrollViewer to make the steps grid scrollable
+            ScrollViewer scrollViewer = new ScrollViewer
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Margin = new Thickness(0, 10, 0, 0),
+                MaxHeight = parentPanel.ActualHeight / 2 - 10
+            };
+
+            return scrollViewer;
+
+        }
+
+
+        /// <summary>
+        /// Helper to fill in the steps grid
+        /// </summary>
+        private void PopulateStepsGrid()
+        {
+            bool wasExpanded = stepsExpander?.IsExpanded ?? false;
+
+            parentPanel?.Children.Remove(stepsExpander);
+
+            stepsGrid?.Children.Clear();
+            stepsGrid = new UniformGrid
+            {
+                Rows = recipe.GetRecipeSteps().Count,
+                Columns = 1,
+                Margin = new Thickness(20, 10, 10, 10)
+            };
+            foreach (string step in recipe.GetRecipeSteps())
+            {
+                Border stepBox = CreateStepBox(step);
+                stepsGrid?.Children.Add(stepBox);
+            }
+
+            // Create steps scroller
+            ScrollViewer stepsScroller = CreateStepsScroller();
+            stepsScroller.Content = stepsGrid;
+
+
+            // Create expander for steps
+            stepsExpander = CreateExpander("Steps", stepsScroller);
+            stepsExpander.Content = stepsScroller;
+            stepsExpander.IsExpanded = wasExpanded;
+
+            parentPanel?.Children.Insert(2, stepsExpander);
+
+        }
+
+        /// <summary>
+        /// Helper to create box for each step
+        /// </summary>
+        /// <param name="step"> The step to make a box out of </param>
+        /// <returns> Style border with step and delete button</returns>
+        private Border CreateStepBox(string step)
+        {
+            // Define resource-based colors and font sizes
+            SolidColorBrush boxTextCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            SolidColorBrush boxBorderCol = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+            int stepFont = 30;
+
+            Border stepBorder = new Border
+            {
+                BorderBrush = boxBorderCol,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(5),
+                Margin = new Thickness(5),
+                Padding = new Thickness(10),
+                Style = (Style)Application.Current.Resources["HoverableBorder"],
+                MaxHeight = parentPanel.ActualHeight / 4,
+                ToolTip = step
+            };
+
+            DockPanel borderContent = new DockPanel();
+
+            TextBlock stepText = new TextBlock
+            {
+                Text = step,
+                FontSize = stepFont,
+                Foreground = boxTextCol,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                MaxWidth = 0.7 * parentPanel.ActualWidth,
+                MaxHeight = 0.4 * parentPanel.ActualHeight,
+                Margin = new Thickness(5)
+            };
+
+            DockPanel.SetDock(stepText, Dock.Left);
+            borderContent.Children.Add(stepText);
+
+            Button deleteButton = new Button
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Icons/del_icon_red.png")),
+                    Height = 50,
+                    Width = 50,
+                    Stretch = Stretch.Uniform
+                },
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Margin = new Thickness(10),
+                Cursor = Cursors.Hand,
+                ToolTip = "Delete",
+                Style = (Style)Application.Current.Resources["NoHighlightButton"],
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            deleteButton.Click += async (s, e) => await DeleteStepPopup(step);
+
+            DockPanel.SetDock(deleteButton, Dock.Right);
+            borderContent.Children.Add(deleteButton);
+
+            stepBorder.Child = borderContent;
+
+            return stepBorder;
+        }
+
+        /// <summary>
+        /// Shows a dialog box to confirm deleting a step from recipe
+        /// </summary>
+        /// <param name="step"> The step to be deleted </param>
+        private async Task DeleteStepPopup(string step)
+        {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create popup window for confirmation
+            Window confirmationPopup = new Window
+            {
+                Title = "Deleting Step",
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            // Stack panel for layout
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = $"Are you sure you want to delete {step}?",
+                Margin = new Thickness(10),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = textForeground,
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                MaxWidth = parentPanel.ActualWidth - 200
+            });
+
+            // Confirmation button 
+            Button confirmButton = new Button
+            {
+                Content = "Delete",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"],
+                Background = Brushes.Red,
+                Foreground = Brushes.White
+            };
+
+            // Add the button to the panel
+            panel.Children.Add(new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Children = { confirmButton }
+            });
+
+            // Event handler for confirm button to initiate deletion
+            confirmButton.Click += async (s, e) =>
+            {
+                confirmButton.IsEnabled = false;
+
+                // Call backend to remove step
+                int stepIndex = recipe.GetStepIndex(step);
+                bool success = false;
+                if (stepIndex > 0)
+                {
+                    success = await backend.DeleteStepFromRecipe(user, stepIndex, recipe.GetRecipeName());
+                }
+
+                // Display result and close popup
+                if (success)
+                {
+                    MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    PopulateStepsGrid();
                 }
                 else
                 {
