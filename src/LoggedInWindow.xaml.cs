@@ -29,7 +29,7 @@ namespace Desktop_Frontend
             this.backend = backend; // Store the backend instance
             allIngredientsHandler = new AllIngredientsHandler(backend, user); // Instantiate the ingredients handler
             myListsHandler = new MyListsHandler(backend, user); // Instantiate the lists handler
-            allRecipesHandler = new AllRecipesHandler(backend, user, ContentArea, AllRecipesButton);
+            allRecipesHandler = new AllRecipesHandler(backend, user, ContentArea, AllRecipesButton, ParentScrollViewer);
 
             InitializeContentSpace(); // Call the method to initialize content
             UsernameTextBox.Text = user.UserName(); // Set the username
