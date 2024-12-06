@@ -23,17 +23,20 @@ namespace Desktop_Frontend.Components
         private Expander? stepsExpander;
         private UniformGrid? ingGrid;
         private UniformGrid? stepsGrid;
+        private ScrollViewer? parentScroller;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public RecipeHandler(IBackend backend, IUser user, StackPanel parentPanel, Recipe recipe)
+        public RecipeHandler(IBackend backend, IUser user, StackPanel parentPanel, Recipe recipe, ScrollViewer parentScroller)
         {
             this.backend = backend;
             this.user = user;
             this.recipe = recipe;
             this.parentPanel = parentPanel;
             this.parentPanel.Children.Clear();
+            this.parentScroller = parentScroller;
+            parentScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
         }
 
         /// <summary>
@@ -555,6 +558,7 @@ namespace Desktop_Frontend.Components
             // Create ingredient scroller
             ScrollViewer ingScroller = CreateIngredientScroller();
             ingScroller.Content = ingGrid;
+            ingScroller.PreviewMouseWheel += InnerScrollViewer_PreviewMouseWheel;
 
 
             // Create expander for ingredients
@@ -848,6 +852,7 @@ namespace Desktop_Frontend.Components
             // Create steps scroller
             ScrollViewer stepsScroller = CreateStepsScroller();
             stepsScroller.Content = stepsGrid;
+            stepsScroller.PreviewMouseWheel += InnerScrollViewer_PreviewMouseWheel;
 
 
             // Create expander for steps
@@ -1013,5 +1018,41 @@ namespace Desktop_Frontend.Components
             confirmationPopup.ShowDialog();
         }
 
+        /// <summary>
+        /// Method to handle bubbling scroll event for recipe scrollers
+        /// </summary>
+        private void InnerScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            int delta = e.Delta;
+            var scv = sender as ScrollViewer;
+            if (scv == null) return;
+
+            // Check if we're at the bottom or top of the inner ScrollViewer
+            bool atBottom = scv.VerticalOffset >= scv.ExtentHeight - scv.ViewportHeight;
+            bool atTop = scv.VerticalOffset <= 0.0;
+
+
+            // If at the bottom and scrolling up, transfer control to the parent
+            if (delta < 0 && atBottom)
+            {
+                // Transfer control to the parent ScrollViewer
+                double offset = double.MinNumber(parentScroller.MaxHeight, parentScroller.VerticalOffset - delta / 2);
+                parentScroller.ScrollToVerticalOffset(offset);
+                e.Handled = false;  // Let the parent handle the event (smooth bubbling)
+            }
+            // If at the top and scrolling down, transfer control to the parent
+            else if (delta > 0 && atTop)
+            {
+                // Transfer control to the parent ScrollViewer
+                double offset = double.MaxNumber(0.0, parentScroller.VerticalOffset - delta / 2);
+                parentScroller.ScrollToVerticalOffset(offset);
+                e.Handled = false;  // Let the parent handle the event (smooth bubbling)
+            }
+            else
+            {
+                // Let the inner ScrollViewer handle scrolling normally
+                e.Handled = false;  // Allow inner ScrollViewer to handle the event
+            }
+        }
     }
 }
