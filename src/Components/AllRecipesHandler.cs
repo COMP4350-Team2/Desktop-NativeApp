@@ -22,6 +22,7 @@ namespace Desktop_Frontend.Components
         private ScrollViewer scrollViewer;
         private UniformGrid recipeGrid;
         private StackPanel allRecipesButton;
+        private ScrollViewer parentScroller;
 
         /// <summary>
         /// Constructor do initalizing the component handler
@@ -29,7 +30,7 @@ namespace Desktop_Frontend.Components
         /// <param name="backend"> backend to be used </param>
         /// <param name="user"> user making calls </param>
         /// <param name="parentPanel"> content panel in LoggedInWindow </param>
-        public AllRecipesHandler(IBackend backend, IUser user, StackPanel parentPanel, StackPanel allRecipesButton)
+        public AllRecipesHandler(IBackend backend, IUser user, StackPanel parentPanel, StackPanel allRecipesButton, ScrollViewer parentScroller)
         {
             this.backend = backend;
             this.user = user;
@@ -37,6 +38,7 @@ namespace Desktop_Frontend.Components
             recipes = null;
             scrollViewer = null;
             this.allRecipesButton = allRecipesButton;
+            this.parentScroller = parentScroller;
         }
 
         /// <summary>
@@ -290,7 +292,7 @@ namespace Desktop_Frontend.Components
 
             recipeBorder.MouseLeftButtonDown += async (sender, e) =>
             {
-                RecipeHandler recipePage = new RecipeHandler(backend, user, parentPanel, recipe);
+                RecipeHandler recipePage = new RecipeHandler(backend, user, parentPanel, recipe, parentScroller);
                 await recipePage.DisplayRecipe();
                 allRecipesButton.IsEnabled = true;
             };
