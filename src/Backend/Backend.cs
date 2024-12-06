@@ -1507,5 +1507,64 @@ namespace Desktop_Frontend.Backend
                 }
             }
         }
+
+        /// <summary>
+        /// Private helper for refreshing tokens
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> RefreshToken(IUser user)
+        {
+            bool refreshed = false;
+
+            // Create request
+            string url = config.BackendUrl + config.Refresh_Token_Endpoint;
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            var body = new
+            {
+                client_id = user.GetClientId(),
+                refresh_token = user.GetRefreshToken()
+            };
+            string jsonBody = JsonSerializer.Serialize(body);
+            request.Content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+            // Get response
+            try
+            {
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+                if(response.StatusCode == HttpStatusCode.OK)
+                {
+                    // Read the response content as a string
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    // Parse the JSON response
+                    using JsonDocument jsonDocument = JsonDocument.Parse(responseContent);
+                    JsonElement root = jsonDocument.RootElement;
+
+                    // Extract the tokens
+                    string accessToken = root.GetProperty("access_token").GetString();
+                    string refreshToken = root.GetProperty("refresh_token").GetString();
+
+                    // Set the user's tokens
+                    user.SetAccessToken(accessToken);
+                    user.SetRefreshToken(refreshToken);
+
+                    refreshed = true;
+                }
+                else
+                {
+                    await user.Logout();
+                    await user.Login();
+
+                    refreshed = user.LoggedIn();
+                }
+
+            }
+            catch (Exception)
+            {
+                refreshed = false;
+            }
+
+            return refreshed;
+        }
     }
 }
