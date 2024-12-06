@@ -813,7 +813,7 @@ namespace Desktop_Frontend.Backend
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.Created)
                 {
                     created = CreateCachedList(listName);
                 }
@@ -1061,7 +1061,7 @@ namespace Desktop_Frontend.Backend
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.Created)
                 {
                     allIngredients.Add(customIng);
                     allIngredients.Sort((x, y) => string.Compare(x.GetName(), y.GetName(), StringComparison.OrdinalIgnoreCase));
@@ -1320,7 +1320,7 @@ namespace Desktop_Frontend.Backend
             {
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.Created)
                 {
                     if (recipes == null)
                     {
