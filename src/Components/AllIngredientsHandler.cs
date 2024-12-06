@@ -902,7 +902,7 @@ namespace Desktop_Frontend.Components
         /// Shows a dialog box to confirm deleting a custom ingredient
         /// </summary>
         /// <param name="ingredient"> The ingredient to be deleted </param>
-        /// <param name="ingredient"> The ingredient to be deleted </param>
+        /// <param name="ingGrid"> The ingredient grid to be updated </param>
         private async Task DeleteCustomIngredientPopup(Ingredient ingredient, UniformGrid ingGrid)
         {
             SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
