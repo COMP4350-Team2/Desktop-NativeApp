@@ -96,17 +96,6 @@ namespace Desktop_Frontend.DSOs
         }
 
         /// <summary>
-        /// Checks if the configuration is valid.
-        /// </summary>
-        /// <returns>
-        /// A boolean indicating whether the configuration is valid.
-        /// </returns>
-        private bool ConfigValid()
-        {
-            return config != null && config.ConfigValid;
-        }
-
-        /// <summary>
         /// Checks if the user is currently logged in.
         /// </summary>
         /// <returns>
