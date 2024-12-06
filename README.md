@@ -48,6 +48,13 @@ Type `dotnet --version` in terminal to check version on your system.
     MOVE_INGREDIENT=
     CREATE_CUSTOM_ING=
     DELETE_CUSTOM_ING=
+    GET_RECIPES=
+    CREATE_RECIPE=
+    DELETE_RECIPE=
+    ADD_ING_RECIPE=
+    DELETE_ING_RECIPE=
+    ADD_STEP_RECIPE=
+    DELETE_STEP_RECIPE=
     ```   
 
 - Not having these files will run a Mock version of the system.
