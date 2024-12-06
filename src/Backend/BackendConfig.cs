@@ -30,6 +30,7 @@ namespace Desktop_Frontend.Backend
         public string? Delete_Ing_Recipe_Endpoint;
         public string? Add_Step_Recipe_Endppoint;
         public string? Delete_Step_Recipe_Endpoint;
+        public string? Refresh_Token_Endpoint;
 
         /// <summary>
         /// bool to check if the backend configuration is valid
@@ -87,6 +88,7 @@ namespace Desktop_Frontend.Backend
                 Delete_Ing_Recipe_Endpoint = Env.GetString("DELETE_ING_RECIPE");
                 Add_Step_Recipe_Endppoint = Env.GetString("ADD_STEP_RECIPE");
                 Delete_Step_Recipe_Endpoint = Env.GetString("DELETE_STEP_RECIPE");
+                Refresh_Token_Endpoint = Env.GetString("REFRESH-TOKEN");
             }
 
         }
@@ -107,7 +109,7 @@ namespace Desktop_Frontend.Backend
                || string.IsNullOrEmpty(Get_Recipes_Endpoint) || string.IsNullOrEmpty(Create_Recipe_Endpoint)
                || string.IsNullOrEmpty(Delete_Recipe_Endpoint) || string.IsNullOrEmpty(Add_Ing_Recipe_Endppoint)
                || string.IsNullOrEmpty(Delete_Ing_Recipe_Endpoint) || string.IsNullOrEmpty(Add_Step_Recipe_Endppoint)
-               || string.IsNullOrEmpty(Delete_Step_Recipe_Endpoint));
+               || string.IsNullOrEmpty(Delete_Step_Recipe_Endpoint) || string.IsNullOrEmpty(Refresh_Token_Endpoint));
         }
 
         /// <summary>
