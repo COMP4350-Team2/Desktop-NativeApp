@@ -708,6 +708,8 @@ namespace Desktop_Frontend.Components
                 Style = (Style)Application.Current.Resources["NoHighlightButton"],
                 HorizontalAlignment = HorizontalAlignment.Right
             };
+            deleteButton.Click += async (s, e) => await DeleteIngredientPopup(ingredient);
+
             DockPanel.SetDock(deleteButton, Dock.Right);
             bottomPanel.Children.Add(deleteButton);
 
@@ -719,6 +721,85 @@ namespace Desktop_Frontend.Components
             ingBorder.Child = contentPanel;
 
             return ingBorder;
+        }
+
+        /// <summary>
+        /// Shows a dialog box to confirm deleting an ingredient from recipe
+        /// </summary>
+        /// <param name="ingredient"> The ingredient to be deleted </param>
+        private async Task DeleteIngredientPopup(Ingredient ingredient)
+        {
+            SolidColorBrush background = (SolidColorBrush)App.Current.Resources["PrimaryBrushB"];
+            SolidColorBrush textForeground = (SolidColorBrush)App.Current.Resources["SecondaryBrushB"];
+
+            // Create popup window for confirmation
+            Window confirmationPopup = new Window
+            {
+                Title = "Deleting " + ingredient.GetName(),
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = background
+            };
+
+            // Stack panel for layout
+            StackPanel panel = new StackPanel { Margin = new Thickness(10) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = $"Are you sure you want to delete {ingredient.GetName()}?",
+                Margin = new Thickness(10),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = textForeground,
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                MaxWidth = parentPanel.ActualWidth - 200
+            });
+
+            // Confirmation button 
+            Button confirmButton = new Button
+            {
+                Content = "Delete",
+                Margin = new Thickness(10, 30, 10, 10),
+                Style = (Style)Application.Current.Resources["ExpandButtonStyle"],
+                Background = Brushes.Red,
+                Foreground = Brushes.White
+            };
+
+            // Add the button to the panel
+            panel.Children.Add(new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Children = { confirmButton }
+            });
+
+            // Event handler for confirm button to initiate deletion
+            confirmButton.Click += async (s, e) =>
+            {
+                confirmButton.IsEnabled = false;
+
+                // Call backend to remove ingredient
+                bool success = await backend.DeleteIngInRecipe(user, ingredient, recipe.GetRecipeName());   
+
+                // Display result and close popup
+                if (success)
+                {
+                    MessageBox.Show("Ingredient deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    PopulateIngGrid();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete ingredient. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                confirmButton.IsEnabled = true;
+
+                confirmationPopup.Close();
+            };
+
+            confirmationPopup.Content = panel;
+            confirmationPopup.ShowDialog();
         }
 
     }
